@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Logo from "@/components/ui/Logo";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
@@ -6,57 +6,65 @@ import { useState } from "react";
 import MobileNav from "./MobileNav";
 
 const navLinks = [
-  { href: "/compare", label: "Cards" },
-  { href: "/loans", label: "Loans" },
-  { href: "/savings", label: "Savings" },
-  { href: "/banks", label: "Banks" },
-  { href: "/guides", label: "Guides" },
-  { href: "/eligibility", label: "Compare" },
+  { href: "/compare", label: "Cards", icon: "credit_card" },
+  { href: "/loans", label: "Loans", icon: "account_balance" },
+  { href: "/savings", label: "Savings", icon: "savings" },
+  { href: "/banks", label: "Banks", icon: "business" },
+  { href: "/guides", label: "Guides", icon: "menu_book" },
 ];
 
 const Header = () => {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-primary/10 bg-card/80 backdrop-blur-md container-padding py-3">
-        <div className="flex items-center justify-between whitespace-nowrap">
+      <header className="sticky top-0 z-50 w-full border-b border-primary/10 bg-card/95 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between whitespace-nowrap max-w-[1400px] mx-auto">
           {/* Logo */}
-          <Link to="/">
+          <Link to="/" className="shrink-0">
             <Logo size="md" />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex flex-1 justify-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="text-sm font-semibold hover:text-primary transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+          <nav className="hidden lg:flex flex-1 justify-center gap-1">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    isActive 
+                      ? "bg-primary/10 text-primary" 
+                      : "hover:bg-muted hover:text-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
-            {/* Compare CTA */}
-            <Link to="/compare">
-              <Button className="hidden sm:flex min-w-[84px] h-10 px-4 text-sm font-bold shadow-sm">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Compare CTA - Desktop only */}
+            <Link to="/compare" className="hidden sm:block">
+              <Button className="min-w-[84px] h-10 px-4 text-sm font-bold shadow-sm">
                 Compare Now
               </Button>
             </Link>
 
-            {/* Language Toggle */}
-            <button className="flex items-center gap-2 rounded-lg h-10 px-3 bg-primary/10 text-primary text-sm font-bold border border-primary/20">
+            {/* Language Toggle - Hidden on very small screens */}
+            <button className="hidden xs:flex items-center gap-1 sm:gap-2 rounded-lg h-9 sm:h-10 px-2 sm:px-3 bg-primary/10 text-primary text-xs sm:text-sm font-bold border border-primary/20">
               <MaterialIcon name="language" className="text-sm" />
-              <span>EN/BN</span>
+              <span className="hidden sm:inline">EN/BN</span>
             </button>
 
-            {/* User Avatar */}
-            <div 
-              className="hidden sm:block bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20"
+            {/* User Avatar - Desktop only */}
+            <Link 
+              to="/dashboard"
+              className="hidden md:block bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20 hover:border-primary transition-colors"
               style={{
                 backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuACEbGTRBfMw99Qp0lE-ppdjKnDQQ0POIIfoS1GUE-ivf45IqxEBUrNdktDuAbjq3STzFDAOfb685uz9Jwj5aherHLvFVSjsnJYz72kzdxGxG7fWSLQjWLyQUyVt4gepCO2-uhN3jmawwaaaipFvTBtDnNPTSTjWY5eFt8UyWU5HYHmAvz6WRbVQmcyJJbrnehyZ2c5pyZmS-zd4jHRrM_YRYtlKDFvLEtHA1j1JnggVL9R5k_971hi74Lt_0bDntRAlgs-pxbx9Ms")`
               }}

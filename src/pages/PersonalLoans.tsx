@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -71,37 +72,37 @@ const PersonalLoans = () => {
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       <Header />
-      <main className="flex-1 max-w-[1200px] mx-auto px-4 py-8 w-full">
+      <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Page Heading */}
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-10">
           <div className="flex flex-col gap-2">
-            <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight text-foreground">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight text-foreground">
               Personal Loan <span className="text-primary">Comparison Tool</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl">
               Compare interest rates, calculate EMI, and apply for the best personal loans from top Bangladeshi banks instantly.
-              <span className="block mt-1 font-bengali">
+              <span className="hidden sm:block mt-1 font-bengali">
                 বাংলাদেশের শীর্ষস্থানীয় ব্যাংকগুলো থেকে আপনার জন্য সেরা লোনটি বেছে নিন।
               </span>
             </p>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 items-start">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           {/* Left: Configuration (Inputs) */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-card p-8 rounded-xl border border-primary/10 shadow-sm">
-              <h3 className="text-xl font-bold mb-8 flex items-center gap-2">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            <div className="bg-card p-4 sm:p-8 rounded-xl border border-primary/10 shadow-sm">
+              <h3 className="text-lg sm:text-xl font-bold mb-6 sm:mb-8 flex items-center gap-2">
                 <MaterialIcon name="tune" className="text-primary" />
                 Configure Your Loan
               </h3>
 
               {/* Slider: Loan Amount */}
-              <div className="mb-12">
-                <div className="flex justify-between items-center mb-6">
-                  <label className="text-base font-semibold">Loan Amount (৳)</label>
-                  <div className="bg-primary/10 px-4 py-2 rounded-lg border border-primary/30">
-                    <span className="text-lg font-bold text-primary tracking-wide">
+              <div className="mb-8 sm:mb-12">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4 sm:mb-6">
+                  <label className="text-sm sm:text-base font-semibold">Loan Amount (৳)</label>
+                  <div className="bg-primary/10 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-primary/30 self-start sm:self-auto">
+                    <span className="text-base sm:text-lg font-bold text-primary tracking-wide">
                       ৳ {formatCurrency(loanAmount[0])}
                     </span>
                   </div>
@@ -114,18 +115,18 @@ const PersonalLoans = () => {
                   step={10000}
                   className="w-full"
                 />
-                <div className="flex justify-between mt-4 text-xs font-medium text-muted-foreground">
+                <div className="flex justify-between mt-3 sm:mt-4 text-[10px] sm:text-xs font-medium text-muted-foreground">
                   <span>৳ 50,000</span>
                   <span>৳ 20,00,000</span>
                 </div>
               </div>
 
               {/* Slider: Tenure */}
-              <div className="mb-8">
-                <div className="flex justify-between items-center mb-6">
-                  <label className="text-base font-semibold">Tenure (Years)</label>
-                  <div className="bg-primary/10 px-4 py-2 rounded-lg border border-primary/30">
-                    <span className="text-lg font-bold text-primary">{tenure[0]} Years</span>
+              <div className="mb-6 sm:mb-8">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4 sm:mb-6">
+                  <label className="text-sm sm:text-base font-semibold">Tenure (Years)</label>
+                  <div className="bg-primary/10 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-primary/30 self-start sm:self-auto">
+                    <span className="text-base sm:text-lg font-bold text-primary">{tenure[0]} Years</span>
                   </div>
                 </div>
                 <Slider
@@ -136,7 +137,7 @@ const PersonalLoans = () => {
                   step={1}
                   className="w-full"
                 />
-                <div className="flex justify-between mt-4 text-xs font-medium text-muted-foreground">
+                <div className="flex justify-between mt-3 sm:mt-4 text-[10px] sm:text-xs font-medium text-muted-foreground">
                   <span>1 Year</span>
                   <span>5 Years</span>
                 </div>
@@ -146,17 +147,17 @@ const PersonalLoans = () => {
 
           {/* Right: Dynamic EMI Box */}
           <div className="lg:col-span-1">
-            <div className="bg-card rounded-xl border-t-4 border-primary shadow-xl overflow-hidden sticky top-24">
-              <div className="p-6 bg-primary/5 border-b border-primary/10">
-                <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">
+            <div className="bg-card rounded-xl border-t-4 border-primary shadow-xl overflow-hidden lg:sticky lg:top-24">
+              <div className="p-4 sm:p-6 bg-primary/5 border-b border-primary/10">
+                <h4 className="text-xs sm:text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">
                   Estimated Monthly EMI
                 </h4>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-foreground">৳ {formatCurrency(emi)}</span>
-                  <span className="text-sm font-medium text-muted-foreground">/mo</span>
+                  <span className="text-3xl sm:text-4xl font-black text-foreground">৳ {formatCurrency(emi)}</span>
+                  <span className="text-xs sm:text-sm font-medium text-muted-foreground">/mo</span>
                 </div>
               </div>
-              <div className="p-6 space-y-4">
+              <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Total Interest Payable</span>
                   <span className="font-bold">৳ {formatCurrency(totalInterest)}</span>
@@ -165,10 +166,10 @@ const PersonalLoans = () => {
                   <span className="text-muted-foreground">Total Repayment</span>
                   <span className="font-bold">৳ {formatCurrency(totalRepayment)}</span>
                 </div>
-                <div className="pt-4 border-t border-dashed border-primary/10">
-                  <div className="bg-accent/10 p-3 rounded flex items-start gap-2 border border-accent/20">
-                    <MaterialIcon name="info" className="text-accent text-lg leading-none" />
-                    <p className="text-[11px] text-muted-foreground leading-tight">
+                <div className="pt-3 sm:pt-4 border-t border-dashed border-primary/10">
+                  <div className="bg-accent/10 p-2.5 sm:p-3 rounded flex items-start gap-2 border border-accent/20">
+                    <MaterialIcon name="info" className="text-accent text-base sm:text-lg leading-none shrink-0" />
+                    <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight">
                       Calculations based on an average interest rate of 12%. Final rates may vary by bank.
                     </p>
                   </div>
@@ -179,12 +180,12 @@ const PersonalLoans = () => {
         </div>
 
         {/* Comparison Table Section */}
-        <div className="mt-16">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <h3 className="text-2xl font-bold">Top Offers for You</h3>
+        <div className="mt-10 sm:mt-16">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+            <h3 className="text-xl sm:text-2xl font-bold">Top Offers for You</h3>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">Sort by:</span>
-              <select className="bg-card border border-primary/10 rounded-lg text-sm px-4 py-2 focus:ring-primary">
+              <span className="text-xs sm:text-sm font-medium text-muted-foreground">Sort by:</span>
+              <select className="bg-card border border-primary/10 rounded-lg text-xs sm:text-sm px-3 sm:px-4 py-2 focus:ring-primary">
                 <option>Lowest Interest Rate</option>
                 <option>Lowest Processing Fee</option>
                 <option>Quickest Approval</option>
@@ -192,7 +193,8 @@ const PersonalLoans = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full border-separate border-spacing-y-4">
               <thead>
                 <tr className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
@@ -210,28 +212,72 @@ const PersonalLoans = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-4">
+            {loanOffers.map((offer) => (
+              <div 
+                key={offer.id}
+                className={`bg-card rounded-xl border ${offer.isPremium ? 'border-accent' : 'border-primary/10'} p-4 relative overflow-hidden`}
+              >
+                {offer.isPremium && (
+                  <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-bl">
+                    Premium Choice
+                  </div>
+                )}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-12 h-12 ${offer.bgColor} rounded-xl flex items-center justify-center`}>
+                    <span className="text-white text-xs font-bold">{offer.bankCode}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold">{offer.bank}</h4>
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">{offer.badge}</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <span className="text-xs text-muted-foreground block">Interest Rate</span>
+                    <span className="text-lg font-bold text-primary">{offer.interestRate}%</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground block">Processing Fee</span>
+                    <span className="text-lg font-bold">{offer.processingFee}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-3 border-t border-primary/10">
+                  <div>
+                    <span className="text-xs text-muted-foreground block">Total Repayment</span>
+                    <span className="font-bold">৳ {formatCurrency(offer.totalRepayment)}</span>
+                  </div>
+                  <Button size="sm" className="h-9">
+                    Apply Now
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Footer Help */}
-        <div className="mt-20 py-12 border-t border-primary/10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="mt-12 sm:mt-20 py-8 sm:py-12 border-t border-primary/10">
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
-              <h5 className="text-xl font-bold mb-4">Confused about which loan to pick?</h5>
-              <p className="text-muted-foreground mb-6">
+              <h5 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Confused about which loan to pick?</h5>
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
                 Our financial advisors are here to help you navigate the best rates and terms for your specific needs.
               </p>
-              <button className="flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all">
+              <button className="flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all text-sm sm:text-base">
                 Talk to an Advisor <MaterialIcon name="arrow_forward" />
               </button>
             </div>
-            <div className="bg-primary/5 p-6 rounded-xl border border-primary/20">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="bg-primary p-2 rounded-full">
-                  <MaterialIcon name="verified_user" className="text-primary-foreground" />
+            <div className="bg-primary/5 p-4 sm:p-6 rounded-xl border border-primary/20">
+              <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <div className="bg-primary p-2 rounded-full shrink-0">
+                  <MaterialIcon name="verified_user" className="text-primary-foreground text-lg sm:text-xl" />
                 </div>
-                <h6 className="font-bold">BankBujhi Verified</h6>
+                <h6 className="font-bold text-sm sm:text-base">BankBujhi Verified</h6>
               </div>
-              <p className="text-xs text-muted-foreground italic">
+              <p className="text-[10px] sm:text-xs text-muted-foreground italic">
                 All rates and fees displayed are updated daily from official bank communications. We provide 
                 transparent comparisons to help you make informed decisions. No hidden charges from BankBujhi.
               </p>
@@ -240,6 +286,7 @@ const PersonalLoans = () => {
         </div>
       </main>
       <Footer />
+      <BottomNav />
     </div>
   );
 };

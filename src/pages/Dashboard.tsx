@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import CreditCardVisual from "@/components/cards/CreditCardVisual";
 
 const savedCards = [
   {
@@ -62,14 +62,68 @@ const menuItems = [
 
 const Dashboard = () => {
   const [profileCompletion] = useState(65);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       <Header />
-      <main className="flex-1 max-w-[1200px] mx-auto px-4 py-8 w-full">
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <aside className="lg:col-span-1">
+      <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
+        {/* Mobile Profile Header */}
+        <div className="lg:hidden mb-6">
+          <div className="bg-card rounded-xl border border-primary/10 p-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                <MaterialIcon name="person" className="text-2xl text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold truncate">Welcome Back!</h3>
+                <p className="text-sm text-muted-foreground truncate">user@example.com</p>
+              </div>
+              <button 
+                onClick={() => setShowSidebar(!showSidebar)}
+                className="p-2 rounded-lg bg-muted"
+              >
+                <MaterialIcon name="menu" />
+              </button>
+            </div>
+            
+            {/* Profile Completion */}
+            <div className="mt-4">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-muted-foreground">Profile Completion</span>
+                <span className="font-bold text-primary">{profileCompletion}%</span>
+              </div>
+              <Progress value={profileCompletion} className="h-2" />
+            </div>
+
+            {/* Mobile Menu - Collapsible */}
+            {showSidebar && (
+              <nav className="mt-4 pt-4 border-t border-primary/10 space-y-1">
+                {menuItems.map((item) => (
+                  <button
+                    key={item.label}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
+                      item.active
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <MaterialIcon name={item.icon} className="text-lg" />
+                    <span className="font-medium text-sm">{item.label}</span>
+                  </button>
+                ))}
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-destructive hover:bg-destructive/10 transition-colors">
+                  <MaterialIcon name="logout" className="text-lg" />
+                  <span className="font-medium text-sm">Log Out</span>
+                </button>
+              </nav>
+            )}
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
+          {/* Sidebar - Desktop only */}
+          <aside className="hidden lg:block lg:col-span-1">
             <div className="bg-card rounded-xl border border-primary/10 p-6 sticky top-24">
               {/* Profile */}
               <div className="text-center mb-6">
@@ -116,37 +170,61 @@ const Dashboard = () => {
           </aside>
 
           {/* Main Content */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-3 space-y-6 sm:space-y-8">
+            {/* Quick Actions - Mobile first */}
+            <section className="lg:order-last">
+              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">Quick Actions</h2>
+              <div className="grid grid-cols-4 gap-2 sm:gap-4">
+                {[
+                  { icon: "add_card", label: "Add Card" },
+                  { icon: "compare_arrows", label: "Compare" },
+                  { icon: "calculate", label: "EMI Calc" },
+                  { icon: "support_agent", label: "Support" },
+                ].map((action) => (
+                  <button
+                    key={action.label}
+                    className="bg-card p-3 sm:p-4 rounded-xl border border-primary/10 text-center hover:bg-primary/5 transition-colors"
+                  >
+                    <MaterialIcon name={action.icon} className="text-xl sm:text-3xl text-primary mb-1 sm:mb-2" />
+                    <span className="text-[10px] sm:text-sm font-medium block truncate">{action.label}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
             {/* Saved Cards */}
             <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Saved Cards</h2>
-                <Button variant="outline" size="sm" className="text-primary border-primary">
-                  <MaterialIcon name="visibility" className="mr-1" />
-                  সবগুলো দেখুন
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-2xl font-bold">Saved Cards</h2>
+                <Button variant="outline" size="sm" className="text-primary border-primary text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
+                  <MaterialIcon name="visibility" className="mr-1 text-sm" />
+                  <span className="hidden xs:inline">সবগুলো দেখুন</span>
+                  <span className="xs:hidden">All</span>
                 </Button>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              
+              {/* Horizontal scroll on mobile */}
+              <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible">
                 {savedCards.map((card) => (
                   <div
                     key={card.id}
-                    className="bg-card rounded-xl border border-primary/10 p-4 hover:shadow-lg transition-shadow"
+                    className="bg-card rounded-xl border border-primary/10 p-3 sm:p-4 hover:shadow-lg transition-shadow shrink-0 w-[260px] sm:w-auto"
                   >
-                    <div className={`${card.color} rounded-lg p-4 mb-4`}>
-                      <div className="flex justify-between items-start mb-6">
-                        <span className="text-white text-xs font-bold uppercase">{card.bank}</span>
+                    <div className={`${card.color} rounded-lg p-3 sm:p-4 mb-3 sm:mb-4`}>
+                      <div className="flex justify-between items-start mb-4 sm:mb-6">
+                        <span className="text-white text-[10px] sm:text-xs font-bold uppercase">{card.bank}</span>
                       </div>
-                      <div className="text-white/80 text-sm tracking-widest mb-2">
+                      <div className="text-white/80 text-xs sm:text-sm tracking-widest mb-1 sm:mb-2">
                         **** **** **** {card.lastFour}
                       </div>
-                      <div className="text-white text-xs">{card.name}</div>
+                      <div className="text-white text-[10px] sm:text-xs">{card.name}</div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1 text-xs">
+                      <Button size="sm" variant="outline" className="flex-1 text-[10px] sm:text-xs h-8">
                         বিস্তারিত
                       </Button>
-                      <Button size="sm" className="flex-1 text-xs">
-                        আবেদন করুন
+                      <Button size="sm" className="flex-1 text-[10px] sm:text-xs h-8">
+                        আবেদন
                       </Button>
                     </div>
                   </div>
@@ -156,51 +234,30 @@ const Dashboard = () => {
 
             {/* Recommendations */}
             <section>
-              <h2 className="text-2xl font-bold mb-6">Recommended for You</h2>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">Recommended for You</h2>
+              <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
                 {recommendations.map((rec) => (
                   <div
                     key={rec.id}
-                    className="bg-card rounded-xl border border-primary/10 p-6 hover:shadow-lg transition-shadow"
+                    className="bg-card rounded-xl border border-primary/10 p-4 sm:p-6 hover:shadow-lg transition-shadow"
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <span className="text-xs font-semibold text-primary uppercase">{rec.tag}</span>
-                        <h3 className="font-bold mt-1">{rec.bank}</h3>
-                        <p className="text-sm text-muted-foreground">{rec.name}</p>
+                    <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
+                      <div className="min-w-0">
+                        <span className="text-[10px] sm:text-xs font-semibold text-primary uppercase">{rec.tag}</span>
+                        <h3 className="font-bold mt-0.5 sm:mt-1 truncate">{rec.bank}</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground truncate">{rec.name}</p>
                       </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-primary">{rec.benefit}</div>
+                      <div className="text-right shrink-0">
+                        <div className="text-lg sm:text-2xl font-bold text-primary">{rec.benefit}</div>
                         {rec.score && (
-                          <div className="text-xs text-muted-foreground">{rec.score} GOOD</div>
+                          <div className="text-[10px] sm:text-xs text-muted-foreground">{rec.score} GOOD</div>
                         )}
                       </div>
                     </div>
-                    <Button size="sm" className="w-full">
+                    <Button size="sm" className="w-full h-9">
                       View Details
                     </Button>
                   </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Quick Actions */}
-            <section>
-              <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {[
-                  { icon: "add_card", label: "Add Card" },
-                  { icon: "compare_arrows", label: "Compare" },
-                  { icon: "calculate", label: "EMI Calc" },
-                  { icon: "support_agent", label: "Support" },
-                ].map((action) => (
-                  <button
-                    key={action.label}
-                    className="bg-card p-4 rounded-xl border border-primary/10 text-center hover:bg-primary/5 transition-colors"
-                  >
-                    <MaterialIcon name={action.icon} className="text-3xl text-primary mb-2" />
-                    <span className="text-sm font-medium block">{action.label}</span>
-                  </button>
                 ))}
               </div>
             </section>
@@ -208,6 +265,7 @@ const Dashboard = () => {
         </div>
       </main>
       <Footer />
+      <BottomNav />
     </div>
   );
 };
