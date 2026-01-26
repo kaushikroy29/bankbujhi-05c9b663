@@ -14,7 +14,252 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      banks: {
+        Row: {
+          created_at: string
+          description: string | null
+          established_year: number | null
+          headquarters: string | null
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          name: string
+          name_bn: string | null
+          swift_code: string | null
+          type: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          established_year?: number | null
+          headquarters?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name: string
+          name_bn?: string | null
+          swift_code?: string | null
+          type?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          established_year?: number | null
+          headquarters?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name?: string
+          name_bn?: string | null
+          swift_code?: string | null
+          type?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      credit_cards: {
+        Row: {
+          annual_fee: string | null
+          annual_fee_note: string | null
+          annual_fee_waived: boolean | null
+          apply_url: string | null
+          badge: string | null
+          bank_id: string | null
+          benefits: Json | null
+          category: string | null
+          created_at: string
+          credit_score: string | null
+          employment_types: string[] | null
+          fees: Json | null
+          id: string
+          image_url: string | null
+          interest_rate: string | null
+          is_active: boolean | null
+          max_age: number | null
+          min_age: number | null
+          min_income: string | null
+          name: string
+          required_documents: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          annual_fee?: string | null
+          annual_fee_note?: string | null
+          annual_fee_waived?: boolean | null
+          apply_url?: string | null
+          badge?: string | null
+          bank_id?: string | null
+          benefits?: Json | null
+          category?: string | null
+          created_at?: string
+          credit_score?: string | null
+          employment_types?: string[] | null
+          fees?: Json | null
+          id?: string
+          image_url?: string | null
+          interest_rate?: string | null
+          is_active?: boolean | null
+          max_age?: number | null
+          min_age?: number | null
+          min_income?: string | null
+          name: string
+          required_documents?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          annual_fee?: string | null
+          annual_fee_note?: string | null
+          annual_fee_waived?: boolean | null
+          apply_url?: string | null
+          badge?: string | null
+          bank_id?: string | null
+          benefits?: Json | null
+          category?: string | null
+          created_at?: string
+          credit_score?: string | null
+          employment_types?: string[] | null
+          fees?: Json | null
+          id?: string
+          image_url?: string | null
+          interest_rate?: string | null
+          is_active?: boolean | null
+          max_age?: number | null
+          min_age?: number | null
+          min_income?: string | null
+          name?: string
+          required_documents?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_cards_bank_id_fkey"
+            columns: ["bank_id"]
+            isOneToOne: false
+            referencedRelation: "banks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_products: {
+        Row: {
+          apply_url: string | null
+          badge: string | null
+          bank_id: string | null
+          created_at: string
+          features: string[] | null
+          id: string
+          interest_rate_max: number | null
+          interest_rate_min: number | null
+          is_active: boolean | null
+          loan_type: string
+          max_amount: string | null
+          max_tenure_months: number | null
+          min_income: string | null
+          name: string
+          processing_fee: string | null
+          updated_at: string
+        }
+        Insert: {
+          apply_url?: string | null
+          badge?: string | null
+          bank_id?: string | null
+          created_at?: string
+          features?: string[] | null
+          id?: string
+          interest_rate_max?: number | null
+          interest_rate_min?: number | null
+          is_active?: boolean | null
+          loan_type?: string
+          max_amount?: string | null
+          max_tenure_months?: number | null
+          min_income?: string | null
+          name: string
+          processing_fee?: string | null
+          updated_at?: string
+        }
+        Update: {
+          apply_url?: string | null
+          badge?: string | null
+          bank_id?: string | null
+          created_at?: string
+          features?: string[] | null
+          id?: string
+          interest_rate_max?: number | null
+          interest_rate_min?: number | null
+          is_active?: boolean | null
+          loan_type?: string
+          max_amount?: string | null
+          max_tenure_months?: number | null
+          min_income?: string | null
+          name?: string
+          processing_fee?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_products_bank_id_fkey"
+            columns: ["bank_id"]
+            isOneToOne: false
+            referencedRelation: "banks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      savings_rates: {
+        Row: {
+          bank_id: string | null
+          created_at: string
+          id: string
+          interest_rate: number | null
+          is_active: boolean | null
+          min_deposit: string | null
+          product_type: string
+          special_offer: string | null
+          tenure_label: string | null
+          tenure_months: number | null
+          updated_at: string
+        }
+        Insert: {
+          bank_id?: string | null
+          created_at?: string
+          id?: string
+          interest_rate?: number | null
+          is_active?: boolean | null
+          min_deposit?: string | null
+          product_type?: string
+          special_offer?: string | null
+          tenure_label?: string | null
+          tenure_months?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bank_id?: string | null
+          created_at?: string
+          id?: string
+          interest_rate?: number | null
+          is_active?: boolean | null
+          min_deposit?: string | null
+          product_type?: string
+          special_offer?: string | null
+          tenure_label?: string | null
+          tenure_months?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "savings_rates_bank_id_fkey"
+            columns: ["bank_id"]
+            isOneToOne: false
+            referencedRelation: "banks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
