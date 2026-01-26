@@ -100,6 +100,10 @@ const Compare = () => {
     annualFeeNote: card.annual_fee_note || "",
     interestRate: card.interest_rate || undefined,
     minIncome: card.min_income || undefined,
+    creditScore: card.credit_score || undefined,
+    minAge: card.min_age || undefined,
+    maxAge: card.max_age || undefined,
+    requiredDocuments: card.required_documents || undefined,
     image: card.image_url || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400",
     benefits: card.benefits.map(b => ({ icon: b.icon, text: b.text })),
   });

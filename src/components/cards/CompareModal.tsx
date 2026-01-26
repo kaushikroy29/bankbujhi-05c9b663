@@ -16,6 +16,10 @@ interface CompareCard {
   category: string;
   annualFee: string;
   annualFeeNote: string;
+  creditScore?: string;
+  minAge?: number;
+  maxAge?: number;
+  requiredDocuments?: string[];
   interestRate?: string;
   minIncome?: string;
   image: string;
@@ -124,6 +128,50 @@ const CompareModal = ({ open, onOpenChange, cards, onRemoveCard }: CompareModalP
               label="Min. Income" 
               values={cards.map((card) => card.minIncome || "—")}
             />
+            <CompareRow 
+              label="Credit Score" 
+              values={cards.map((card) => (
+                <span className="text-sm font-medium">
+                  {card.creditScore || "—"}
+                </span>
+              ))}
+              highlight
+            />
+            <CompareRow 
+              label="Age Limit" 
+              values={cards.map((card) => (
+                card.minAge && card.maxAge 
+                  ? `${card.minAge} - ${card.maxAge} years`
+                  : "—"
+              ))}
+            />
+            
+            {/* Required Documents Section */}
+            <div className="py-4 px-4 border-b border-primary/10">
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                Required Documents
+              </p>
+              <div 
+                className="grid gap-4"
+                style={{ gridTemplateColumns: `140px repeat(${cards.length}, 1fr)` }}
+              >
+                <div />
+                {cards.map((card) => (
+                  <div key={card.id} className="space-y-1.5">
+                    {card.requiredDocuments && card.requiredDocuments.length > 0 ? (
+                      card.requiredDocuments.map((doc, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <MaterialIcon name="description" className="text-muted-foreground text-sm mt-0.5" />
+                          <span className="text-xs font-medium leading-tight">{doc}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Not specified</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
             
             {/* Benefits Section */}
             <div className="py-4 px-4 border-b border-primary/10">
