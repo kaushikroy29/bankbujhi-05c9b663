@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Safe area for bottom navigation */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Custom breakpoint for extra small screens */
+@media (min-width: 375px) {
+  .xs\:inline {
+    display: inline;
+  }
+  .xs\:hidden {
+    display: none;
+  }
+}
+
 /* BankBujhi Design System
    All colors in HSL format for proper theming
 */

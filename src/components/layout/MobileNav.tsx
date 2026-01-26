@@ -1,15 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import Logo from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
 
+interface NavLink {
+  href: string;
+  label: string;
+  icon: string;
+}
+
 interface MobileNavProps {
   isOpen: boolean;
   onClose: () => void;
-  links: Array<{ href: string; label: string }>;
+  links: NavLink[];
 }
 
 const MobileNav = ({ isOpen, onClose, links }: MobileNavProps) => {
+  const location = useLocation();
+
   return (
     <>
       {/* Backdrop */}
@@ -42,30 +50,87 @@ const MobileNav = ({ isOpen, onClose, links }: MobileNavProps) => {
 
           {/* Navigation Links */}
           <nav className="flex-1 overflow-y-auto p-4">
-            <ul className="space-y-2">
-              {links.map((link) => (
-                <li key={link.href}>
+            <ul className="space-y-1">
+              {links.map((link) => {
+                const isActive = location.pathname === link.href;
+                return (
+                  <li key={link.href}>
+                    <Link
+                      to={link.href}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-colors",
+                        isActive 
+                          ? "bg-primary text-primary-foreground" 
+                          : "text-foreground hover:bg-primary/10 hover:text-primary"
+                      )}
+                      onClick={onClose}
+                    >
+                      <MaterialIcon name={link.icon} className="text-xl" />
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* Additional Links */}
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-4 mb-3">
+                Account
+              </p>
+              <ul className="space-y-1">
+                <li>
                   <Link
-                    to={link.href}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground font-semibold hover:bg-primary/10 hover:text-primary transition-colors"
+                    to="/dashboard"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                     onClick={onClose}
                   >
-                    {link.label}
+                    <MaterialIcon name="dashboard" className="text-xl" />
+                    Dashboard
                   </Link>
                 </li>
-              ))}
-            </ul>
+                <li>
+                  <Link
+                    to="/eligibility"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                    onClick={onClose}
+                  >
+                    <MaterialIcon name="fact_check" className="text-xl" />
+                    Eligibility Check
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/premium"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                    onClick={onClose}
+                  >
+                    <MaterialIcon name="workspace_premium" className="text-xl text-accent" />
+                    <span>Go Premium</span>
+                    <span className="ml-auto bg-accent/20 text-accent text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-border">
+          <div className="p-4 border-t border-border space-y-3">
             <Link
-              to="/compare"
-              className="flex items-center justify-center gap-2 w-full bg-primary text-primary-foreground font-bold py-3 px-4 rounded-lg"
+              to="/signup"
+              className="flex items-center justify-center gap-2 w-full bg-primary text-primary-foreground font-bold py-3.5 px-4 rounded-xl"
               onClick={onClose}
             >
-              Compare Now
-              <MaterialIcon name="arrow_forward" className="text-sm" />
+              <MaterialIcon name="person_add" className="text-lg" />
+              Sign Up Free
+            </Link>
+            <Link
+              to="/contact"
+              className="flex items-center justify-center gap-2 w-full border border-primary/20 text-foreground font-medium py-3 px-4 rounded-xl hover:bg-muted transition-colors"
+              onClick={onClose}
+            >
+              <MaterialIcon name="help" className="text-lg text-primary" />
+              Help Center
             </Link>
           </div>
         </div>
