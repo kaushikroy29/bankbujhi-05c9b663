@@ -6,6 +6,7 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CreditCardListing from "@/components/cards/CreditCardListing";
+import CompareModal from "@/components/cards/CompareModal";
 import { fetchCreditCards, fetchBanks, type CreditCard, type Bank } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -25,6 +26,7 @@ const Compare = () => {
   const [loading, setLoading] = useState(true);
   const [compareList, setCompareList] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [showCompareModal, setShowCompareModal] = useState(false);
   
   // Filters
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -87,6 +89,28 @@ const Compare = () => {
     badge: card.badge || undefined,
     image: card.image_url || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400",
   });
+
+  // Transform card data for CompareModal component
+  const transformCardForCompare = (card: CreditCard) => ({
+    id: card.id,
+    bank: card.banks?.name || "Unknown Bank",
+    name: card.name,
+    category: card.category || "",
+    annualFee: card.annual_fee || "N/A",
+    annualFeeNote: card.annual_fee_note || "",
+    interestRate: card.interest_rate || undefined,
+    minIncome: card.min_income || undefined,
+    image: card.image_url || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400",
+    benefits: card.benefits.map(b => ({ icon: b.icon, text: b.text })),
+  });
+
+  const cardsForCompare = cards
+    .filter(card => compareList.includes(card.id))
+    .map(transformCardForCompare);
+
+  const handleRemoveFromCompare = (id: string) => {
+    setCompareList(prev => prev.filter(item => item !== id));
+  };
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
@@ -273,13 +297,24 @@ const Compare = () => {
                 <Button variant="outline" onClick={() => setCompareList([])}>
                   Clear
                 </Button>
-                <Button disabled={compareList.length < 2}>
+                <Button 
+                  disabled={compareList.length < 2}
+                  onClick={() => setShowCompareModal(true)}
+                >
                   Compare Now
                 </Button>
               </div>
             </div>
           </div>
         )}
+
+        {/* Compare Modal */}
+        <CompareModal
+          open={showCompareModal}
+          onOpenChange={setShowCompareModal}
+          cards={cardsForCompare}
+          onRemoveCard={handleRemoveFromCompare}
+        />
       </main>
       <Footer />
       <BottomNav />
