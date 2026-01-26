@@ -1,0 +1,129 @@
+import MaterialIcon from "@/components/ui/MaterialIcon";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+
+interface CardBenefit {
+  icon: string;
+  text: string;
+}
+
+interface CreditCard {
+  id: string;
+  bank: string;
+  name: string;
+  category: string;
+  annualFee: string;
+  annualFeeNote: string;
+  annualFeeStrikethrough?: boolean;
+  benefits: CardBenefit[];
+  badge?: string;
+  image: string;
+}
+
+interface CreditCardListingProps {
+  card: CreditCard;
+  isComparing: boolean;
+  onToggleCompare: () => void;
+}
+
+const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardListingProps) => {
+  return (
+    <div className="bg-card border border-primary/10 rounded-2xl p-5 hover:shadow-xl transition-all group">
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Card Image */}
+        <div className="w-full md:w-52 h-32 bg-muted rounded-xl overflow-hidden shrink-0 relative flex items-center justify-center">
+          <img 
+            className="w-full h-full object-cover" 
+            src={card.image}
+            alt={card.name}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        </div>
+
+        {/* Card Details */}
+        <div className="flex-1 flex flex-col justify-between">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                {card.badge && (
+                  <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase tracking-wider">
+                    {card.badge}
+                  </span>
+                )}
+                <p className="text-sm font-bold text-muted-foreground">{card.bank}</p>
+              </div>
+              <h3 className="text-xl font-black leading-tight">{card.name}</h3>
+              <p className="text-sm text-muted-foreground mt-1">{card.category}</p>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className={cn(
+                "text-2xl font-black",
+                card.annualFee === "Free" || card.annualFee === "৳0" 
+                  ? "text-primary" 
+                  : "text-foreground"
+              )}>
+                {card.annualFee}
+              </span>
+              <span className={cn(
+                "text-[10px] font-bold text-muted-foreground uppercase tracking-widest",
+                card.annualFeeStrikethrough && "line-through"
+              )}>
+                {card.annualFeeNote}
+              </span>
+            </div>
+          </div>
+
+          {/* Benefits */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {card.benefits.map((benefit, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <div className="size-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary">
+                  <MaterialIcon name={benefit.icon} className="text-lg" />
+                </div>
+                <p className="text-sm font-medium">{benefit.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="w-full md:w-48 flex flex-col justify-between border-t md:border-t-0 md:border-l border-primary/10 pt-4 md:pt-0 md:pl-6">
+          <label className="flex items-center gap-3 cursor-pointer select-none group/check mb-4 md:mb-0">
+            <div className="relative">
+              <input 
+                type="checkbox" 
+                className="peer hidden" 
+                checked={isComparing}
+                onChange={onToggleCompare}
+              />
+              <div className={cn(
+                "size-5 rounded border-2 transition-all flex items-center justify-center",
+                isComparing 
+                  ? "bg-primary border-primary" 
+                  : "border-primary/20"
+              )}>
+                {isComparing && (
+                  <MaterialIcon name="check" className="text-primary-foreground text-sm" />
+                )}
+              </div>
+            </div>
+            <span className={cn(
+              "text-sm font-bold transition-colors",
+              isComparing ? "text-primary" : "group-hover/check:text-primary"
+            )}>
+              {isComparing ? "Compared" : "Compare"}
+            </span>
+          </label>
+          <Link to={`/cards/${card.id}`}>
+            <Button className="w-full font-bold">
+              View Details
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CreditCardListing;
