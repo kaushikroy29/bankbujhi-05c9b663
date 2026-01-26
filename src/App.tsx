@@ -18,6 +18,7 @@ import Premium from "./pages/Premium";
 import MonthlyPicks from "./pages/MonthlyPicks";
 import Eligibility from "./pages/Eligibility";
 import SignUp from "./pages/SignUp";
+import CardDetails from "./pages/CardDetails";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/newsletter" element={<MonthlyPicks />} />
           <Route path="/eligibility" element={<Eligibility />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/cards/:id" element={<CardDetails />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
