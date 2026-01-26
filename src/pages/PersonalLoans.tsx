@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
@@ -6,55 +6,50 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import LoanOfferCard from "@/components/cards/LoanOfferCard";
-
-const loanOffers = [
-  {
-    id: 1,
-    bank: "Eastern Bank",
-    bankCode: "EBL",
-    interestRate: 11.5,
-    processingFee: "0.5%",
-    processingFeeNote: "Min ৳2,000",
-    totalRepayment: 1428400,
-    badge: "Quick Approval",
-    isPremium: false,
-    bgColor: "bg-blue-900",
-  },
-  {
-    id: 2,
-    bank: "Mutual Trust Bank",
-    bankCode: "MTB",
-    interestRate: 10.99,
-    processingFee: "0.25%",
-    processingFeeNote: "Promotion Offer",
-    totalRepayment: 1412200,
-    badge: "Low Processing Fee",
-    isPremium: true,
-    bgColor: "bg-red-800",
-  },
-  {
-    id: 3,
-    bank: "City Bank",
-    bankCode: "City",
-    interestRate: 12.2,
-    processingFee: "1.0%",
-    processingFeeNote: "Standard Fee",
-    totalRepayment: 1448900,
-    badge: "Paperless",
-    isPremium: false,
-    bgColor: "bg-green-800",
-  },
-];
+import { fetchLoanProducts, fetchBanks, type LoanProduct, type Bank } from "@/lib/api/banks";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PersonalLoans = () => {
+  const [loans, setLoans] = useState<LoanProduct[]>([]);
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [loading, setLoading] = useState(true);
   const [loanAmount, setLoanAmount] = useState([1200000]);
   const [tenure, setTenure] = useState([3]);
+  const [loanType, setLoanType] = useState("personal");
+  const [selectedBank, setSelectedBank] = useState("all");
+  const [sortBy, setSortBy] = useState("interest");
 
-  // EMI calculation based on 12% average interest rate
-  const calculateEMI = () => {
+  useEffect(() => {
+    loadData();
+  }, [loanType, selectedBank]);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [loansData, banksData] = await Promise.all([
+        fetchLoanProducts({
+          loanType: loanType,
+          bankId: selectedBank,
+        }),
+        fetchBanks(),
+      ]);
+      setLoans(loansData);
+      setBanks(banksData);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // EMI calculation
+  const calculateEMI = (rate?: number) => {
     const principal = loanAmount[0];
     const years = tenure[0];
-    const monthlyRate = 12 / 100 / 12;
+    const avgRate = rate || (loans.length > 0 
+      ? loans.reduce((sum, l) => sum + (l.interest_rate_min || 12), 0) / loans.length
+      : 12);
+    const monthlyRate = avgRate / 100 / 12;
     const months = years * 12;
     const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
                 (Math.pow(1 + monthlyRate, months) - 1);
@@ -68,6 +63,33 @@ const PersonalLoans = () => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN').format(amount);
   };
+
+  // Sort loans
+  const sortedLoans = [...loans].sort((a, b) => {
+    switch (sortBy) {
+      case "interest":
+        return (a.interest_rate_min || 0) - (b.interest_rate_min || 0);
+      case "fee":
+        return (parseFloat(a.processing_fee?.replace('%', '') || '0')) - 
+               (parseFloat(b.processing_fee?.replace('%', '') || '0'));
+      default:
+        return 0;
+    }
+  });
+
+  // Transform data for LoanOfferCard
+  const transformLoan = (loan: LoanProduct, index: number) => ({
+    id: index + 1,
+    bank: loan.banks?.name || "Unknown Bank",
+    bankCode: loan.banks?.swift_code?.substring(0, 4) || loan.banks?.name?.substring(0, 4).toUpperCase() || "BANK",
+    interestRate: loan.interest_rate_min || 0,
+    processingFee: loan.processing_fee || "1%",
+    processingFeeNote: loan.max_amount || "",
+    totalRepayment: Math.round(loanAmount[0] * (1 + (loan.interest_rate_min || 12) / 100 * tenure[0])),
+    badge: loan.badge || (loan.features?.[0] || ""),
+    isPremium: !!loan.badge,
+    bgColor: "bg-primary",
+  });
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
@@ -88,6 +110,23 @@ const PersonalLoans = () => {
           </div>
         </div>
 
+        {/* Loan Type Tabs */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {["personal", "home", "auto"].map((type) => (
+            <button
+              key={type}
+              onClick={() => setLoanType(type)}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${
+                loanType === type
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card border border-primary/10 hover:bg-primary/5"
+              }`}
+            >
+              {type === "personal" ? "Personal Loans" : type === "home" ? "Home Loans" : "Auto Loans"}
+            </button>
+          ))}
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           {/* Left: Configuration (Inputs) */}
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
@@ -96,6 +135,21 @@ const PersonalLoans = () => {
                 <MaterialIcon name="tune" className="text-primary" />
                 Configure Your Loan
               </h3>
+
+              {/* Bank Filter */}
+              <div className="mb-6">
+                <label className="text-sm font-semibold mb-2 block">Filter by Bank</label>
+                <select
+                  value={selectedBank}
+                  onChange={(e) => setSelectedBank(e.target.value)}
+                  className="w-full sm:w-auto bg-background border border-primary/10 rounded-lg px-3 py-2 text-sm"
+                >
+                  <option value="all">All Banks</option>
+                  {banks.map((bank) => (
+                    <option key={bank.id} value={bank.id}>{bank.name}</option>
+                  ))}
+                </select>
+              </div>
 
               {/* Slider: Loan Amount */}
               <div className="mb-8 sm:mb-12">
@@ -111,13 +165,13 @@ const PersonalLoans = () => {
                   value={loanAmount}
                   onValueChange={setLoanAmount}
                   min={50000}
-                  max={2000000}
+                  max={loanType === "home" ? 20000000 : 2000000}
                   step={10000}
                   className="w-full"
                 />
                 <div className="flex justify-between mt-3 sm:mt-4 text-[10px] sm:text-xs font-medium text-muted-foreground">
                   <span>৳ 50,000</span>
-                  <span>৳ 20,00,000</span>
+                  <span>৳ {loanType === "home" ? "2,00,00,000" : "20,00,000"}</span>
                 </div>
               </div>
 
@@ -133,13 +187,13 @@ const PersonalLoans = () => {
                   value={tenure}
                   onValueChange={setTenure}
                   min={1}
-                  max={5}
+                  max={loanType === "home" ? 25 : 5}
                   step={1}
                   className="w-full"
                 />
                 <div className="flex justify-between mt-3 sm:mt-4 text-[10px] sm:text-xs font-medium text-muted-foreground">
                   <span>1 Year</span>
-                  <span>5 Years</span>
+                  <span>{loanType === "home" ? "25" : "5"} Years</span>
                 </div>
               </div>
             </div>
@@ -170,7 +224,7 @@ const PersonalLoans = () => {
                   <div className="bg-accent/10 p-2.5 sm:p-3 rounded flex items-start gap-2 border border-accent/20">
                     <MaterialIcon name="info" className="text-accent text-base sm:text-lg leading-none shrink-0" />
                     <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-tight">
-                      Calculations based on an average interest rate of 12%. Final rates may vary by bank.
+                      Based on average rate. Final rates may vary by bank.
                     </p>
                   </div>
                 </div>
@@ -182,13 +236,19 @@ const PersonalLoans = () => {
         {/* Comparison Table Section */}
         <div className="mt-10 sm:mt-16">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
-            <h3 className="text-xl sm:text-2xl font-bold">Top Offers for You</h3>
+            <h3 className="text-xl sm:text-2xl font-bold">
+              Top Offers for You 
+              <span className="text-muted-foreground font-normal text-base ml-2">({loans.length} options)</span>
+            </h3>
             <div className="flex items-center gap-2">
               <span className="text-xs sm:text-sm font-medium text-muted-foreground">Sort by:</span>
-              <select className="bg-card border border-primary/10 rounded-lg text-xs sm:text-sm px-3 sm:px-4 py-2 focus:ring-primary">
-                <option>Lowest Interest Rate</option>
-                <option>Lowest Processing Fee</option>
-                <option>Quickest Approval</option>
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="bg-card border border-primary/10 rounded-lg text-xs sm:text-sm px-3 sm:px-4 py-2 focus:ring-primary"
+              >
+                <option value="interest">Lowest Interest Rate</option>
+                <option value="fee">Lowest Processing Fee</option>
               </select>
             </div>
           </div>
@@ -201,60 +261,89 @@ const PersonalLoans = () => {
                   <th className="px-6 pb-2">Bank Partner</th>
                   <th className="px-6 pb-2">Interest Rate</th>
                   <th className="px-6 pb-2">Processing Fee</th>
-                  <th className="px-6 pb-2">Total Repayment</th>
+                  <th className="px-6 pb-2">Max Amount</th>
                   <th className="px-6 pb-2">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {loanOffers.map((offer) => (
-                  <LoanOfferCard key={offer.id} offer={offer} />
-                ))}
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={5} className="p-2">
+                        <Skeleton className="h-20 w-full rounded-xl" />
+                      </td>
+                    </tr>
+                  ))
+                ) : sortedLoans.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                      No loan products found for selected filters
+                    </td>
+                  </tr>
+                ) : (
+                  sortedLoans.map((loan, index) => (
+                    <LoanOfferCard key={loan.id} offer={transformLoan(loan, index)} />
+                  ))
+                )}
               </tbody>
             </table>
           </div>
 
           {/* Mobile Cards */}
           <div className="md:hidden space-y-4">
-            {loanOffers.map((offer) => (
-              <div 
-                key={offer.id}
-                className={`bg-card rounded-xl border ${offer.isPremium ? 'border-accent' : 'border-primary/10'} p-4 relative overflow-hidden`}
-              >
-                {offer.isPremium && (
-                  <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-bl">
-                    Premium Choice
-                  </div>
-                )}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-12 h-12 ${offer.bgColor} rounded-xl flex items-center justify-center`}>
-                    <span className="text-white text-xs font-bold">{offer.bankCode}</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold">{offer.bank}</h4>
-                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">{offer.badge}</span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div>
-                    <span className="text-xs text-muted-foreground block">Interest Rate</span>
-                    <span className="text-lg font-bold text-primary">{offer.interestRate}%</span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-muted-foreground block">Processing Fee</span>
-                    <span className="text-lg font-bold">{offer.processingFee}</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between pt-3 border-t border-primary/10">
-                  <div>
-                    <span className="text-xs text-muted-foreground block">Total Repayment</span>
-                    <span className="font-bold">৳ {formatCurrency(offer.totalRepayment)}</span>
-                  </div>
-                  <Button size="sm" className="h-9">
-                    Apply Now
-                  </Button>
-                </div>
+            {loading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-48 w-full rounded-xl" />
+              ))
+            ) : sortedLoans.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No loan products found for selected filters
               </div>
-            ))}
+            ) : (
+              sortedLoans.map((loan, index) => {
+                const offer = transformLoan(loan, index);
+                return (
+                  <div 
+                    key={loan.id}
+                    className={`bg-card rounded-xl border ${offer.isPremium ? 'border-accent' : 'border-primary/10'} p-4 relative overflow-hidden`}
+                  >
+                    {offer.isPremium && (
+                      <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-bl">
+                        Premium Choice
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={`w-12 h-12 ${offer.bgColor} rounded-xl flex items-center justify-center`}>
+                        <span className="text-white text-xs font-bold">{offer.bankCode}</span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold">{offer.bank}</h4>
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">{offer.badge}</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Interest Rate</span>
+                        <span className="text-lg font-bold text-primary">{offer.interestRate}%</span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Processing Fee</span>
+                        <span className="text-lg font-bold">{offer.processingFee}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between pt-3 border-t border-primary/10">
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Max Amount</span>
+                        <span className="font-bold">{loan.max_amount}</span>
+                      </div>
+                      <Button size="sm" className="h-9">
+                        Apply Now
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 
@@ -278,8 +367,8 @@ const PersonalLoans = () => {
                 <h6 className="font-bold text-sm sm:text-base">BankBujhi Verified</h6>
               </div>
               <p className="text-[10px] sm:text-xs text-muted-foreground italic">
-                All rates and fees displayed are updated daily from official bank communications. We provide 
-                transparent comparisons to help you make informed decisions. No hidden charges from BankBujhi.
+                All rates and fees displayed are updated from official bank communications. We provide 
+                transparent comparisons to help you make informed decisions.
               </p>
             </div>
           </div>

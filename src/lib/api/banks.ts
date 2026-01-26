@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 export interface Bank {
   id: string;
@@ -14,6 +15,12 @@ export interface Bank {
   is_active: boolean;
 }
 
+export interface CardBenefit {
+  icon: string;
+  text: string;
+  description?: string;
+}
+
 export interface CreditCard {
   id: string;
   bank_id: string | null;
@@ -22,7 +29,7 @@ export interface CreditCard {
   image_url: string | null;
   annual_fee: string | null;
   annual_fee_note: string | null;
-  annual_fee_waived: boolean;
+  annual_fee_waived: boolean | null;
   interest_rate: string | null;
   min_income: string | null;
   min_age: number | null;
@@ -30,12 +37,12 @@ export interface CreditCard {
   credit_score: string | null;
   employment_types: string[] | null;
   required_documents: string[] | null;
-  benefits: { icon: string; text: string; description?: string }[];
+  benefits: CardBenefit[];
   fees: Record<string, string>;
   badge: string | null;
   apply_url: string | null;
-  is_active: boolean;
-  banks?: Bank;
+  is_active: boolean | null;
+  banks?: Bank | null;
 }
 
 export interface SavingsRate {
@@ -47,8 +54,8 @@ export interface SavingsRate {
   interest_rate: number | null;
   min_deposit: string | null;
   special_offer: string | null;
-  is_active: boolean;
-  banks?: Bank;
+  is_active: boolean | null;
+  banks?: Bank | null;
 }
 
 export interface LoanProduct {
@@ -65,8 +72,36 @@ export interface LoanProduct {
   features: string[] | null;
   badge: string | null;
   apply_url: string | null;
-  is_active: boolean;
-  banks?: Bank;
+  is_active: boolean | null;
+  banks?: Bank | null;
+}
+
+// Helper to parse JSON fields
+function parseBenefits(benefits: Json): CardBenefit[] {
+  if (Array.isArray(benefits)) {
+    return benefits.map(b => {
+      if (b && typeof b === 'object' && !Array.isArray(b)) {
+        return {
+          icon: String((b as Record<string, unknown>).icon || ''),
+          text: String((b as Record<string, unknown>).text || ''),
+          description: (b as Record<string, unknown>).description ? String((b as Record<string, unknown>).description) : undefined,
+        };
+      }
+      return { icon: '', text: '' };
+    });
+  }
+  return [];
+}
+
+function parseFees(fees: Json): Record<string, string> {
+  if (fees && typeof fees === 'object' && !Array.isArray(fees)) {
+    const result: Record<string, string> = {};
+    for (const [key, value] of Object.entries(fees as Record<string, unknown>)) {
+      result[key] = String(value || '');
+    }
+    return result;
+  }
+  return {};
 }
 
 // Fetch all banks
@@ -105,7 +140,13 @@ export async function fetchCreditCards(filters?: {
   const { data, error } = await query.order('created_at', { ascending: false });
   
   if (error) throw error;
-  return data as CreditCard[];
+  
+  // Transform data to match interface
+  return (data || []).map(card => ({
+    ...card,
+    benefits: parseBenefits(card.benefits),
+    fees: parseFees(card.fees),
+  })) as CreditCard[];
 }
 
 // Fetch single credit card
@@ -117,7 +158,13 @@ export async function fetchCreditCard(id: string) {
     .maybeSingle();
   
   if (error) throw error;
-  return data as CreditCard | null;
+  if (!data) return null;
+  
+  return {
+    ...data,
+    benefits: parseBenefits(data.benefits),
+    fees: parseFees(data.fees),
+  } as CreditCard;
 }
 
 // Fetch savings rates with bank info
@@ -140,7 +187,7 @@ export async function fetchSavingsRates(filters?: {
   const { data, error } = await query.order('interest_rate', { ascending: false });
   
   if (error) throw error;
-  return data as SavingsRate[];
+  return (data || []) as SavingsRate[];
 }
 
 // Fetch loan products with bank info
@@ -163,7 +210,7 @@ export async function fetchLoanProducts(filters?: {
   const { data, error } = await query.order('interest_rate_min', { ascending: true });
   
   if (error) throw error;
-  return data as LoanProduct[];
+  return (data || []) as LoanProduct[];
 }
 
 // Trigger scraping

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
@@ -7,78 +7,49 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SavingsRateCard from "@/components/cards/SavingsRateCard";
-
-const fdrRates = [
-  {
-    id: 1,
-    bank: "City Bank",
-    bankCode: "City",
-    interestRate: 9.5,
-    compounding: "At Maturity",
-    taxAdjusted: 8.55,
-    bgColor: "bg-green-800",
-  },
-  {
-    id: 2,
-    bank: "BRAC Bank",
-    bankCode: "BRAC",
-    interestRate: 8.75,
-    compounding: "Monthly",
-    taxAdjusted: 7.87,
-    bgColor: "bg-red-700",
-  },
-  {
-    id: 3,
-    bank: "IDLC Finance",
-    bankCode: "IDLC",
-    interestRate: 8.25,
-    compounding: "Quarterly",
-    taxAdjusted: 7.42,
-    bgColor: "bg-blue-800",
-  },
-  {
-    id: 4,
-    bank: "Eastern Bank",
-    bankCode: "EBL",
-    interestRate: 8.0,
-    compounding: "At Maturity",
-    taxAdjusted: 7.2,
-    bgColor: "bg-blue-900",
-  },
-];
-
-const highInterestRates = [
-  {
-    id: 1,
-    bank: "Standard Chartered",
-    bankCode: "SCB",
-    interestRate: 6.5,
-    compounding: "Monthly",
-    taxAdjusted: 5.85,
-    bgColor: "bg-teal-700",
-  },
-  {
-    id: 2,
-    bank: "Dutch Bangla Bank",
-    bankCode: "DBBL",
-    interestRate: 6.25,
-    compounding: "Quarterly",
-    taxAdjusted: 5.62,
-    bgColor: "bg-orange-700",
-  },
-];
+import { fetchSavingsRates, fetchBanks, type SavingsRate, type Bank } from "@/lib/api/banks";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const FDRSavings = () => {
+  const [rates, setRates] = useState<SavingsRate[]>([]);
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [loading, setLoading] = useState(true);
   const [depositAmount, setDepositAmount] = useState([100000]);
   const [duration, setDuration] = useState([1]);
   const [activeTab, setActiveTab] = useState("fdr");
+  const [selectedBank, setSelectedBank] = useState("all");
 
-  // Calculate estimated interest (8.5% average, 10% tax)
+  useEffect(() => {
+    loadData();
+  }, [activeTab, selectedBank]);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [ratesData, banksData] = await Promise.all([
+        fetchSavingsRates({
+          productType: activeTab,
+          bankId: selectedBank,
+        }),
+        fetchBanks(),
+      ]);
+      setRates(ratesData);
+      setBanks(banksData);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate estimated interest based on average rate from data
   const calculateInterest = () => {
+    const avgRate = rates.length > 0 
+      ? rates.reduce((sum, r) => sum + (r.interest_rate || 0), 0) / rates.length / 100
+      : 0.085;
     const principal = depositAmount[0];
     const years = duration[0];
-    const rate = 0.085;
-    const grossInterest = principal * rate * years;
+    const grossInterest = principal * avgRate * years;
     const netInterest = grossInterest * 0.9; // 10% tax
     return Math.round(netInterest);
   };
@@ -89,6 +60,17 @@ const FDRSavings = () => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-IN").format(amount);
   };
+
+  // Transform data for SavingsRateCard
+  const transformRate = (rate: SavingsRate, index: number) => ({
+    id: index + 1,
+    bank: rate.banks?.name || "Unknown Bank",
+    bankCode: rate.banks?.swift_code?.substring(0, 4) || rate.banks?.name?.substring(0, 4).toUpperCase() || "BANK",
+    interestRate: rate.interest_rate || 0,
+    compounding: rate.tenure_label || "At Maturity",
+    taxAdjusted: Number(((rate.interest_rate || 0) * 0.9).toFixed(2)),
+    bgColor: "bg-primary",
+  });
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
@@ -104,27 +86,40 @@ const FDRSavings = () => {
           </p>
         </div>
 
-        {/* Tabs - Scrollable on mobile */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6 sm:mb-8">
-          <TabsList className="bg-card border border-primary/10 w-full sm:w-auto overflow-x-auto">
-            <TabsTrigger 
-              value="fdr" 
-              className="flex-1 sm:flex-none text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap"
-            >
-              Fixed Deposits (FDR)
-            </TabsTrigger>
-            <TabsTrigger 
-              value="savings" 
-              className="flex-1 sm:flex-none text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap"
-            >
-              High-Interest Savings
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {/* Tabs */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 sm:mb-8">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="bg-card border border-primary/10 w-full sm:w-auto overflow-x-auto">
+              <TabsTrigger 
+                value="fdr" 
+                className="flex-1 sm:flex-none text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap"
+              >
+                Fixed Deposits (FDR)
+              </TabsTrigger>
+              <TabsTrigger 
+                value="savings" 
+                className="flex-1 sm:flex-none text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap"
+              >
+                High-Interest Savings
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        {/* Mobile: Calculator first, then table */}
+          {/* Bank Filter */}
+          <select
+            value={selectedBank}
+            onChange={(e) => setSelectedBank(e.target.value)}
+            className="bg-card border border-primary/10 rounded-lg px-3 py-2 text-sm"
+          >
+            <option value="all">All Banks</option>
+            {banks.map((bank) => (
+              <option key={bank.id} value={bank.id}>{bank.name}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start">
-          {/* Calculator - Shows at top on mobile */}
+          {/* Calculator */}
           <div className="lg:col-span-1 order-1 lg:order-1">
             <div className="bg-card p-4 sm:p-6 rounded-xl border border-primary/10 shadow-sm">
               <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
@@ -193,16 +188,18 @@ const FDRSavings = () => {
               </div>
 
               <p className="text-[10px] sm:text-xs text-muted-foreground mt-4 italic">
-                * Calculation based on 8.5% average interest rate and 10% tax deduction for TIN holders.
+                * Calculation based on average rate and 10% tax deduction for TIN holders.
               </p>
             </div>
 
-            {/* Promo Box - Hidden on mobile, shown on desktop */}
+            {/* Promo Box */}
             <div className="hidden lg:block mt-6 bg-gradient-to-br from-primary to-primary-light p-6 rounded-xl text-primary-foreground">
-              <div className="text-xs font-bold uppercase tracking-wider mb-2 opacity-80">Limited Offer</div>
-              <h4 className="text-2xl font-black mb-2">Earn up to 9.25% Interest</h4>
+              <div className="text-xs font-bold uppercase tracking-wider mb-2 opacity-80">Live Rates</div>
+              <h4 className="text-2xl font-black mb-2">
+                {rates.length > 0 ? `Up to ${Math.max(...rates.map(r => r.interest_rate || 0)).toFixed(2)}%` : 'Loading...'}
+              </h4>
               <p className="text-sm opacity-90 mb-4">
-                Compare exclusive rates from 20+ partner banks and start your investment journey today with zero processing fees.
+                Compare exclusive rates from {banks.length}+ partner banks.
               </p>
               <Button variant="secondary" className="w-full">
                 Compare All Rates
@@ -213,26 +210,42 @@ const FDRSavings = () => {
           {/* Rate Tables */}
           <div className="lg:col-span-2 order-2 lg:order-2">
             <div className="bg-card rounded-xl border border-primary/10 overflow-hidden">
-              <div className="p-4 sm:p-6 border-b border-primary/10">
+              <div className="p-4 sm:p-6 border-b border-primary/10 flex items-center justify-between">
                 <h3 className="text-lg sm:text-xl font-bold">Top Bank Rates</h3>
+                <span className="text-sm text-muted-foreground">{rates.length} options</span>
               </div>
 
-              {/* Table with horizontal scroll on mobile */}
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[600px] md:min-w-0">
                   <thead className="bg-muted/50 hidden md:table-header-group">
                     <tr className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       <th className="px-4 lg:px-6 py-4">Bank</th>
                       <th className="px-4 lg:px-6 py-4">Interest Rate</th>
-                      <th className="px-4 lg:px-6 py-4">Compounding</th>
+                      <th className="px-4 lg:px-6 py-4">Tenure</th>
                       <th className="px-4 lg:px-6 py-4">Tax-Adjusted</th>
                       <th className="px-4 lg:px-6 py-4"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {(activeTab === "fdr" ? fdrRates : highInterestRates).map((rate) => (
-                      <SavingsRateCard key={rate.id} rate={rate} />
-                    ))}
+                    {loading ? (
+                      Array.from({ length: 4 }).map((_, i) => (
+                        <tr key={i}>
+                          <td colSpan={5} className="p-4">
+                            <Skeleton className="h-16 w-full" />
+                          </td>
+                        </tr>
+                      ))
+                    ) : rates.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                          No rates found for selected filters
+                        </td>
+                      </tr>
+                    ) : (
+                      rates.map((rate, index) => (
+                        <SavingsRateCard key={rate.id} rate={transformRate(rate, index)} />
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -247,17 +260,18 @@ const FDRSavings = () => {
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 As per Bangladesh Bank regulations, a withholding tax is applicable on interest earnings. 
                 For individuals with a valid TIN, the tax rate is 10%. For those without a TIN, a 15% tax 
-                is deducted at source. Our calculation assumes you are a TIN holder. Interest rates are 
-                subject to change based on bank policies and regulatory updates.
+                is deducted at source. Our calculation assumes you are a TIN holder.
               </p>
             </div>
 
             {/* Mobile Promo Box */}
             <div className="lg:hidden mt-6 bg-gradient-to-br from-primary to-primary-light p-5 rounded-xl text-primary-foreground">
-              <div className="text-xs font-bold uppercase tracking-wider mb-1 opacity-80">Limited Offer</div>
-              <h4 className="text-xl font-black mb-2">Earn up to 9.25% Interest</h4>
+              <div className="text-xs font-bold uppercase tracking-wider mb-1 opacity-80">Live Rates</div>
+              <h4 className="text-xl font-black mb-2">
+                {rates.length > 0 ? `Up to ${Math.max(...rates.map(r => r.interest_rate || 0)).toFixed(2)}%` : 'Loading...'}
+              </h4>
               <p className="text-sm opacity-90 mb-4">
-                Compare exclusive rates from 20+ partner banks.
+                Compare rates from {banks.length}+ partner banks.
               </p>
               <Button variant="secondary" className="w-full">
                 Compare All Rates

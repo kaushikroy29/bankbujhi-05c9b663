@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -6,111 +7,57 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import { cn } from "@/lib/utils";
-
-// Mock data - in production this would come from an API
-const creditCards = [
-  {
-    id: "1",
-    bank: "City Bank",
-    name: "American Express Cashback Card",
-    category: "Lifestyle & Daily Essentials",
-    annualFee: "Free",
-    annualFeeNote: "Annual Fee",
-    benefits: [
-      { icon: "local_mall", text: "1% Cashback on all groceries", description: "Earn 1% cashback on every grocery purchase at partner stores including Shwapno, Agora, and Meena Bazaar." },
-      { icon: "flight_takeoff", text: "Airport Lounge Access", description: "Complimentary access to 1000+ airport lounges worldwide through Priority Pass." },
-      { icon: "restaurant", text: "Dining Discounts", description: "Get up to 20% off at 200+ partner restaurants across Bangladesh." },
-      { icon: "movie", text: "Entertainment Perks", description: "Buy 1 Get 1 Free on movie tickets at Star Cineplex every Friday." },
-    ],
-    fees: {
-      annual: "Free (Lifetime)",
-      supplementary: "৳500/year",
-      latePayment: "৳500 or 5% of minimum due",
-      cashAdvance: "2.5% or minimum ৳500",
-      foreignTransaction: "2.5% of transaction amount",
-      cardReplacement: "৳300",
-      statementCopy: "৳100 per copy",
-    },
-    eligibility: {
-      minIncome: "৳30,000/month",
-      minAge: 21,
-      maxAge: 60,
-      employmentType: ["Salaried", "Self-employed", "Business Owner"],
-      documents: ["NID/Passport", "Income Proof", "Bank Statement (3 months)", "Passport Size Photo"],
-      creditScore: "Good to Excellent",
-    },
-    badge: "Top Rated",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuChJn49OYUwsQijWezZmLPBBn7NRLhhgQYtGq0GZYK09qbbkGLGhWHXX4Q4EQScZhmpsjPmpAs2YILFyipRk3T3PB5mpBBltNgY8F4fZ-IJWdWMFYLwDfMLm7owKEUzkvmcnqOTXvBb3BTxlLfeXa-Fy6WqbCmP7GB2YEvmy14T3c1JZ42QdlyJkKotjnrz-8mHVdAGYvOkwS9DbVv4m4VQ2bIkRF9vABePrHVSvnw-c3mGQYCWleLr-BEH1OWWKjoS_tKp2B61bP8",
-  },
-  {
-    id: "2",
-    bank: "BRAC Bank",
-    name: "VISA Signature Card",
-    category: "Premium Travel & Rewards",
-    annualFee: "৳0",
-    annualFeeNote: "৳5,000 (Waived 1st Year)",
-    benefits: [
-      { icon: "restaurant", text: "Buy 1 Get 1 at 100+ Dinings", description: "Enjoy BOGO offers at over 100 premium restaurants including Mainland China, Nando's, and Pizza Hut." },
-      { icon: "hotel", text: "15% Discount on top hotels", description: "Get 15% off at partner hotels including Radisson, Le Méridien, and Pan Pacific." },
-      { icon: "flight", text: "Travel Insurance", description: "Complimentary travel insurance up to $500,000 coverage when booking flights with your card." },
-      { icon: "spa", text: "Spa & Wellness", description: "20% off at partner spas and wellness centers across Dhaka and Chittagong." },
-    ],
-    fees: {
-      annual: "৳5,000 (Waived 1st Year)",
-      supplementary: "৳2,500/year",
-      latePayment: "৳750 or 5% of minimum due",
-      cashAdvance: "3% or minimum ৳750",
-      foreignTransaction: "2% of transaction amount",
-      cardReplacement: "৳500",
-      statementCopy: "৳150 per copy",
-    },
-    eligibility: {
-      minIncome: "৳75,000/month",
-      minAge: 25,
-      maxAge: 55,
-      employmentType: ["Salaried (Executive+)", "Business Owner"],
-      documents: ["NID/Passport", "Salary Certificate", "Bank Statement (6 months)", "TIN Certificate", "Passport Size Photo"],
-      creditScore: "Excellent",
-    },
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAmUARpGFpmotra-SYHvfXNkjeaDanbaO5mdJ-LxYMPDYtBGLYF64nhPhaHAMPZeOxQYAoWXi8nniKbTrIzHOvqqhxfTMcyvU8pNc_EkbIljuiwuOkOjL0afyNepQpZnL0VxBsJ7IlbQ9rDr4EOan_oGn55__8LVUB0hhlvmLZkPY_qG1iHupJYH3t5hbPAFCeaQEGE39jf2Ib4pLVBZYFDanXgVmH4ekRiWNSrUu1HO47EBsQXshLfdW-YuPYskSZeBmIBLnHRhb8",
-  },
-  {
-    id: "3",
-    bank: "Standard Chartered",
-    name: "Mastercard Platinum Card",
-    category: "Shopping & Utility Payments",
-    annualFee: "Free",
-    annualFeeNote: "Lifetime Free",
-    benefits: [
-      { icon: "bolt", text: "5% Reward on utility bills", description: "Earn 5% reward points on all utility bill payments including electricity, gas, and water." },
-      { icon: "movie", text: "Buy 1 Get 1 Cineplex Tickets", description: "Get BOGO movie tickets at Star Cineplex and Blockbuster Cinemas every weekend." },
-      { icon: "shopping_cart", text: "Online Shopping Cashback", description: "3% cashback on online shopping at Daraz, Evaly, and other partner e-commerce sites." },
-      { icon: "local_gas_station", text: "Fuel Surcharge Waiver", description: "1% fuel surcharge waiver at all fuel stations across Bangladesh." },
-    ],
-    fees: {
-      annual: "Free (Lifetime)",
-      supplementary: "Free",
-      latePayment: "৳400 or 4% of minimum due",
-      cashAdvance: "2% or minimum ৳400",
-      foreignTransaction: "3% of transaction amount",
-      cardReplacement: "৳250",
-      statementCopy: "৳75 per copy",
-    },
-    eligibility: {
-      minIncome: "৳25,000/month",
-      minAge: 18,
-      maxAge: 65,
-      employmentType: ["Salaried", "Self-employed", "Student (with guarantor)"],
-      documents: ["NID/Passport", "Income Proof or Guarantor Letter", "Bank Statement (3 months)", "Passport Size Photo"],
-      creditScore: "Fair to Good",
-    },
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAf7qTA98WGNaYJzckTNPG1m-1qeJ8ohCneNWbiojCOKY4FcZQLXOWOnTQppDjZgDNasG5Go33HYxkZ_d8_j8SNr3ixDjvN89fgMW-uMTTTgVojncNYOuylm5f97RLHT3_VTsyUU3kYBjk_ZiZlbAuNNGXy2vRDE2CvDuRBJXv-X_V-bIC8S6rCzp6TDhrBzg3leMi7hRq0UWzR4iwC8WGOhMQL5Zg1D0MzVEpM5rPIY6EMli4X8DMvFCA9iIy7AX_OSYIk4hQml-0",
-  },
-];
+import { fetchCreditCard, type CreditCard } from "@/lib/api/banks";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CardDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const card = creditCards.find((c) => c.id === id);
+  const [card, setCard] = useState<CreditCard | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      loadCard();
+    }
+  }, [id]);
+
+  const loadCard = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchCreditCard(id!);
+      setCard(data);
+    } catch (error) {
+      console.error("Error loading card:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="flex-1 pb-20 md:pb-0">
+          <section className="bg-gradient-to-br from-primary/5 to-accent/5 border-b">
+            <div className="container mx-auto px-4 py-6 md:py-10">
+              <Skeleton className="h-4 w-48 mb-6" />
+              <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+                <Skeleton className="w-full md:w-72 h-44 rounded-2xl" />
+                <div className="flex-1 space-y-4">
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-8 w-64" />
+                  <Skeleton className="h-4 w-48" />
+                  <Skeleton className="h-10 w-32" />
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+        <BottomNav />
+      </div>
+    );
+  }
 
   if (!card) {
     return (
@@ -131,6 +78,8 @@ const CardDetails = () => {
       </div>
     );
   }
+
+  const bankName = card.banks?.name || "Unknown Bank";
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -154,7 +103,7 @@ const CardDetails = () => {
               <div className="w-full md:w-72 shrink-0">
                 <div className="relative aspect-[1.6/1] rounded-2xl overflow-hidden shadow-xl">
                   <img 
-                    src={card.image} 
+                    src={card.image_url || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400"} 
                     alt={card.name}
                     className="w-full h-full object-cover"
                   />
@@ -170,7 +119,7 @@ const CardDetails = () => {
                       {card.badge}
                     </span>
                   )}
-                  <span className="text-sm font-bold text-muted-foreground">{card.bank}</span>
+                  <span className="text-sm font-bold text-muted-foreground">{bankName}</span>
                 </div>
                 
                 <h1 className="text-2xl md:text-3xl font-black mb-2">{card.name}</h1>
@@ -179,19 +128,21 @@ const CardDetails = () => {
                 <div className="flex items-baseline gap-2 mb-6">
                   <span className={cn(
                     "text-3xl font-black",
-                    card.annualFee === "Free" || card.annualFee === "৳0" 
+                    card.annual_fee === "Free" || card.annual_fee === "৳0" 
                       ? "text-primary" 
                       : "text-foreground"
                   )}>
-                    {card.annualFee}
+                    {card.annual_fee || "N/A"}
                   </span>
-                  <span className="text-sm text-muted-foreground">{card.annualFeeNote}</span>
+                  <span className="text-sm text-muted-foreground">{card.annual_fee_note}</span>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  <Button size="lg" className="font-bold">
-                    <MaterialIcon name="open_in_new" className="text-lg mr-1" />
-                    Apply Now
+                  <Button size="lg" className="font-bold" asChild>
+                    <a href={card.apply_url || "#"} target="_blank" rel="noopener noreferrer">
+                      <MaterialIcon name="open_in_new" className="text-lg mr-1" />
+                      Apply Now
+                    </a>
                   </Button>
                   <Button size="lg" variant="outline" className="font-bold">
                     <MaterialIcon name="compare_arrows" className="text-lg mr-1" />
@@ -224,22 +175,30 @@ const CardDetails = () => {
             {/* Benefits Tab */}
             <TabsContent value="benefits" className="mt-0">
               <div className="grid gap-4 md:gap-6">
-                {card.benefits.map((benefit, index) => (
-                  <div 
-                    key={index}
-                    className="bg-card border border-primary/10 rounded-xl p-4 md:p-6 hover:shadow-lg transition-shadow"
-                  >
-                    <div className="flex gap-4">
-                      <div className="size-12 md:size-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                        <MaterialIcon name={benefit.icon} className="text-2xl md:text-3xl" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-1">{benefit.text}</h3>
-                        <p className="text-muted-foreground text-sm md:text-base">{benefit.description}</p>
+                {card.benefits.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No benefits information available
+                  </div>
+                ) : (
+                  card.benefits.map((benefit, index) => (
+                    <div 
+                      key={index}
+                      className="bg-card border border-primary/10 rounded-xl p-4 md:p-6 hover:shadow-lg transition-shadow"
+                    >
+                      <div className="flex gap-4">
+                        <div className="size-12 md:size-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                          <MaterialIcon name={benefit.icon || "check"} className="text-2xl md:text-3xl" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg mb-1">{benefit.text}</h3>
+                          {benefit.description && (
+                            <p className="text-muted-foreground text-sm md:text-base">{benefit.description}</p>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </TabsContent>
 
@@ -247,22 +206,28 @@ const CardDetails = () => {
             <TabsContent value="fees" className="mt-0">
               <div className="bg-card border border-primary/10 rounded-xl overflow-hidden">
                 <div className="divide-y divide-primary/10">
-                  {Object.entries(card.fees).map(([key, value]) => (
-                    <div 
-                      key={key}
-                      className="flex justify-between items-center p-4 md:p-5 hover:bg-muted/50 transition-colors"
-                    >
-                      <span className="text-muted-foreground capitalize">
-                        {key.replace(/([A-Z])/g, ' $1').trim()}
-                      </span>
-                      <span className={cn(
-                        "font-bold",
-                        value.toLowerCase().includes("free") ? "text-primary" : "text-foreground"
-                      )}>
-                        {value}
-                      </span>
+                  {Object.keys(card.fees).length === 0 ? (
+                    <div className="p-8 text-center text-muted-foreground">
+                      No fee information available
                     </div>
-                  ))}
+                  ) : (
+                    Object.entries(card.fees).map(([key, value]) => (
+                      <div 
+                        key={key}
+                        className="flex justify-between items-center p-4 md:p-5 hover:bg-muted/50 transition-colors"
+                      >
+                        <span className="text-muted-foreground capitalize">
+                          {key.replace(/([A-Z])/g, ' $1').trim()}
+                        </span>
+                        <span className={cn(
+                          "font-bold",
+                          value.toLowerCase().includes("free") ? "text-primary" : "text-foreground"
+                        )}>
+                          {value}
+                        </span>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -272,7 +237,7 @@ const CardDetails = () => {
                   <div>
                     <p className="font-bold text-sm mb-1">Fee Waiver Tip</p>
                     <p className="text-muted-foreground text-sm">
-                      Annual fees are often waived if you spend a minimum amount per year. Contact the bank for details on fee waiver conditions.
+                      Annual fees are often waived if you spend a minimum amount per year. Contact the bank for details.
                     </p>
                   </div>
                 </div>
@@ -291,15 +256,20 @@ const CardDetails = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Minimum Income</span>
-                      <span className="font-bold">{card.eligibility.minIncome}</span>
+                      <span className="font-bold">{card.min_income || "N/A"}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Age Range</span>
-                      <span className="font-bold">{card.eligibility.minAge} - {card.eligibility.maxAge} years</span>
+                      <span className="font-bold">
+                        {card.min_age && card.max_age 
+                          ? `${card.min_age} - ${card.max_age} years`
+                          : "N/A"
+                        }
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Credit Score</span>
-                      <span className="font-bold text-primary">{card.eligibility.creditScore}</span>
+                      <span className="font-bold text-primary">{card.credit_score || "N/A"}</span>
                     </div>
                   </div>
                 </div>
@@ -311,14 +281,18 @@ const CardDetails = () => {
                     Employment Type
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {card.eligibility.employmentType.map((type, index) => (
-                      <span 
-                        key={index}
-                        className="px-3 py-1.5 bg-primary/10 text-primary text-sm font-medium rounded-full"
-                      >
-                        {type}
-                      </span>
-                    ))}
+                    {card.employment_types && card.employment_types.length > 0 ? (
+                      card.employment_types.map((type, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1.5 bg-primary/10 text-primary text-sm font-medium rounded-full"
+                        >
+                          {type}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground">Not specified</span>
+                    )}
                   </div>
                 </div>
 
@@ -329,15 +303,21 @@ const CardDetails = () => {
                     Required Documents
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {card.eligibility.documents.map((doc, index) => (
-                      <div 
-                        key={index}
-                        className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
-                      >
-                        <MaterialIcon name="check_circle" className="text-primary text-lg" />
-                        <span className="text-sm font-medium">{doc}</span>
+                    {card.required_documents && card.required_documents.length > 0 ? (
+                      card.required_documents.map((doc, index) => (
+                        <div 
+                          key={index}
+                          className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
+                        >
+                          <MaterialIcon name="check_circle" className="text-primary text-lg" />
+                          <span className="text-sm font-medium">{doc}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-muted-foreground col-span-2">
+                        Contact bank for document requirements
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
