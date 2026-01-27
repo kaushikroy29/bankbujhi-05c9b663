@@ -60,6 +60,7 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
     // Validate user authentication
     const authClient = createClient(supabaseUrl, supabaseAnonKey, {
@@ -73,6 +74,30 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ success: false, error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    
+    // Check if user has admin role using service role client (bypasses RLS)
+    const adminClient = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: hasAdminRole, error: roleError } = await adminClient.rpc('has_role', {
+      _user_id: userId,
+      _role: 'admin'
+    });
+
+    if (roleError) {
+      console.error('Role check error:', roleError);
+      return new Response(
+        JSON.stringify({ success: false, error: 'Authorization check failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!hasAdminRole) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Forbidden: Admin access required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -119,9 +144,6 @@ Deno.serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     if (action === 'scrape-all') {
       const results = [];
