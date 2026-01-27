@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import { Button } from "@/components/ui/button";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { cn } from "@/lib/utils";
 import { fetchCreditCard, type CreditCard } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -154,13 +155,13 @@ const CardDetails = () => {
         <section className="bg-gradient-to-br from-primary/5 to-accent/5 border-b">
           <div className="container mx-auto px-4 py-6 md:py-10">
             {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-              <Link to="/" className="hover:text-primary transition-colors">হোম</Link>
-              <MaterialIcon name="chevron_right" className="text-base" />
-              <Link to="/compare" className="hover:text-primary transition-colors">ক্রেডিট কার্ড</Link>
-              <MaterialIcon name="chevron_right" className="text-base" />
-              <span className="text-foreground font-medium truncate">{card.name}</span>
-            </nav>
+            <PageBreadcrumb 
+              items={[
+                { label: "ক্রেডিট কার্ড", href: "/compare" },
+                { label: card.name }
+              ]} 
+              className="mb-6"
+            />
 
             <div className="flex flex-col md:flex-row gap-6 md:gap-10">
               {/* Card Image */}

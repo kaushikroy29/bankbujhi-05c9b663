@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CreditCardListing from "@/components/cards/CreditCardListing";
@@ -244,12 +245,11 @@ const Compare = () => {
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       <Header />
       <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
-        {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 mb-4 sm:mb-6">
-          <Link to="/" className="text-muted-foreground text-xs sm:text-sm font-medium hover:underline">হোম</Link>
-          <MaterialIcon name="chevron_right" className="text-sm text-muted-foreground" />
-          <span className="text-primary text-xs sm:text-sm font-medium">ক্রেডিট কার্ড</span>
-        </div>
+        {/* Breadcrumb */}
+        <PageBreadcrumb 
+          items={[{ label: "ক্রেডিট কার্ড" }]} 
+          className="mb-4 sm:mb-6"
+        />
 
         {/* Page Heading */}
         <div className="mb-6 sm:mb-8 flex flex-col gap-4">

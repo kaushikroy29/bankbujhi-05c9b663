@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
@@ -151,6 +152,12 @@ const Eligibility = () => {
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       <Header />
       <main className="flex-1 max-w-[800px] mx-auto px-4 py-8 md:py-12 w-full">
+        {/* Breadcrumb */}
+        <PageBreadcrumb 
+          items={[{ label: "যোগ্যতা যাচাই" }]} 
+          className="mb-6"
+        />
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl md:text-3xl font-black leading-tight tracking-tight text-foreground mb-3 font-bengali">

@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import SearchBar from "@/components/ui/SearchBar";
 import ArticleCard from "@/components/cards/ArticleCard";
 
@@ -88,6 +89,12 @@ const Guides = () => {
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       <Header />
       <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
+        {/* Breadcrumb */}
+        <PageBreadcrumb 
+          items={[{ label: "গাইড" }]} 
+          className="mb-6"
+        />
+
         {/* Hero */}
         <div className="text-center mb-8 sm:mb-10">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight tracking-tight text-foreground mb-3">
