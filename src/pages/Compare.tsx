@@ -104,6 +104,8 @@ const Compare = () => {
     minAge: card.min_age || undefined,
     maxAge: card.max_age || undefined,
     requiredDocuments: card.required_documents || undefined,
+    employmentTypes: card.employment_types || undefined,
+    fees: card.fees || undefined,
     image: card.image_url || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400",
     benefits: card.benefits.map(b => ({ icon: b.icon, text: b.text })),
   });
