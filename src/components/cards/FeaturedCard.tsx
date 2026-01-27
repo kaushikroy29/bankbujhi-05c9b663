@@ -1,23 +1,28 @@
+import { Link } from "react-router-dom";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import CreditCardVisual from "./CreditCardVisual";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface FeaturedCardProps {
+  id: string;
   name: string;
   cardLabel: string;
   rating: number;
   benefits: string[];
   variant?: "dark" | "green";
+  applyUrl?: string;
   className?: string;
 }
 
 const FeaturedCard = ({ 
+  id,
   name, 
   cardLabel, 
   rating, 
   benefits, 
   variant = "dark",
+  applyUrl,
   className 
 }: FeaturedCardProps) => {
   return (
@@ -60,16 +65,29 @@ const FeaturedCard = ({
           <Button 
             size="sm" 
             className="flex-1 text-xs font-bold"
+            asChild
           >
-            Details
+            <Link to={`/cards/${id}`}>Details</Link>
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex-1 text-xs font-bold border-primary text-primary hover:bg-primary/5"
-          >
-            Apply
-          </Button>
+          {applyUrl ? (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex-1 text-xs font-bold border-primary text-primary hover:bg-primary/5"
+              asChild
+            >
+              <a href={applyUrl} target="_blank" rel="noopener noreferrer">Apply</a>
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex-1 text-xs font-bold border-primary text-primary hover:bg-primary/5"
+              asChild
+            >
+              <Link to="/eligibility">Apply</Link>
+            </Button>
+          )}
         </div>
       </div>
     </div>

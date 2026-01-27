@@ -2,18 +2,22 @@ import FeaturedCard from "@/components/cards/FeaturedCard";
 
 const featuredCards = [
   {
+    id: "city-bank-amex",
     name: "City Bank Amex",
     cardLabel: "Platinum Rewards",
     rating: 4.8,
     benefits: ["5% Cashback on Groceries", "Free Lounge Access"],
     variant: "dark" as const,
+    applyUrl: "https://thecitybank.com/credit-cards",
   },
   {
+    id: "ebl-skybanking",
     name: "EBL Skybanking",
     cardLabel: "Travel Elite",
     rating: 4.7,
     benefits: ["BOGO at Top Hotels", "Zero Annual Fee (Year 1)"],
     variant: "green" as const,
+    applyUrl: "https://ebl.com.bd/personal/cards",
   },
 ];
 
@@ -38,12 +42,14 @@ const FeaturedCardsSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {featuredCards.map((card) => (
             <FeaturedCard
-              key={card.name}
+              key={card.id}
+              id={card.id}
               name={card.name}
               cardLabel={card.cardLabel}
               rating={card.rating}
               benefits={card.benefits}
               variant={card.variant}
+              applyUrl={card.applyUrl}
             />
           ))}
         </div>
