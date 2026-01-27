@@ -4,6 +4,7 @@ import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { Link } from "react-router-dom";
+import SEOHead from "@/components/seo/SEOHead";
 
 const tips = [
   {
@@ -57,9 +58,15 @@ const featuredTip = {
 
 const FinancialTips = () => {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
+    <>
+      <SEOHead 
+        title="আর্থিক পরামর্শ | BankBujhi"
+        description="স্মার্ট আর্থিক সিদ্ধান্তের টিপস। ক্রেডিট কার্ড থেকে সেভিংস—সব বিষয়ে পরামর্শ।"
+        path="/tips"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumb */}
         <PageBreadcrumb 
           items={[{ label: "আর্থিক পরামর্শ" }]} 
@@ -149,6 +156,7 @@ const FinancialTips = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 

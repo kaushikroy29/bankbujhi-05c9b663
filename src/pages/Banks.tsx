@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { fetchBanks, fetchCreditCards, type Bank, type CreditCard } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import SEOHead from "@/components/seo/SEOHead";
 
 interface BankWithDetails extends Bank {
   cardCount: number;
@@ -101,9 +102,16 @@ const Banks = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
+    <>
+      <SEOHead 
+        title="ব্যাংক ডিরেক্টরি | BankBujhi"
+        description="বাংলাদেশের সব ব্যাংকের তথ্য। ক্রেডিট কার্ড, লোন ও সেভিংস প্রোডাক্ট তুলনা করুন।"
+        image="https://bankbujhi.lovable.app/og/og-banks.jpg"
+        path="/banks"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumb */}
         <PageBreadcrumb 
           items={[{ label: "ব্যাংক ডিরেক্টরি" }]} 
@@ -257,6 +265,7 @@ const Banks = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 

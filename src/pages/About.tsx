@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
+import SEOHead from "@/components/seo/SEOHead";
 
 const values = [
   {
@@ -30,9 +31,16 @@ const values = [
 
 const About = () => {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 pb-16 md:pb-0">
+    <>
+      <SEOHead 
+        title="আমাদের সম্পর্কে | BankBujhi"
+        description="BankBujhi কেন তৈরি হলো। নিরপেক্ষ আর্থিক তথ্য প্রদানের লক্ষ্যে আমাদের যাত্রা।"
+        image="https://bankbujhi.lovable.app/og/og-about.jpg"
+        path="/about"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 pb-16 md:pb-0">
         {/* Breadcrumb */}
         <div className="max-w-[1000px] mx-auto px-4 pt-6">
           <PageBreadcrumb items={[{ label: "আমাদের সম্পর্কে" }]} />
@@ -180,6 +188,7 @@ const About = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 

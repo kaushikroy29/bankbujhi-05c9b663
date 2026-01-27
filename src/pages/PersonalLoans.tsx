@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import LoanOfferCard from "@/components/cards/LoanOfferCard";
 import { fetchLoanProducts, fetchBanks, type LoanProduct, type Bank } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
+import SEOHead from "@/components/seo/SEOHead";
 
 const PersonalLoans = () => {
   const [loans, setLoans] = useState<LoanProduct[]>([]);
@@ -94,9 +95,16 @@ const PersonalLoans = () => {
   });
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
+    <>
+      <SEOHead 
+        title="পার্সোনাল লোন ক্যালকুলেটর | BankBujhi"
+        description="EMI হিসাব করুন ও সেরা রেট খুঁজুন। বাংলাদেশের শীর্ষ ব্যাংকগুলোর লোন তুলনা।"
+        image="https://bankbujhi.lovable.app/og/og-loans.jpg"
+        path="/loans"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumb */}
         <PageBreadcrumb 
           items={[{ label: "পার্সোনাল লোন" }]} 
@@ -385,6 +393,7 @@ const PersonalLoans = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 

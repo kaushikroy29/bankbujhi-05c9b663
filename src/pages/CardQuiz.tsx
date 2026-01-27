@@ -8,6 +8,7 @@ import QuizResults from "@/components/quiz/QuizResults";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import SEOHead from "@/components/seo/SEOHead";
 
 export interface QuizAnswer {
   questionId: string;
@@ -151,18 +152,33 @@ const CardQuiz = () => {
 
   if (showResults) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <Header />
-        <main className="flex-1 pb-20 md:pb-0">
-          <QuizResults answers={answers} onRestart={handleRestart} />
-        </main>
-        <Footer />
-        <BottomNav />
-      </div>
+      <>
+        <SEOHead 
+          title="কার্ড কুইজ | BankBujhi"
+          description="৩০ সেকেন্ডে সেরা কার্ড খুঁজুন। আপনার জন্য উপযুক্ত ক্রেডিট কার্ড সুপারিশ।"
+          image="https://bankbujhi.lovable.app/og/og-quiz.jpg"
+          path="/quiz"
+        />
+        <div className="min-h-screen bg-background flex flex-col">
+          <Header />
+          <main className="flex-1 pb-20 md:pb-0">
+            <QuizResults answers={answers} onRestart={handleRestart} />
+          </main>
+          <Footer />
+          <BottomNav />
+        </div>
+      </>
     );
   }
 
   return (
+    <>
+      <SEOHead 
+        title="কার্ড কুইজ | BankBujhi"
+        description="৩০ সেকেন্ডে সেরা কার্ড খুঁজুন। আপনার জন্য উপযুক্ত ক্রেডিট কার্ড সুপারিশ।"
+        image="https://bankbujhi.lovable.app/og/og-quiz.jpg"
+        path="/quiz"
+      />
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
@@ -205,6 +221,7 @@ const CardQuiz = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 
