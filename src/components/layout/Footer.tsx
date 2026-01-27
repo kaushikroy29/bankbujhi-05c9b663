@@ -4,16 +4,16 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 
 const companyLinks = [
   { href: "/about", label: "About Us" },
-  { href: "/about", label: "Our Team" },
-  { href: "/about", label: "Careers" },
+  { href: "/team", label: "Our Team" },
+  { href: "/careers", label: "Careers" },
   { href: "/contact", label: "Contact" },
 ];
 
 const resourceLinks = [
   { href: "/guides", label: "Credit Card Guide" },
   { href: "/banks", label: "Bank Directory" },
-  { href: "/guides", label: "Financial Tips" },
-  { href: "/contact", label: "Help Center" },
+  { href: "/tips", label: "Financial Tips" },
+  { href: "/help", label: "Help Center" },
 ];
 
 const socialLinks = [
@@ -99,9 +99,9 @@ const Footer = () => {
           © 2024 BankBujhi. All rights reserved. Registered in Bangladesh.
         </p>
         <div className="flex gap-6 text-xs text-muted-foreground">
-          <a href="#" className="hover:text-primary">Privacy Policy</a>
-          <a href="#" className="hover:text-primary">Terms of Service</a>
-          <a href="#" className="hover:text-primary">Cookies</a>
+          <Link to="/privacy" className="hover:text-primary">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-primary">Terms of Service</Link>
+          <Link to="/help" className="hover:text-primary">Cookies</Link>
         </div>
       </div>
     </footer>

@@ -19,6 +19,12 @@ import MonthlyPicks from "./pages/MonthlyPicks";
 import Eligibility from "./pages/Eligibility";
 import SignUp from "./pages/SignUp";
 import CardDetails from "./pages/CardDetails";
+import Team from "./pages/Team";
+import Careers from "./pages/Careers";
+import FinancialTips from "./pages/FinancialTips";
+import HelpCenter from "./pages/HelpCenter";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +43,12 @@ const App = () => (
           <Route path="/guides" element={<Guides />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/tips" element={<FinancialTips />} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/reset-password" element={<PasswordReset />} />
           <Route path="/premium" element={<Premium />} />
