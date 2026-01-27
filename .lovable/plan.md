@@ -1,383 +1,228 @@
 
 
-# BankBujhi Complete Website Recreation Plan
+# Open Graph Meta Tags & Bangla OG Images Implementation Plan
 
-## Project Overview
+## Overview
 
-Recreate the BankBujhi website - a Bengali financial comparison platform for credit cards, loans, savings, and banking products in Bangladesh. The complete website consists of **16 pages** across the homepage and 15 additional pages you've uploaded.
-
----
-
-## Complete Page Inventory
-
-| # | Page | Route | Description |
-|---|------|-------|-------------|
-| 1 | Homepage | `/` | Hero, stats, categories, featured cards |
-| 2 | About Us | `/about` | Company mission, team, values |
-| 3 | Banks Directory | `/banks` | Bank partner grid with search |
-| 4 | Card Details | `/cards/:id` | Individual credit card profile |
-| 5 | Card Analysis | `/analysis` | Comparison report generator |
-| 6 | Compare (Search Results) | `/compare` | Card search with filters and results |
-| 7 | Contact/Help Center | `/contact` | FAQ, contact form, support |
-| 8 | Dashboard | `/dashboard` | User account, saved cards, profile |
-| 9 | Eligibility Checker | `/eligibility` | Multi-step form for card eligibility |
-| 10 | FDR/Savings | `/savings` | Fixed deposit comparison tool |
-| 11 | Guides | `/guides` | Financial articles and education |
-| 12 | Monthly Picks | `/newsletter` | Email-style monthly newsletter |
-| 13 | Password Reset | `/reset-password` | Account recovery page |
-| 14 | Personal Loans | `/loans` | Loan comparison with EMI calculator |
-| 15 | Premium | `/premium` | Subscription pricing page |
-| 16 | 404 Error | `*` | Custom Bengali error page |
+This plan adds dynamic Open Graph meta tags for better social sharing on Facebook, Twitter, LinkedIn, and other platforms. It includes:
+1. A reusable SEO component for page-specific meta tags
+2. Custom OG images with Bangla text for key pages
+3. Enhanced Twitter Card support
 
 ---
 
-## Design System
+## Current State
 
-### Color Palette (Unified)
-
-The pages use slight variations of greens; we will normalize to a consistent palette:
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `primary` | `#2f7f33` | Primary brand color (darker green) |
-| `primary-light` | `#13ec5b` | Bright accent green |
-| `accent-gold` | `#F9A825` | Premium badges, highlights |
-| `background-light` | `#f6f8f6` | Light mode background |
-| `background-dark` | `#141e15` | Dark mode background |
-| `card-dark` | `#1a2e20` | Dark mode card background |
-| `text-dark` | `#111811` | Primary text |
-| `text-muted` | `#5e8760` | Secondary text |
-
-### Typography
-- **Primary fonts**: Inter + Noto Sans Bengali
-- **Icons**: Google Material Symbols (Outlined)
+- **Static OG tags** in `index.html` apply to all pages (same title/description everywhere)
+- **OG image** uses a generic Lovable placeholder (`lovable.dev/opengraph-image-p98pqg.png`)
+- **No dynamic meta management** - React pages don't update document head
 
 ---
 
-## Shared Components Architecture
+## Implementation Plan
 
-### Layout Components
+### Phase 1: Create SEO Meta Component
 
-```text
-src/components/layout/
-  Header.tsx          # Sticky navigation with search, language toggle
-  Footer.tsx          # Multi-column footer with links
-  MobileNav.tsx       # Hamburger menu for mobile
-  DashboardSidebar.tsx # Sidebar for dashboard page
-  Breadcrumb.tsx      # Breadcrumb navigation component
-```
+**Create `src/components/seo/SEOHead.tsx`**
 
-### Core UI Components
+A reusable component that dynamically updates the document head with:
+- Page-specific `<title>`
+- Meta description
+- Open Graph tags (og:title, og:description, og:image, og:url, og:type)
+- Twitter Card tags (twitter:title, twitter:description, twitter:image)
+- Canonical URL
 
 ```text
-src/components/ui/
-  MaterialIcon.tsx    # Google Material Symbols wrapper
-  Logo.tsx            # Diamond SVG brand logo
-  Badge.tsx           # Category/status badges
-  SearchBar.tsx       # Reusable search input with icon
-  ProgressBar.tsx     # Profile completion, step indicators
-  PriceDisplay.tsx    # Taka currency formatting
-  TabNavigation.tsx   # Horizontal tab navigation
-  FilterSidebar.tsx   # Filter panel with checkboxes, sliders
++--------------------------------------------------+
+|                  SEOHead Component               |
++--------------------------------------------------+
+|  Props:                                          |
+|  - title: string (page title)                    |
+|  - description: string (meta description)        |
+|  - image?: string (OG image URL)                 |
+|  - path?: string (canonical path)                |
+|  - type?: "website" | "article"                  |
++--------------------------------------------------+
 ```
 
-### Card/Product Components
-
-```text
-src/components/cards/
-  CreditCardVisual.tsx    # 3D credit card mockup
-  CreditCardListing.tsx   # Card result row with details
-  BankCard.tsx            # Bank partner card
-  LoanOfferCard.tsx       # Loan comparison row
-  SavingsRateCard.tsx     # FDR bank rate row
-  ArticleCard.tsx         # Blog/guide article preview
-  PricingCard.tsx         # Premium subscription tier
-```
-
-### Feature Components
-
-```text
-src/components/features/
-  StatCard.tsx            # Homepage statistics
-  CategoryCard.tsx        # Browse by category
-  ValueCard.tsx           # Core values (About page)
-  TeamMemberCard.tsx      # Team profiles
-  QuickLinkCard.tsx       # 404 page navigation
-  FAQAccordion.tsx        # Contact page FAQs
-  ContactMethodCard.tsx   # Email/phone/chat cards
-```
-
-### Form Components
-
-```text
-src/components/forms/
-  EligibilityForm.tsx     # Multi-step eligibility wizard
-  PasswordResetForm.tsx   # Account recovery form
-  EMICalculator.tsx       # Loan EMI slider calculator
-  InvestmentCalculator.tsx # FDR maturity calculator
-  ContactForm.tsx         # Contact page form
-```
+Uses vanilla JavaScript to manipulate `document.head` (no external dependencies needed since React Helmet isn't installed).
 
 ---
 
-## Implementation Phases
+### Phase 2: Create OG Images with Bangla Text
 
-### Phase 1: Foundation Setup
+**Add 8 custom OG images to `/public/og/`**
 
-**Design System:**
-- Update `tailwind.config.ts` with complete BankBujhi color palette
-- Add Google Fonts to `index.html` (Inter, Noto Sans Bengali, Material Symbols)
-- Update `src/index.css` with CSS variables and custom utilities
+Each image will be **1200x630px** (Facebook recommended size) with:
+- BankBujhi branding (logo + name)
+- Page-specific Bangla headline
+- Primary green gradient background
+- Bengali typography (Noto Sans Bengali)
 
-**Core Infrastructure:**
-- Create MaterialIcon component for consistent icon usage
-- Create Logo component with SVG
-- Set up responsive layout wrapper
+| Page | Image File | Bangla Headline |
+|------|------------|-----------------|
+| Home | `og-home.png` | বাংলাদেশের ব্যাংক ও ক্রেডিট কার্ড তুলনা |
+| Compare | `og-compare.png` | ক্রেডিট কার্ড তুলনা করুন |
+| Loans | `og-loans.png` | পার্সোনাল লোন ক্যালকুলেটর |
+| Savings | `og-savings.png` | এফডিআর ও সেভিংস রেট |
+| Eligibility | `og-eligibility.png` | ক্রেডিট কার্ড যোগ্যতা যাচাই |
+| Quiz | `og-quiz.png` | আপনার জন্য সেরা কার্ড খুঁজুন |
+| Banks | `og-banks.png` | ব্যাংক ডিরেক্টরি |
+| About | `og-about.png` | BankBujhi সম্পর্কে |
 
-### Phase 2: Shared Layout Components
-
-- Header with navigation, search, login button
-- Footer with multi-column links
-- Mobile navigation drawer
-- Breadcrumb component
-
-### Phase 3: Homepage
-
-**Components:**
-- HeroSection with search bar
-- StatsSection (3 stat cards)
-- CategoriesSection (browse by category)
-- FeaturedCardsSection
-
-### Phase 4: Core Financial Pages
-
-**Compare/Search Page:**
-- FilterSidebar with bank, category, fee filters
-- CreditCardListing for search results
-- Sort and pagination controls
-
-**Card Details Page:**
-- CardHero with visual and key info
-- TabNavigation (Benefits, Fees, Eligibility)
-- BenefitsGrid, FeesTable, DocumentsList
-- StickyBottomCTA for mobile
-
-**Personal Loans Page:**
-- LoanConfigForm with sliders
-- EMICalculator sidebar
-- LoanOfferCard comparison table
-
-**FDR/Savings Page:**
-- InvestmentCalculator
-- Tab navigation (FDR vs High-Interest)
-- SavingsRateCard comparison list
-
-### Phase 5: Utility Pages
-
-**Eligibility Checker:**
-- Multi-step form wizard with progress bar
-- Employment type selector
-- Income and bank selection
-
-**Dashboard:**
-- DashboardSidebar navigation
-- Profile completion progress
-- Saved cards grid
-- Recent activity
-
-**Password Reset:**
-- Centered card layout
-- Email/phone input
-- Trust badges
-
-### Phase 6: Content Pages
-
-**Guides/Knowledge Center:**
-- Hero with search
-- Category filter tabs
-- ArticleCard grid with images
-
-**About Us:**
-- Mission hero
-- Problem/solution layout
-- Core values cards
-- Team carousel
-
-**Contact/Help:**
-- Search bar
-- FAQ accordion sections
-- Contact method cards (email, phone, chat)
-
-**Monthly Newsletter:**
-- Email-style layout
-- Featured cards section
-- Tips and highlights
-
-### Phase 7: Premium/Subscription
-
-- Hero with CTA buttons
-- 3-tier pricing cards (Basic, Pro, Elite)
-- Feature comparison table
-- Dark theme by default
-
-### Phase 8: 404 Error Page
-
-- Custom Bengali error message
-- Illustrated error graphic
-- Quick link cards to main pages
+**Note:** I will generate these images using the AI image generation API during implementation.
 
 ---
 
-## Routing Configuration
+### Phase 3: Integrate SEOHead into Pages
 
-```text
-App.tsx Routes:
-  /                 → Index.tsx (Homepage)
-  /about            → About.tsx
-  /banks            → Banks.tsx
-  /cards/:id        → CardDetails.tsx
-  /analysis         → CardAnalysis.tsx
-  /compare          → Compare.tsx (Search Results)
-  /contact          → Contact.tsx
-  /dashboard        → Dashboard.tsx
-  /eligibility      → Eligibility.tsx
-  /savings          → FDRSavings.tsx
-  /guides           → Guides.tsx
-  /newsletter       → MonthlyPicks.tsx
-  /reset-password   → PasswordReset.tsx
-  /loans            → PersonalLoans.tsx
-  /premium          → Premium.tsx
-  *                 → NotFound.tsx (404)
-```
+**Update 12 key pages** with the `SEOHead` component:
+
+| Page | Title (Bangla) | Description |
+|------|----------------|-------------|
+| Index | বাংলাদেশের ব্যাংক ও ক্রেডিট কার্ড তুলনা \| BankBujhi | সব ফি, ক্যাশব্যাক ও সুবিধা এক জায়গায় |
+| Compare | ক্রেডিট কার্ড তুলনা \| BankBujhi | ২০+ ব্যাংকের কার্ড পাশাপাশি তুলনা করুন |
+| PersonalLoans | পার্সোনাল লোন ক্যালকুলেটর \| BankBujhi | EMI হিসাব করুন ও সেরা রেট খুঁজুন |
+| FDRSavings | এফডিআর ও সেভিংস রেট \| BankBujhi | সর্বোচ্চ সুদের হার তুলনা করুন |
+| Eligibility | ক্রেডিট কার্ড যোগ্যতা যাচাই \| BankBujhi | আপনার জন্য যোগ্য কার্ড দেখুন |
+| CardQuiz | কার্ড কুইজ \| BankBujhi | ৩০ সেকেন্ডে সেরা কার্ড খুঁজুন |
+| Banks | ব্যাংক ডিরেক্টরি \| BankBujhi | বাংলাদেশের সব ব্যাংকের তথ্য |
+| About | আমাদের সম্পর্কে \| BankBujhi | BankBujhi কেন তৈরি হলো |
+| CardDetails | [Card Name] \| BankBujhi | Dynamic based on card data |
+| Guides | গাইড ও টিউটোরিয়াল \| BankBujhi | আর্থিক বিষয়ে সহজ গাইড |
+| FinancialTips | আর্থিক পরামর্শ \| BankBujhi | স্মার্ট আর্থিক সিদ্ধান্তের টিপস |
+| HelpCenter | সাহায্য কেন্দ্র \| BankBujhi | প্রায়শই জিজ্ঞাসিত প্রশ্ন |
 
 ---
 
-## Final File Structure
+### Phase 4: Update Base HTML
 
-```text
-src/
-  components/
-    layout/
-      Header.tsx
-      Footer.tsx
-      MobileNav.tsx
-      DashboardSidebar.tsx
-      Breadcrumb.tsx
-    ui/
-      MaterialIcon.tsx
-      Logo.tsx
-      Badge.tsx
-      SearchBar.tsx
-      ProgressBar.tsx
-      PriceDisplay.tsx
-      TabNavigation.tsx
-      FilterSidebar.tsx
-    cards/
-      CreditCardVisual.tsx
-      CreditCardListing.tsx
-      BankCard.tsx
-      LoanOfferCard.tsx
-      SavingsRateCard.tsx
-      ArticleCard.tsx
-      PricingCard.tsx
-    features/
-      StatCard.tsx
-      CategoryCard.tsx
-      ValueCard.tsx
-      TeamMemberCard.tsx
-      QuickLinkCard.tsx
-      FAQAccordion.tsx
-      ContactMethodCard.tsx
-    forms/
-      EligibilityForm.tsx
-      PasswordResetForm.tsx
-      EMICalculator.tsx
-      InvestmentCalculator.tsx
-    home/
-      HeroSection.tsx
-      StatsSection.tsx
-      CategoriesSection.tsx
-      FeaturedCardsSection.tsx
-  pages/
-    Index.tsx
-    About.tsx
-    Banks.tsx
-    CardDetails.tsx
-    CardAnalysis.tsx
-    Compare.tsx
-    Contact.tsx
-    Dashboard.tsx
-    Eligibility.tsx
-    FDRSavings.tsx
-    Guides.tsx
-    MonthlyPicks.tsx
-    PasswordReset.tsx
-    PersonalLoans.tsx
-    Premium.tsx
-    NotFound.tsx
-  App.tsx
-```
+**Enhance `index.html`** with:
+- Add `og:url` with base URL
+- Add `og:site_name`
+- Add `twitter:title` and `twitter:description`
+- Update default OG image to new branded image
 
 ---
 
-## Technical Requirements
+## Technical Details
 
-### Font Loading
+### SEOHead Component Implementation
 
-```html
-<!-- Add to index.html -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-```
-
-### Custom CSS
-
-```css
-/* Material Symbols styling */
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+```typescript
+// src/components/seo/SEOHead.tsx
+interface SEOHeadProps {
+  title: string;
+  description: string;
+  image?: string;
+  path?: string;
+  type?: "website" | "article";
 }
 
-/* Bengali font support */
-.bengali-font {
-  font-family: 'Noto Sans Bengali', sans-serif;
-  line-height: 1.6;
-}
+const SEOHead = ({ title, description, image, path, type = "website" }: SEOHeadProps) => {
+  const baseUrl = "https://bankbujhi.lovable.app";
+  const defaultImage = `${baseUrl}/og/og-home.png`;
+  
+  useEffect(() => {
+    // Update document title
+    document.title = title;
+    
+    // Update meta tags dynamically
+    updateMetaTag("description", description);
+    updateMetaTag("og:title", title);
+    updateMetaTag("og:description", description);
+    updateMetaTag("og:image", image || defaultImage);
+    updateMetaTag("og:url", path ? `${baseUrl}${path}` : baseUrl);
+    updateMetaTag("og:type", type);
+    updateMetaTag("twitter:title", title);
+    updateMetaTag("twitter:description", description);
+    updateMetaTag("twitter:image", image || defaultImage);
+    
+    // Cleanup on unmount
+    return () => { /* Reset to defaults */ };
+  }, [title, description, image, path, type]);
+  
+  return null; // Component only updates head, renders nothing
+};
 ```
 
-### Dark Mode
+### OG Image Design Specifications
 
-All pages support dark mode using Tailwind's `dark:` prefix with class-based toggling.
+```text
++--------------------------------------------------+
+|                   1200 x 630px                   |
+|  +--------------------------------------------+  |
+|  |                                            |  |
+|  |        [BankBujhi Logo]                    |  |
+|  |                                            |  |
+|  |     বাংলাদেশের ব্যাংক ও ক্রেডিট কার্ড     |  |
+|  |           তুলনা করুন                       |  |
+|  |                                            |  |
+|  |     সব ফি, ক্যাশব্যাক ও সুবিধা             |  |
+|  |         এক জায়গায়                         |  |
+|  |                                            |  |
+|  |              bankbujhi.lovable.app         |  |
+|  +--------------------------------------------+  |
++--------------------------------------------------+
 
----
-
-## Order of Implementation
-
-1. Design system setup (fonts, colors, CSS variables)
-2. Core UI components (MaterialIcon, Logo, SearchBar, Badge)
-3. Layout components (Header, Footer, MobileNav)
-4. Homepage with all sections
-5. 404 Error page (simple, tests routing)
-6. Compare/Search page (core product page)
-7. Card Details page
-8. Banks Directory
-9. Personal Loans with EMI calculator
-10. FDR/Savings comparison
-11. Eligibility Checker wizard
-12. Contact/Help Center
-13. Guides/Knowledge Center
-14. About Us page
-15. Dashboard (requires layout sidebar)
-16. Password Reset
-17. Monthly Picks newsletter
-18. Premium pricing page
+Background: Linear gradient from #2f7f33 to #13ec5b
+Text: White (Noto Sans Bengali)
+Logo: BankBujhi diamond icon
+```
 
 ---
 
-## Notes
+## Files to Create/Modify
 
-- All images from the original HTML use external Google URLs - these will be kept as-is initially
-- Bengali text (বাংলা) will be preserved exactly as in the original HTML
-- Interactive features like sliders, accordions will use existing Radix UI components where possible
-- Print styles will be implemented for the Card Analysis report page
+### New Files
+| File | Purpose |
+|------|---------|
+| `src/components/seo/SEOHead.tsx` | Reusable SEO component |
+| `public/og/og-home.png` | Home page OG image |
+| `public/og/og-compare.png` | Compare page OG image |
+| `public/og/og-loans.png` | Loans page OG image |
+| `public/og/og-savings.png` | Savings page OG image |
+| `public/og/og-eligibility.png` | Eligibility page OG image |
+| `public/og/og-quiz.png` | Quiz page OG image |
+| `public/og/og-banks.png` | Banks page OG image |
+| `public/og/og-about.png` | About page OG image |
+
+### Modified Files
+| File | Changes |
+|------|---------|
+| `index.html` | Add og:site_name, og:url, update default image |
+| `src/pages/Index.tsx` | Add SEOHead component |
+| `src/pages/Compare.tsx` | Add SEOHead component |
+| `src/pages/PersonalLoans.tsx` | Add SEOHead component |
+| `src/pages/FDRSavings.tsx` | Add SEOHead component |
+| `src/pages/Eligibility.tsx` | Add SEOHead component |
+| `src/pages/CardQuiz.tsx` | Add SEOHead component |
+| `src/pages/Banks.tsx` | Add SEOHead component |
+| `src/pages/About.tsx` | Add SEOHead component |
+| `src/pages/CardDetails.tsx` | Add dynamic SEOHead with card data |
+| `src/pages/Guides.tsx` | Add SEOHead component |
+| `src/pages/FinancialTips.tsx` | Add SEOHead component |
+| `src/pages/HelpCenter.tsx` | Add SEOHead component |
+
+---
+
+## Expected Outcome
+
+After implementation:
+
+1. **Facebook/LinkedIn Sharing** - Shows custom Bangla title, description, and branded image
+2. **Twitter Cards** - Large image cards with proper Bangla text
+3. **WhatsApp Previews** - Displays localized content when sharing links
+4. **SEO Benefits** - Each page has unique, descriptive meta content
+5. **Brand Consistency** - All OG images follow BankBujhi design system
+
+---
+
+## Testing
+
+After implementation, test sharing on:
+- Facebook Sharing Debugger (developers.facebook.com/tools/debug)
+- Twitter Card Validator (cards-dev.twitter.com/validator)
+- LinkedIn Post Inspector (linkedin.com/post-inspector)
+- WhatsApp (paste link and check preview)
 
