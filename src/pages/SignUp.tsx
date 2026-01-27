@@ -36,7 +36,7 @@ const SignUp = () => {
       <div className="hidden lg:flex lg:w-1/2 bg-primary/5 p-12 flex-col justify-center">
         <div className="max-w-md mx-auto">
           <Link to="/" className="inline-flex items-center gap-2 mb-12">
-            <Logo className="w-10 h-10" />
+            <Logo showText={false} className="w-10 h-10" />
             <span className="text-2xl font-black text-foreground">BankBujhi.com</span>
           </Link>
 
@@ -71,7 +71,7 @@ const SignUp = () => {
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2">
-              <Logo className="w-10 h-10" />
+              <Logo showText={false} className="w-10 h-10" />
               <span className="text-2xl font-black text-foreground">BankBujhi.com</span>
             </Link>
           </div>
