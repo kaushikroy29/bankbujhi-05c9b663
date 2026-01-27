@@ -18,8 +18,8 @@ const resourceLinks = [
 
 const socialLinks = [
   { icon: "mail", href: "mailto:contact@bankbujhi.com", label: "Email" },
-  { icon: "facebook", href: "https://facebook.com/bankbujhi", label: "Facebook" },
-  { icon: "telegram", href: "https://t.me/bankbujhi", label: "Telegram" },
+  { icon: "public", href: "https://facebook.com/bankbujhi", label: "Facebook" },
+  { icon: "send", href: "https://t.me/bankbujhi", label: "Telegram" },
 ];
 
 const Footer = () => {
