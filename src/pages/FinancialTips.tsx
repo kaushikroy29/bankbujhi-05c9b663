@@ -2,6 +2,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { Link } from "react-router-dom";
 
 const tips = [
@@ -59,12 +60,11 @@ const FinancialTips = () => {
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       <Header />
       <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
-        {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 mb-6">
-          <Link to="/" className="text-muted-foreground text-sm font-medium hover:underline">Home</Link>
-          <MaterialIcon name="chevron_right" className="text-sm text-muted-foreground" />
-          <span className="text-primary text-sm font-medium">Financial Tips</span>
-        </div>
+        {/* Breadcrumb */}
+        <PageBreadcrumb 
+          items={[{ label: "আর্থিক পরামর্শ" }]} 
+          className="mb-6"
+        />
 
         {/* Hero Section */}
         <div className="text-center mb-12">

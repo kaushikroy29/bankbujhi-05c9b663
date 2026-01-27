@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import LoanOfferCard from "@/components/cards/LoanOfferCard";
@@ -96,6 +97,12 @@ const PersonalLoans = () => {
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       <Header />
       <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
+        {/* Breadcrumb */}
+        <PageBreadcrumb 
+          items={[{ label: "পার্সোনাল লোন" }]} 
+          className="mb-6"
+        />
+
         {/* Page Heading */}
         <div className="mb-6 sm:mb-10">
           <div className="flex flex-col gap-2">
