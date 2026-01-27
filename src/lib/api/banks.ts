@@ -133,20 +133,29 @@ export async function fetchCreditCards(filters?: {
   if (filters?.bankId && filters.bankId !== 'all') {
     query = query.eq('bank_id', filters.bankId);
   }
-  if (filters?.search) {
-    query = query.ilike('name', `%${filters.search}%`);
-  }
 
   const { data, error } = await query.order('created_at', { ascending: false });
   
   if (error) throw error;
   
   // Transform data to match interface
-  return (data || []).map(card => ({
+  let results = (data || []).map(card => ({
     ...card,
     benefits: parseBenefits(card.benefits),
     fees: parseFees(card.fees),
   })) as CreditCard[];
+
+  // Client-side filter for search (supports both card name and bank name)
+  if (filters?.search) {
+    const searchLower = filters.search.toLowerCase();
+    results = results.filter(card => 
+      card.name.toLowerCase().includes(searchLower) ||
+      (card.banks?.name && card.banks.name.toLowerCase().includes(searchLower)) ||
+      (card.banks?.name_bn && card.banks.name_bn.includes(filters.search))
+    );
+  }
+
+  return results;
 }
 
 // Fetch single credit card
