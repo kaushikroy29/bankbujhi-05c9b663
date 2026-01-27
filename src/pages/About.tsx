@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 
 const values = [
   {
@@ -32,6 +33,11 @@ const About = () => {
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
       <Header />
       <main className="flex-1 pb-16 md:pb-0">
+        {/* Breadcrumb */}
+        <div className="max-w-[1000px] mx-auto px-4 pt-6">
+          <PageBreadcrumb items={[{ label: "আমাদের সম্পর্কে" }]} />
+        </div>
+
         {/* Hero */}
         <section className="bg-gradient-to-br from-primary/5 to-primary/10 py-10 sm:py-16">
           <div className="max-w-[1000px] mx-auto px-4 text-center">
