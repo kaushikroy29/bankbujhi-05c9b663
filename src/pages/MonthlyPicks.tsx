@@ -84,8 +84,8 @@ const MonthlyPicks = () => {
                   <div className="font-bold truncate">{card.name}</div>
                   <div className="text-sm text-primary">{card.benefit}</div>
                 </div>
-                <Button size="sm" variant="outline" className="shrink-0 border-primary text-primary">
-                  বিস্তারিত দেখুন
+                <Button size="sm" variant="outline" className="shrink-0 border-primary text-primary" asChild>
+                  <Link to="/compare">বিস্তারিত দেখুন</Link>
                 </Button>
               </div>
             ))}
@@ -134,19 +134,19 @@ const MonthlyPicks = () => {
             Your trusted financial companion in Bangladesh
           </p>
           <div className="flex justify-center gap-4 mb-4">
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+            <a href="mailto:contact@bankbujhi.com" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Email">
               <MaterialIcon name="mail" />
             </a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+            <a href="https://facebook.com/bankbujhi" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Facebook">
               <MaterialIcon name="facebook" />
             </a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+            <a href="https://t.me/bankbujhi" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Telegram">
               <MaterialIcon name="telegram" />
             </a>
           </div>
-          <button className="text-xs text-muted-foreground hover:text-primary font-bengali">
+          <Link to="/contact" className="text-xs text-muted-foreground hover:text-primary font-bengali">
             আনসাবস্ক্রাইব করুন
-          </button>
+          </Link>
           <p className="text-xs text-muted-foreground mt-4">
             © BankBujhi.com. All rights reserved.
           </p>
