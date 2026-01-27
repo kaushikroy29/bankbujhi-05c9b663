@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
@@ -355,9 +356,9 @@ const PersonalLoans = () => {
               <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
                 Our financial advisors are here to help you navigate the best rates and terms for your specific needs.
               </p>
-              <button className="flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all text-sm sm:text-base">
+              <Link to="/contact" className="flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all text-sm sm:text-base">
                 Talk to an Advisor <MaterialIcon name="arrow_forward" />
-              </button>
+              </Link>
             </div>
             <div className="bg-primary/5 p-4 sm:p-6 rounded-xl border border-primary/20">
               <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">

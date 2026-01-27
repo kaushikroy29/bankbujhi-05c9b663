@@ -17,9 +17,9 @@ const resourceLinks = [
 ];
 
 const socialLinks = [
-  { icon: "social_leaderboard", href: "#" },
-  { icon: "alternate_email", href: "#" },
-  { icon: "share", href: "#" },
+  { icon: "mail", href: "mailto:contact@bankbujhi.com", label: "Email" },
+  { icon: "facebook", href: "https://facebook.com/bankbujhi", label: "Facebook" },
+  { icon: "telegram", href: "https://t.me/bankbujhi", label: "Telegram" },
 ];
 
 const Footer = () => {
@@ -84,6 +84,9 @@ const Footer = () => {
               <a
                 key={link.icon}
                 href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.label}
                 className="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-all"
               >
                 <MaterialIcon name={link.icon} className="text-lg" />

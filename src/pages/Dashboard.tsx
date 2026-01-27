@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
@@ -176,18 +177,19 @@ const Dashboard = () => {
               <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">Quick Actions</h2>
               <div className="grid grid-cols-4 gap-2 sm:gap-4">
                 {[
-                  { icon: "add_card", label: "Add Card" },
-                  { icon: "compare_arrows", label: "Compare" },
-                  { icon: "calculate", label: "EMI Calc" },
-                  { icon: "support_agent", label: "Support" },
+                  { icon: "add_card", label: "Add Card", href: "/compare" },
+                  { icon: "compare_arrows", label: "Compare", href: "/compare" },
+                  { icon: "calculate", label: "EMI Calc", href: "/loans" },
+                  { icon: "support_agent", label: "Support", href: "/contact" },
                 ].map((action) => (
-                  <button
+                  <Link
                     key={action.label}
+                    to={action.href}
                     className="bg-card p-3 sm:p-4 rounded-xl border border-primary/10 text-center hover:bg-primary/5 transition-colors"
                   >
                     <MaterialIcon name={action.icon} className="text-xl sm:text-3xl text-primary mb-1 sm:mb-2" />
                     <span className="text-[10px] sm:text-sm font-medium block truncate">{action.label}</span>
-                  </button>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -196,10 +198,12 @@ const Dashboard = () => {
             <section>
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h2 className="text-lg sm:text-2xl font-bold">Saved Cards</h2>
-                <Button variant="outline" size="sm" className="text-primary border-primary text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
-                  <MaterialIcon name="visibility" className="mr-1 text-sm" />
-                  <span className="hidden xs:inline">সবগুলো দেখুন</span>
-                  <span className="xs:hidden">All</span>
+                <Button variant="outline" size="sm" className="text-primary border-primary text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3" asChild>
+                  <Link to="/compare">
+                    <MaterialIcon name="visibility" className="mr-1 text-sm" />
+                    <span className="hidden xs:inline">সবগুলো দেখুন</span>
+                    <span className="xs:hidden">All</span>
+                  </Link>
                 </Button>
               </div>
               
@@ -220,11 +224,11 @@ const Dashboard = () => {
                       <div className="text-white text-[10px] sm:text-xs">{card.name}</div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1 text-[10px] sm:text-xs h-8">
-                        বিস্তারিত
+                      <Button size="sm" variant="outline" className="flex-1 text-[10px] sm:text-xs h-8" asChild>
+                        <Link to="/compare">বিস্তারিত</Link>
                       </Button>
-                      <Button size="sm" className="flex-1 text-[10px] sm:text-xs h-8">
-                        আবেদন
+                      <Button size="sm" className="flex-1 text-[10px] sm:text-xs h-8" asChild>
+                        <Link to="/eligibility">আবেদন</Link>
                       </Button>
                     </div>
                   </div>
@@ -254,8 +258,8 @@ const Dashboard = () => {
                         )}
                       </div>
                     </div>
-                    <Button size="sm" className="w-full h-9">
-                      View Details
+                    <Button size="sm" className="w-full h-9" asChild>
+                      <Link to="/compare">View Details</Link>
                     </Button>
                   </div>
                 ))}

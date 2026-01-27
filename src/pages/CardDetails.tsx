@@ -138,15 +138,26 @@ const CardDetails = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  <Button size="lg" className="font-bold" asChild>
-                    <a href={card.apply_url || "#"} target="_blank" rel="noopener noreferrer">
-                      <MaterialIcon name="open_in_new" className="text-lg mr-1" />
-                      Apply Now
-                    </a>
-                  </Button>
-                  <Button size="lg" variant="outline" className="font-bold">
-                    <MaterialIcon name="compare_arrows" className="text-lg mr-1" />
-                    Add to Compare
+                  {card.apply_url ? (
+                    <Button size="lg" className="font-bold" asChild>
+                      <a href={card.apply_url} target="_blank" rel="noopener noreferrer">
+                        <MaterialIcon name="open_in_new" className="text-lg mr-1" />
+                        Apply Now
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button size="lg" className="font-bold" asChild>
+                      <Link to="/eligibility">
+                        <MaterialIcon name="fact_check" className="text-lg mr-1" />
+                        Check Eligibility
+                      </Link>
+                    </Button>
+                  )}
+                  <Button size="lg" variant="outline" className="font-bold" asChild>
+                    <Link to="/compare">
+                      <MaterialIcon name="compare_arrows" className="text-lg mr-1" />
+                      Compare Cards
+                    </Link>
                   </Button>
                 </div>
               </div>

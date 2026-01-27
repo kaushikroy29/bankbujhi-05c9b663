@@ -200,15 +200,15 @@ const Eligibility = () => {
 
         {/* Help Links */}
         <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm">
-          <a href="#" className="text-muted-foreground hover:text-primary flex items-center gap-1">
+          <Link to="/help" className="text-muted-foreground hover:text-primary flex items-center gap-1">
             <MaterialIcon name="help" className="text-sm" /> How it works?
-          </a>
-          <a href="/privacy" className="text-muted-foreground hover:text-primary flex items-center gap-1">
+          </Link>
+          <Link to="/privacy" className="text-muted-foreground hover:text-primary flex items-center gap-1">
             <MaterialIcon name="security" className="text-sm" /> Privacy Policy
-          </a>
-          <a href="/contact" className="text-muted-foreground hover:text-primary flex items-center gap-1">
+          </Link>
+          <Link to="/contact" className="text-muted-foreground hover:text-primary flex items-center gap-1">
             <MaterialIcon name="support_agent" className="text-sm" /> Need Assistance?
-          </a>
+          </Link>
         </div>
       </main>
       <Footer />
