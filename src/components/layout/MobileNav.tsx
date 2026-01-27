@@ -73,10 +73,39 @@ const MobileNav = ({ isOpen, onClose, links }: MobileNavProps) => {
               })}
             </ul>
 
-            {/* Additional Links */}
+            {/* Tools Section */}
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-4 mb-3">
-                Account
+                টুলস
+              </p>
+              <ul className="space-y-1">
+                <li>
+                  <Link
+                    to="/eligibility"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                    onClick={onClose}
+                  >
+                    <MaterialIcon name="fact_check" className="text-xl" />
+                    যোগ্যতা যাচাই
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/quiz"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                    onClick={onClose}
+                  >
+                    <MaterialIcon name="quiz" className="text-xl" />
+                    কার্ড কুইজ
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Account Section */}
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-4 mb-3">
+                অ্যাকাউন্ট
               </p>
               <ul className="space-y-1">
                 <li>
@@ -86,17 +115,7 @@ const MobileNav = ({ isOpen, onClose, links }: MobileNavProps) => {
                     onClick={onClose}
                   >
                     <MaterialIcon name="dashboard" className="text-xl" />
-                    Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/eligibility"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-                    onClick={onClose}
-                  >
-                    <MaterialIcon name="fact_check" className="text-xl" />
-                    Eligibility Check
+                    ড্যাশবোর্ড
                   </Link>
                 </li>
                 <li>
@@ -106,8 +125,8 @@ const MobileNav = ({ isOpen, onClose, links }: MobileNavProps) => {
                     onClick={onClose}
                   >
                     <MaterialIcon name="workspace_premium" className="text-xl text-accent" />
-                    <span>Go Premium</span>
-                    <span className="ml-auto bg-accent/20 text-accent text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>
+                    <span>প্রিমিয়াম</span>
+                    <span className="ml-auto bg-accent/20 text-accent text-[10px] font-bold px-2 py-0.5 rounded-full">নতুন</span>
                   </Link>
                 </li>
               </ul>
@@ -122,15 +141,15 @@ const MobileNav = ({ isOpen, onClose, links }: MobileNavProps) => {
               onClick={onClose}
             >
               <MaterialIcon name="person_add" className="text-lg" />
-              Sign Up Free
+              ফ্রি সাইন আপ
             </Link>
             <Link
-              to="/contact"
+              to="/help"
               className="flex items-center justify-center gap-2 w-full border border-primary/20 text-foreground font-medium py-3 px-4 rounded-xl hover:bg-muted transition-colors"
               onClick={onClose}
             >
               <MaterialIcon name="help" className="text-lg text-primary" />
-              Help Center
+              সাহায্য কেন্দ্র
             </Link>
           </div>
         </div>

@@ -3,11 +3,11 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", icon: "home", label: "Home" },
-  { href: "/compare", icon: "credit_card", label: "Cards" },
-  { href: "/loans", icon: "account_balance", label: "Loans" },
-  { href: "/savings", icon: "savings", label: "Savings" },
-  { href: "/dashboard", icon: "person", label: "Account" },
+  { href: "/", icon: "home", label: "হোম" },
+  { href: "/compare", icon: "credit_card", label: "কার্ড" },
+  { href: "/loans", icon: "account_balance", label: "লোন" },
+  { href: "/savings", icon: "savings", label: "সেভিংস" },
+  { href: "/dashboard", icon: "person", label: "অ্যাকাউন্ট" },
 ];
 
 const BottomNav = () => {
