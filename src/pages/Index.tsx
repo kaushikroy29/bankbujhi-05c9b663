@@ -5,6 +5,7 @@ import HeroSection from "@/components/home/HeroSection";
 import StatsSection from "@/components/home/StatsSection";
 import CategoriesSection from "@/components/home/CategoriesSection";
 import FeaturedCardsSection from "@/components/home/FeaturedCardsSection";
+import QuizCTASection from "@/components/home/QuizCTASection";
 
 const Index = () => {
   return (
@@ -15,6 +16,7 @@ const Index = () => {
         <StatsSection />
         <CategoriesSection />
         <FeaturedCardsSection />
+        <QuizCTASection />
       </main>
       <Footer />
       <BottomNav />

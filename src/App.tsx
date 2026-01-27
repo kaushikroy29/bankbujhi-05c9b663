@@ -25,7 +25,7 @@ import FinancialTips from "./pages/FinancialTips";
 import HelpCenter from "./pages/HelpCenter";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-
+import CardQuiz from "./pages/CardQuiz";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -56,6 +56,7 @@ const App = () => (
           <Route path="/eligibility" element={<Eligibility />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/cards/:id" element={<CardDetails />} />
+          <Route path="/quiz" element={<CardQuiz />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
