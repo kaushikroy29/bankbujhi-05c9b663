@@ -9,6 +9,14 @@ const companyLinks = [
   { href: "/contact", label: "যোগাযোগ" },
 ];
 
+const toolLinks = [
+  { href: "/eligibility", label: "যোগ্যতা যাচাই" },
+  { href: "/quiz", label: "কার্ড কুইজ" },
+  { href: "/compare", label: "কার্ড তুলনা" },
+  { href: "/loans", label: "লোন ক্যালকুলেটর" },
+  { href: "/savings", label: "সেভিংস ক্যালকুলেটর" },
+];
+
 const resourceLinks = [
   { href: "/guides", label: "ক্রেডিট কার্ড গাইড" },
   { href: "/banks", label: "ব্যাংক ডিরেক্টরি" },
@@ -40,9 +48,9 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-10">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-10 mb-10">
         {/* Brand Column */}
-        <div className="col-span-1 sm:col-span-2 md:col-span-1">
+        <div className="col-span-2 sm:col-span-3 lg:col-span-1">
           <div className="mb-4">
             <Logo size="sm" />
           </div>
@@ -51,13 +59,13 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Company Links */}
+        {/* Tools Links */}
         <div>
           <h4 className="font-bold text-foreground mb-4 uppercase text-xs tracking-widest">
-            কোম্পানি
+            টুলস
           </h4>
           <ul className="space-y-3 text-sm text-muted-foreground">
-            {companyLinks.map((link) => (
+            {toolLinks.map((link) => (
               <li key={link.label}>
                 <Link 
                   to={link.href}
@@ -77,6 +85,25 @@ const Footer = () => {
           </h4>
           <ul className="space-y-3 text-sm text-muted-foreground">
             {resourceLinks.map((link) => (
+              <li key={link.label}>
+                <Link 
+                  to={link.href}
+                  className="hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Company Links */}
+        <div>
+          <h4 className="font-bold text-foreground mb-4 uppercase text-xs tracking-widest">
+            কোম্পানি
+          </h4>
+          <ul className="space-y-3 text-sm text-muted-foreground">
+            {companyLinks.map((link) => (
               <li key={link.label}>
                 <Link 
                   to={link.href}
