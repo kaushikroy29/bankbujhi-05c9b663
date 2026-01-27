@@ -12,6 +12,7 @@ interface FeaturedCardProps {
   benefits: string[];
   variant?: "dark" | "green";
   applyUrl?: string;
+  badge?: string;
   className?: string;
 }
 
@@ -23,6 +24,7 @@ const FeaturedCard = ({
   benefits, 
   variant = "dark",
   applyUrl,
+  badge,
   className 
 }: FeaturedCardProps) => {
   return (
@@ -38,11 +40,18 @@ const FeaturedCard = ({
       {/* Card Details */}
       <div className="flex-1 flex flex-col justify-between">
         <div>
+          {/* Badge */}
+          {badge && (
+            <span className="inline-block px-2 py-0.5 bg-accent/20 text-accent text-[10px] font-bold uppercase tracking-wider rounded-full mb-2">
+              {badge}
+            </span>
+          )}
+          
           {/* Name and Rating */}
           <div className="flex justify-between items-start mb-1">
             <h4 className="font-bold text-lg text-foreground">{name}</h4>
             <span className="flex items-center text-accent text-xs font-bold">
-              <MaterialIcon name="star" className="text-xs" /> {rating}
+              <MaterialIcon name="star" className="text-xs" /> {rating.toFixed(1)}
             </span>
           </div>
 
