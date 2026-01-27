@@ -105,9 +105,21 @@ const Compare = () => {
     }
   };
 
-  // Apply client-side filters for annual fee and income
+  // Helper to count benefits/rewards value
+  const getRewardsScore = (card: CreditCard): number => {
+    let score = 0;
+    // More benefits = higher score
+    score += (card.benefits?.length || 0) * 10;
+    // Badge gives bonus points
+    if (card.badge) score += 20;
+    // Waived annual fee is a reward
+    if (card.annual_fee_waived) score += 15;
+    return score;
+  };
+
+  // Apply client-side filters and sorting
   const filteredCards = useMemo(() => {
-    return cards.filter(card => {
+    let result = cards.filter(card => {
       // Annual fee filter
       if (annualFeeFilter !== "all") {
         const feeAmount = parseFeeAmount(card.annual_fee);
@@ -128,13 +140,28 @@ const Compare = () => {
       if (incomeFilter !== "all") {
         const minIncomeRequired = parseIncomeAmount(card.min_income);
         const userIncome = parseInt(incomeFilter, 10);
-        // Show cards where required income <= user's income
         if (minIncomeRequired > userIncome) return false;
       }
 
       return true;
     });
-  }, [cards, annualFeeFilter, incomeFilter]);
+
+    // Apply sorting
+    if (sortBy === "fee-low") {
+      result = [...result].sort((a, b) => {
+        const feeA = a.annual_fee_waived ? 0 : parseFeeAmount(a.annual_fee);
+        const feeB = b.annual_fee_waived ? 0 : parseFeeAmount(b.annual_fee);
+        return feeA - feeB;
+      });
+    } else if (sortBy === "rewards") {
+      result = [...result].sort((a, b) => {
+        return getRewardsScore(b) - getRewardsScore(a);
+      });
+    }
+    // "popularity" keeps the default order from the database
+
+    return result;
+  }, [cards, annualFeeFilter, incomeFilter, sortBy]);
 
   const toggleCompare = (id: string) => {
     setCompareList(prev => 
