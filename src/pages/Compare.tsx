@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -10,6 +10,7 @@ import CreditCardListing from "@/components/cards/CreditCardListing";
 import CompareModal from "@/components/cards/CompareModal";
 import { fetchCreditCards, fetchBanks, type CreditCard, type Bank } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Slider } from "@/components/ui/slider";
 
 const categories = [
   { value: "all", label: "All Categories" },
@@ -20,6 +21,36 @@ const categories = [
   { value: "Entry Level", label: "Entry Level" },
   { value: "Premium Rewards", label: "Premium" },
 ];
+
+const annualFeeOptions = [
+  { value: "all", label: "Any Fee" },
+  { value: "free", label: "Free (৳0)" },
+  { value: "0-2000", label: "Up to ৳2,000" },
+  { value: "2000-5000", label: "৳2,000 - ৳5,000" },
+  { value: "5000+", label: "৳5,000+" },
+];
+
+const incomeOptions = [
+  { value: "all", label: "Any Income" },
+  { value: "25000", label: "৳25,000+" },
+  { value: "50000", label: "৳50,000+" },
+  { value: "75000", label: "৳75,000+" },
+  { value: "100000", label: "৳1,00,000+" },
+];
+
+// Helper to parse fee string to number
+const parseFeeAmount = (fee: string | null): number => {
+  if (!fee) return 0;
+  const match = fee.replace(/,/g, '').match(/\d+/);
+  return match ? parseInt(match[0], 10) : 0;
+};
+
+// Helper to parse income string to number
+const parseIncomeAmount = (income: string | null): number => {
+  if (!income) return 0;
+  const match = income.replace(/,/g, '').match(/\d+/);
+  return match ? parseInt(match[0], 10) : 0;
+};
 
 const Compare = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,6 +71,8 @@ const Compare = () => {
   const [selectedBank, setSelectedBank] = useState(urlBank);
   const [searchQuery, setSearchQuery] = useState(urlSearch);
   const [sortBy, setSortBy] = useState("popularity");
+  const [annualFeeFilter, setAnnualFeeFilter] = useState("all");
+  const [incomeFilter, setIncomeFilter] = useState("all");
 
   // Sync state with URL params on mount and URL change
   useEffect(() => {
@@ -72,6 +105,37 @@ const Compare = () => {
     }
   };
 
+  // Apply client-side filters for annual fee and income
+  const filteredCards = useMemo(() => {
+    return cards.filter(card => {
+      // Annual fee filter
+      if (annualFeeFilter !== "all") {
+        const feeAmount = parseFeeAmount(card.annual_fee);
+        const isWaived = card.annual_fee_waived;
+        
+        if (annualFeeFilter === "free") {
+          if (feeAmount > 0 && !isWaived) return false;
+        } else if (annualFeeFilter === "0-2000") {
+          if (feeAmount > 2000 && !isWaived) return false;
+        } else if (annualFeeFilter === "2000-5000") {
+          if (feeAmount < 2000 || feeAmount > 5000) return false;
+        } else if (annualFeeFilter === "5000+") {
+          if (feeAmount < 5000) return false;
+        }
+      }
+
+      // Income filter
+      if (incomeFilter !== "all") {
+        const minIncomeRequired = parseIncomeAmount(card.min_income);
+        const userIncome = parseInt(incomeFilter, 10);
+        // Show cards where required income <= user's income
+        if (minIncomeRequired > userIncome) return false;
+      }
+
+      return true;
+    });
+  }, [cards, annualFeeFilter, incomeFilter]);
+
   const toggleCompare = (id: string) => {
     setCompareList(prev => 
       prev.includes(id) 
@@ -84,12 +148,16 @@ const Compare = () => {
     setSelectedCategory("all");
     setSelectedBank("all");
     setSearchQuery("");
+    setAnnualFeeFilter("all");
+    setIncomeFilter("all");
     setSearchParams({});
   };
 
   const activeFiltersCount = 
     (selectedCategory !== "all" ? 1 : 0) + 
-    (selectedBank !== "all" ? 1 : 0);
+    (selectedBank !== "all" ? 1 : 0) +
+    (annualFeeFilter !== "all" ? 1 : 0) +
+    (incomeFilter !== "all" ? 1 : 0);
 
   // Transform card data for CreditCardListing component
   const transformCard = (card: CreditCard) => ({
@@ -238,6 +306,58 @@ const Compare = () => {
                     ))}
                   </div>
                 </div>
+                {/* Annual Fee Filter */}
+                <div className="mb-4">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
+                    Annual Fee
+                  </label>
+                  <div className="flex flex-col gap-1.5">
+                    {annualFeeOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setAnnualFeeFilter(option.value)}
+                        className={`flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition-colors text-left ${
+                          annualFeeFilter === option.value
+                            ? "bg-primary/5 border border-primary/20"
+                            : "hover:bg-background border border-transparent"
+                        }`}
+                      >
+                        <span className="text-xs sm:text-sm font-medium">{option.label}</span>
+                        {annualFeeFilter === option.value && (
+                          <MaterialIcon name="check" className="text-primary text-sm" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Minimum Income Filter */}
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
+                    Your Monthly Income
+                  </label>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Show cards you're eligible for
+                  </p>
+                  <div className="flex flex-col gap-1.5">
+                    {incomeOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setIncomeFilter(option.value)}
+                        className={`flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition-colors text-left ${
+                          incomeFilter === option.value
+                            ? "bg-primary/5 border border-primary/20"
+                            : "hover:bg-background border border-transparent"
+                        }`}
+                      >
+                        <span className="text-xs sm:text-sm font-medium">{option.label}</span>
+                        {incomeFilter === option.value && (
+                          <MaterialIcon name="check" className="text-primary text-sm" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Help Card */}
@@ -265,7 +385,7 @@ const Compare = () => {
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <p className="text-xs sm:text-sm font-bold text-muted-foreground">
-                SHOWING <span className="text-foreground">{cards.length} CARDS</span> MATCHING YOUR CRITERIA
+                SHOWING <span className="text-foreground">{filteredCards.length} CARDS</span> MATCHING YOUR CRITERIA
               </p>
             </div>
 
@@ -285,7 +405,7 @@ const Compare = () => {
                     </div>
                   </div>
                 ))
-              ) : cards.length === 0 ? (
+              ) : filteredCards.length === 0 ? (
                 <div className="text-center py-12">
                   <MaterialIcon name="credit_card_off" className="text-5xl text-muted-foreground mb-4" />
                   <p className="text-lg font-bold mb-2">No cards found</p>
@@ -293,7 +413,7 @@ const Compare = () => {
                   <Button onClick={clearFilters}>Clear Filters</Button>
                 </div>
               ) : (
-                cards.map((card) => (
+                filteredCards.map((card) => (
                   <CreditCardListing
                     key={card.id}
                     card={transformCard(card)}
