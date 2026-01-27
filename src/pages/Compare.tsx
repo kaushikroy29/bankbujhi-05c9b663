@@ -153,6 +153,12 @@ const Compare = () => {
         const feeB = b.annual_fee_waived ? 0 : parseFeeAmount(b.annual_fee);
         return feeA - feeB;
       });
+    } else if (sortBy === "fee-high") {
+      result = [...result].sort((a, b) => {
+        const feeA = a.annual_fee_waived ? 0 : parseFeeAmount(a.annual_fee);
+        const feeB = b.annual_fee_waived ? 0 : parseFeeAmount(b.annual_fee);
+        return feeB - feeA;
+      });
     } else if (sortBy === "rewards") {
       result = [...result].sort((a, b) => {
         return getRewardsScore(b) - getRewardsScore(a);
@@ -271,6 +277,7 @@ const Compare = () => {
               >
                 <option value="popularity">Popularity</option>
                 <option value="fee-low">Annual Fee (Low-High)</option>
+                <option value="fee-high">Annual Fee (High-Low)</option>
                 <option value="rewards">Highest Rewards</option>
               </select>
             </div>
