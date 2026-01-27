@@ -37,7 +37,11 @@ const BANK_URLS = {
     website: 'https://www.dutchbanglabank.com',
     cardsPage: 'https://www.dutchbanglabank.com/cards'
   }
-};
+} as const;
+
+// Valid bank IDs for allowlist validation
+const VALID_BANK_IDS = Object.keys(BANK_URLS);
+const VALID_ACTIONS = ['scrape-all', 'scrape-single'];
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -45,19 +49,79 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { bankId, action } = await req.json();
-    
-    const apiKey = Deno.env.get('FIRECRAWL_API_KEY');
-    if (!apiKey) {
+    // Authentication check
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Firecrawl not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ success: false, error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    // Validate user authentication
+    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Input validation
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid request body' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid request format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { bankId, action } = body as { bankId?: unknown; action?: unknown };
+
+    // Validate action parameter
+    if (action !== undefined && (typeof action !== 'string' || !VALID_ACTIONS.includes(action))) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid action parameter' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate bankId parameter
+    if (bankId !== undefined && (typeof bankId !== 'string' || !VALID_BANK_IDS.includes(bankId))) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid bank identifier' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const apiKey = Deno.env.get('FIRECRAWL_API_KEY');
+    if (!apiKey) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Scraping service not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     if (action === 'scrape-all') {
       const results = [];
@@ -93,15 +157,14 @@ Deno.serve(async (req) => {
             results.push({
               bank: bank.name,
               status: 'failed',
-              error: scrapeData.error
+              error: 'Scraping failed'
             });
           }
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           results.push({
             bank: bank.name,
             status: 'error',
-            error: errorMessage
+            error: 'Processing error'
           });
         }
       }
@@ -112,7 +175,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Single bank scrape
+    // Single bank scrape - bankId is validated above
     const bank = BANK_URLS[bankId as keyof typeof BANK_URLS];
     if (!bank) {
       return new Response(
@@ -147,9 +210,8 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Scrape error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to scrape';
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
+      JSON.stringify({ success: false, error: 'Processing error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
