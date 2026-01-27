@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Compare from "./pages/Compare";
-import CreditCards from "./pages/CreditCards";
 import PersonalLoans from "./pages/PersonalLoans";
 import FDRSavings from "./pages/FDRSavings";
 import Banks from "./pages/Banks";
@@ -37,7 +36,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/credit-cards" element={<CreditCards />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/loans" element={<PersonalLoans />} />
           <Route path="/savings" element={<FDRSavings />} />

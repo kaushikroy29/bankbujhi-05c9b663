@@ -7,7 +7,7 @@ import MobileNav from "./MobileNav";
 
 const navLinks = [
   { href: "/", label: "হোম" },
-  { href: "/credit-cards", label: "ক্রেডিট কার্ড" },
+  { href: "/compare", label: "ক্রেডিট কার্ড" },
   { href: "/compare", label: "তুলনা" },
   { href: "/guides", label: "গাইড" },
   { href: "/loans", label: "ক্যালকুলেটর" },
@@ -29,11 +29,11 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex flex-1 justify-center gap-1">
-            {navLinks.map((link, index) => {
+            {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
               return (
                 <Link
-                  key={`${link.href}-${index}`}
+                  key={link.href}
                   to={link.href}
                   className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                     isActive 
