@@ -28,14 +28,24 @@ const HeroSection = () => {
         />
 
         {/* Trusted Partners */}
-        <div className="flex flex-wrap justify-center items-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-          <p className="text-xs font-bold uppercase tracking-widest w-full mb-2">
+        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 relative z-10">
+          <p className="text-xs font-bold uppercase tracking-widest w-full mb-2 text-muted-foreground">
             Trusted by partners
           </p>
-          <div className="h-6 w-20 bg-muted-foreground/30 rounded-sm" />
-          <div className="h-6 w-24 bg-muted-foreground/30 rounded-sm" />
-          <div className="h-6 w-16 bg-muted-foreground/30 rounded-sm" />
-          <div className="h-6 w-28 bg-muted-foreground/30 rounded-sm" />
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+            <div className="px-4 py-2 bg-card rounded-lg border border-primary/10 shadow-sm">
+              <span className="text-sm font-bold text-primary">City Bank</span>
+            </div>
+            <div className="px-4 py-2 bg-card rounded-lg border border-primary/10 shadow-sm">
+              <span className="text-sm font-bold text-primary">EBL</span>
+            </div>
+            <div className="px-4 py-2 bg-card rounded-lg border border-primary/10 shadow-sm">
+              <span className="text-sm font-bold text-primary">BRAC Bank</span>
+            </div>
+            <div className="px-4 py-2 bg-card rounded-lg border border-primary/10 shadow-sm">
+              <span className="text-sm font-bold text-primary">Standard Chartered</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
