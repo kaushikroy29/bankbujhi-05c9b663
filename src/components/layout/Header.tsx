@@ -6,11 +6,12 @@ import { useState } from "react";
 import MobileNav from "./MobileNav";
 
 const navLinks = [
-  { href: "/compare", label: "কার্ড", icon: "credit_card" },
-  { href: "/loans", label: "লোন", icon: "account_balance" },
-  { href: "/savings", label: "সেভিংস", icon: "savings" },
-  { href: "/banks", label: "ব্যাংক", icon: "business" },
-  { href: "/guides", label: "গাইড", icon: "menu_book" },
+  { href: "/", label: "হোম" },
+  { href: "/compare", label: "ক্রেডিট কার্ড" },
+  { href: "/compare", label: "তুলনা" },
+  { href: "/guides", label: "গাইড" },
+  { href: "/loans", label: "ক্যালকুলেটর" },
+  { href: "/banks", label: "ব্যাংক" },
 ];
 
 const Header = () => {
@@ -48,27 +49,19 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Compare CTA - Desktop only */}
-            <Link to="/compare" className="hidden sm:block">
-              <Button className="min-w-[84px] h-10 px-4 text-sm font-bold shadow-sm">
-                তুলনা করুন
+            {/* Login Button */}
+            <Link to="/signup" className="hidden sm:block">
+              <Button variant="ghost" className="h-10 px-4 text-sm font-semibold">
+                লগইন
               </Button>
             </Link>
 
-            {/* Language Toggle - Hidden on very small screens */}
-            <button className="hidden xs:flex items-center gap-1 sm:gap-2 rounded-lg h-9 sm:h-10 px-2 sm:px-3 bg-primary/10 text-primary text-xs sm:text-sm font-bold border border-primary/20">
-              <MaterialIcon name="language" className="text-sm" />
-              <span className="hidden sm:inline">EN/BN</span>
-            </button>
-
-            {/* User Avatar - Desktop only */}
-            <Link 
-              to="/dashboard"
-              className="hidden md:block bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20 hover:border-primary transition-colors"
-              style={{
-                backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuACEbGTRBfMw99Qp0lE-ppdjKnDQQ0POIIfoS1GUE-ivf45IqxEBUrNdktDuAbjq3STzFDAOfb685uz9Jwj5aherHLvFVSjsnJYz72kzdxGxG7fWSLQjWLyQUyVt4gepCO2-uhN3jmawwaaaipFvTBtDnNPTSTjWY5eFt8UyWU5HYHmAvz6WRbVQmcyJJbrnehyZ2c5pyZmS-zd4jHRrM_YRYtlKDFvLEtHA1j1JnggVL9R5k_971hi74Lt_0bDntRAlgs-pxbx9Ms")`
-              }}
-            />
+            {/* Sign Up Button */}
+            <Link to="/signup" className="hidden sm:block">
+              <Button className="h-10 px-4 text-sm font-bold shadow-sm">
+                সাইন আপ
+              </Button>
+            </Link>
 
             {/* Mobile Menu Button */}
             <button 

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 interface NavLink {
   href: string;
   label: string;
-  icon: string;
+  icon?: string;
 }
 
 interface MobileNavProps {
@@ -65,7 +65,7 @@ const MobileNav = ({ isOpen, onClose, links }: MobileNavProps) => {
                       )}
                       onClick={onClose}
                     >
-                      <MaterialIcon name={link.icon} className="text-xl" />
+                      {link.icon && <MaterialIcon name={link.icon} className="text-xl" />}
                       {link.label}
                     </Link>
                   </li>
