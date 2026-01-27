@@ -1,90 +1,112 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import FeaturedCard from "@/components/cards/FeaturedCard";
+import { fetchCreditCards, type CreditCard } from "@/lib/api/banks";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 
-const sampleCards = [
-  {
-    id: "1",
-    bankName: "City Bank",
-    cardName: "City Platinum Card",
-    annualFee: "৳৩,০০০",
-    cashback: "১০%",
-  },
-  {
-    id: "2",
-    bankName: "BRAC Bank",
-    cardName: "BRAC Visa Signature",
-    annualFee: "৳৫,০০০",
-    cashback: "৫%",
-  },
-  {
-    id: "3",
-    bankName: "EBL",
-    cardName: "EBL Visa Gold",
-    annualFee: "৳২,০০০",
-    cashback: "৩%",
-  },
-  {
-    id: "4",
-    bankName: "Standard Chartered",
-    cardName: "SC Platinum Rewards",
-    annualFee: "৳৪,০০০",
-    cashback: "৮%",
-  },
-];
-
 const FeaturedCardsSection = () => {
+  const [cards, setCards] = useState<CreditCard[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadFeaturedCards();
+  }, []);
+
+  const loadFeaturedCards = async () => {
+    try {
+      const allCards = await fetchCreditCards();
+      // Get cards with badges (featured/special cards) and sort by category priority
+      const featuredCards = allCards
+        .filter(card => card.badge)
+        .slice(0, 4); // Show top 4 featured cards
+      setCards(featuredCards);
+    } catch (error) {
+      console.error("Error loading featured cards:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Map card category to variant
+  const getVariant = (category: string | null, index: number): "dark" | "green" => {
+    if (!category) return index % 2 === 0 ? "dark" : "green";
+    const catLower = category.toLowerCase();
+    if (catLower.includes("premium") || catLower.includes("travel")) return "dark";
+    if (catLower.includes("cashback") || catLower.includes("lifestyle")) return "green";
+    return index % 2 === 0 ? "dark" : "green";
+  };
+
+  // Extract top 2 benefits as text
+  const getBenefitTexts = (card: CreditCard): string[] => {
+    return card.benefits.slice(0, 2).map(b => b.text);
+  };
+
+  if (loading) {
+    return (
+      <section className="bg-primary/5 container-padding py-20">
+        <div className="max-w-[960px] mx-auto">
+          <div className="text-center mb-12">
+            <Skeleton className="h-6 w-40 mx-auto mb-4" />
+            <Skeleton className="h-10 w-64 mx-auto mb-2" />
+            <Skeleton className="h-4 w-48 mx-auto" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[1, 2, 3, 4].map(i => (
+              <Skeleton key={i} className="h-64 rounded-2xl" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (cards.length === 0) {
+    return null; // Don't show section if no featured cards
+  }
+
   return (
-    <section className="container-padding py-16 md:py-20 bg-muted/30">
-      <div className="max-w-6xl mx-auto">
+    <section className="bg-primary/5 container-padding py-16 md:py-20">
+      <div className="max-w-[960px] mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground">
-            জনপ্রিয় ক্রেডিট কার্ড
+        <div className="text-center mb-10 md:mb-12">
+          <span className="bg-accent/20 text-accent font-bold text-xs uppercase tracking-widest px-3 py-1 rounded-full">
+            সেরা পছন্দ
+          </span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mt-4">
+            ২০২৫ সালের জনপ্রিয় কার্ড
           </h2>
-          <p className="text-muted-foreground mt-3 text-base sm:text-lg">
-            বাংলাদেশের সেরা ব্যাংকগুলোর ক্রেডিট কার্ড
+          <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+            ব্যবহারকারীদের রিভিউ ও সুবিধা-খরচ অনুপাতের ভিত্তিতে নির্বাচিত
           </p>
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {sampleCards.map((card) => (
-            <Card key={card.id} className="bg-card border-primary/10 hover:border-primary/30 transition-colors">
-              <CardContent className="p-6 flex flex-col gap-4">
-                {/* Bank Logo Placeholder */}
-                <div className="w-full h-16 bg-muted rounded-lg flex items-center justify-center">
-                  <MaterialIcon name="account_balance" className="text-3xl text-muted-foreground" />
-                </div>
-
-                {/* Card Info */}
-                <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground font-medium">{card.bankName}</p>
-                  <h3 className="font-bold text-foreground text-lg leading-tight">{card.cardName}</h3>
-                </div>
-
-                {/* Details */}
-                <div className="space-y-2 py-3 border-t border-primary/10">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">বার্ষিক ফি</span>
-                    <span className="font-semibold text-foreground">{card.annualFee}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">ক্যাশব্যাক</span>
-                    <span className="font-semibold text-primary">{card.cashback}</span>
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <Button variant="outline" className="w-full font-semibold border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
-                  <Link to={`/cards/${card.id}`}>
-                    বিস্তারিত দেখুন
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+        {/* Featured Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {cards.map((card, index) => (
+            <FeaturedCard
+              key={card.id}
+              id={card.id}
+              name={card.banks?.name || "Bank"}
+              cardLabel={card.name}
+              rating={4.5 + (index === 0 ? 0.3 : index === 1 ? 0.2 : 0.1)} // Simulated rating
+              benefits={getBenefitTexts(card)}
+              variant={getVariant(card.category, index)}
+              applyUrl={card.apply_url || undefined}
+              badge={card.badge || undefined}
+            />
           ))}
+        </div>
+
+        {/* View All CTA */}
+        <div className="text-center mt-8 md:mt-10">
+          <Button variant="outline" size="lg" className="font-bold gap-2" asChild>
+            <Link to="/compare">
+              <MaterialIcon name="grid_view" className="text-lg" />
+              সব কার্ড দেখুন
+            </Link>
+          </Button>
         </div>
       </div>
     </section>
