@@ -7,6 +7,7 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import SearchBar from "@/components/ui/SearchBar";
 import ArticleCard from "@/components/cards/ArticleCard";
+import SEOHead from "@/components/seo/SEOHead";
 
 const categories = ["সব", "শুরু করুন", "ক্রেডিট স্কোর", "টিপস", "ইসলামিক ব্যাংকিং"];
 
@@ -86,9 +87,15 @@ const Guides = () => {
   });
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
+    <>
+      <SEOHead 
+        title="গাইড ও টিউটোরিয়াল | BankBujhi"
+        description="আর্থিক বিষয়ে সহজ গাইড। ক্রেডিট কার্ড, লোন, সেভিংস নিয়ে বিশেষজ্ঞ পরামর্শ।"
+        path="/guides"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumb */}
         <PageBreadcrumb 
           items={[{ label: "গাইড" }]} 
@@ -187,6 +194,7 @@ const Guides = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 

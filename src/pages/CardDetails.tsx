@@ -9,6 +9,7 @@ import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { cn } from "@/lib/utils";
 import { fetchCreditCard, type CreditCard } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
+import SEOHead from "@/components/seo/SEOHead";
 
 const CardDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -147,8 +148,14 @@ const CardDetails = () => {
   const lastUpdated = new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+    <>
+      <SEOHead 
+        title={`${card.name} | BankBujhi`}
+        description={`${bankName}-এর ${card.name} ক্রেডিট কার্ডের সুবিধা, ফি ও যোগ্যতা দেখুন।`}
+        path={`/cards/${id}`}
+      />
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
       
       <main className="flex-1 pb-20 md:pb-0">
         {/* Hero Section */}
@@ -481,6 +488,7 @@ const CardDetails = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 

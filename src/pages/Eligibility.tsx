@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import SEOHead from "@/components/seo/SEOHead";
 
 const employmentTypes = [
   { value: "salaried", label: "চাকরিজীবী", labelEn: "Salaried", icon: "badge" },
@@ -149,9 +150,16 @@ const Eligibility = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 max-w-[800px] mx-auto px-4 py-8 md:py-12 w-full">
+    <>
+      <SEOHead 
+        title="ক্রেডিট কার্ড যোগ্যতা যাচাই | BankBujhi"
+        description="আপনার জন্য যোগ্য কার্ড দেখুন। তিনটি সহজ প্রশ্নের উত্তর দিন।"
+        image="https://bankbujhi.lovable.app/og/og-eligibility.jpg"
+        path="/eligibility"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 max-w-[800px] mx-auto px-4 py-8 md:py-12 w-full">
         {/* Breadcrumb */}
         <PageBreadcrumb 
           items={[{ label: "যোগ্যতা যাচাই" }]} 
@@ -418,6 +426,7 @@ const Eligibility = () => {
       </main>
       <Footer />
     </div>
+    </>
   );
 };
 

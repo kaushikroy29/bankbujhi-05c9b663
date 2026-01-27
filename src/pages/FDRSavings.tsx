@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SavingsRateCard from "@/components/cards/SavingsRateCard";
 import { fetchSavingsRates, fetchBanks, type SavingsRate, type Bank } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
+import SEOHead from "@/components/seo/SEOHead";
 
 const FDRSavings = () => {
   const [rates, setRates] = useState<SavingsRate[]>([]);
@@ -74,9 +75,16 @@ const FDRSavings = () => {
   });
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
+    <>
+      <SEOHead 
+        title="এফডিআর ও সেভিংস রেট | BankBujhi"
+        description="সর্বোচ্চ সুদের হার তুলনা করুন। বাংলাদেশের সব ব্যাংকের FDR ও সেভিংস রেট এক জায়গায়।"
+        image="https://bankbujhi.lovable.app/og/og-savings.jpg"
+        path="/savings"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumb */}
         <PageBreadcrumb 
           items={[{ label: "সেভিংস ও এফডিআর" }]} 
@@ -290,6 +298,7 @@ const FDRSavings = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 

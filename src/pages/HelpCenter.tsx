@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import SEOHead from "@/components/seo/SEOHead";
 
 const helpCategories = [
   {
@@ -74,9 +75,15 @@ const faqs = [
 
 const HelpCenter = () => {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
+    <>
+      <SEOHead 
+        title="সাহায্য কেন্দ্র | BankBujhi"
+        description="প্রায়শই জিজ্ঞাসিত প্রশ্ন ও সাপোর্ট। BankBujhi সম্পর্কে সব তথ্য এক জায়গায়।"
+        path="/help"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 mb-6">
           <Link to="/" className="text-muted-foreground text-sm font-medium hover:underline">Home</Link>
@@ -161,6 +168,7 @@ const HelpCenter = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 

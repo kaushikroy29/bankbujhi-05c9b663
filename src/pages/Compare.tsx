@@ -12,6 +12,7 @@ import CompareModal from "@/components/cards/CompareModal";
 import { fetchCreditCards, fetchBanks, type CreditCard, type Bank } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
+import SEOHead from "@/components/seo/SEOHead";
 
 const categories = [
   { value: "all", label: "সব ক্যাটাগরি" },
@@ -242,9 +243,16 @@ const Compare = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-      <Header />
-      <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
+    <>
+      <SEOHead 
+        title="ক্রেডিট কার্ড তুলনা | BankBujhi"
+        description="২০+ ব্যাংকের কার্ড পাশাপাশি তুলনা করুন—ফি, ক্যাশব্যাক ও সুবিধা এক নজরে।"
+        image="https://bankbujhi.lovable.app/og/og-compare.jpg"
+        path="/compare"
+      />
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+        <Header />
+        <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumb */}
         <PageBreadcrumb 
           items={[{ label: "ক্রেডিট কার্ড" }]} 
@@ -507,6 +515,7 @@ const Compare = () => {
       <Footer />
       <BottomNav />
     </div>
+    </>
   );
 };
 
