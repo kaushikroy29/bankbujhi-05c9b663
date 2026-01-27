@@ -6,11 +6,11 @@ import { useState } from "react";
 import MobileNav from "./MobileNav";
 
 const navLinks = [
-  { href: "/compare", label: "Cards", icon: "credit_card" },
-  { href: "/loans", label: "Loans", icon: "account_balance" },
-  { href: "/savings", label: "Savings", icon: "savings" },
-  { href: "/banks", label: "Banks", icon: "business" },
-  { href: "/guides", label: "Guides", icon: "menu_book" },
+  { href: "/compare", label: "কার্ড", icon: "credit_card" },
+  { href: "/loans", label: "লোন", icon: "account_balance" },
+  { href: "/savings", label: "সেভিংস", icon: "savings" },
+  { href: "/banks", label: "ব্যাংক", icon: "business" },
+  { href: "/guides", label: "গাইড", icon: "menu_book" },
 ];
 
 const Header = () => {
@@ -51,7 +51,7 @@ const Header = () => {
             {/* Compare CTA - Desktop only */}
             <Link to="/compare" className="hidden sm:block">
               <Button className="min-w-[84px] h-10 px-4 text-sm font-bold shadow-sm">
-                Compare Now
+                তুলনা করুন
               </Button>
             </Link>
 

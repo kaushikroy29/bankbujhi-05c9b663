@@ -3,17 +3,17 @@ import Logo from "@/components/ui/Logo";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 
 const companyLinks = [
-  { href: "/about", label: "About Us" },
-  { href: "/team", label: "Our Team" },
-  { href: "/careers", label: "Careers" },
-  { href: "/contact", label: "Contact" },
+  { href: "/about", label: "আমাদের সম্পর্কে" },
+  { href: "/team", label: "টিম" },
+  { href: "/careers", label: "ক্যারিয়ার" },
+  { href: "/contact", label: "যোগাযোগ" },
 ];
 
 const resourceLinks = [
-  { href: "/guides", label: "Credit Card Guide" },
-  { href: "/banks", label: "Bank Directory" },
-  { href: "/tips", label: "Financial Tips" },
-  { href: "/help", label: "Help Center" },
+  { href: "/guides", label: "ক্রেডিট কার্ড গাইড" },
+  { href: "/banks", label: "ব্যাংক ডিরেক্টরি" },
+  { href: "/tips", label: "আর্থিক পরামর্শ" },
+  { href: "/help", label: "সাহায্য কেন্দ্র" },
 ];
 
 const socialLinks = [
@@ -24,24 +24,39 @@ const socialLinks = [
 
 const Footer = () => {
   return (
-    <footer className="bg-card border-t border-primary/10 container-padding py-12">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+    <footer className="bg-card border-t border-primary/10 container-padding py-10 md:py-12">
+      {/* Disclaimer Banner */}
+      <div className="bg-muted/50 border border-primary/10 rounded-xl p-4 mb-10">
+        <div className="flex items-start gap-3">
+          <MaterialIcon name="info" className="text-primary text-xl shrink-0 mt-0.5" />
+          <div className="text-sm text-muted-foreground">
+            <p className="font-semibold text-foreground mb-1">গুরুত্বপূর্ণ বিজ্ঞপ্তি</p>
+            <p>
+              BankBujhi কোনো ব্যাংক বা আর্থিক প্রতিষ্ঠান নয়। আমরা শুধুমাত্র তথ্য প্রদান করি। 
+              সকল তথ্য সংশ্লিষ্ট ব্যাংকের অফিসিয়াল ওয়েবসাইট থেকে সংগ্রহ করা হয়। 
+              আবেদনের আগে ব্যাংকের সাথে সরাসরি যোগাযোগ করুন।
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-10">
         {/* Brand Column */}
-        <div className="col-span-1 md:col-span-1">
-          <div className="mb-6">
+        <div className="col-span-1 sm:col-span-2 md:col-span-1">
+          <div className="mb-4">
             <Logo size="sm" />
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Helping Bangladeshi consumers make smarter financial decisions with data-driven comparisons.
+            বাংলাদেশের ভোক্তাদের সঠিক আর্থিক সিদ্ধান্ত নিতে সাহায্য করছি নিরপেক্ষ তথ্য ও তুলনার মাধ্যমে।
           </p>
         </div>
 
         {/* Company Links */}
         <div>
-          <h4 className="font-bold text-foreground mb-6 uppercase text-xs tracking-widest">
-            Company
+          <h4 className="font-bold text-foreground mb-4 uppercase text-xs tracking-widest">
+            কোম্পানি
           </h4>
-          <ul className="space-y-4 text-sm text-muted-foreground">
+          <ul className="space-y-3 text-sm text-muted-foreground">
             {companyLinks.map((link) => (
               <li key={link.label}>
                 <Link 
@@ -57,10 +72,10 @@ const Footer = () => {
 
         {/* Resources Links */}
         <div>
-          <h4 className="font-bold text-foreground mb-6 uppercase text-xs tracking-widest">
-            Resources
+          <h4 className="font-bold text-foreground mb-4 uppercase text-xs tracking-widest">
+            রিসোর্স
           </h4>
-          <ul className="space-y-4 text-sm text-muted-foreground">
+          <ul className="space-y-3 text-sm text-muted-foreground">
             {resourceLinks.map((link) => (
               <li key={link.label}>
                 <Link 
@@ -76,10 +91,10 @@ const Footer = () => {
 
         {/* Connect */}
         <div>
-          <h4 className="font-bold text-foreground mb-6 uppercase text-xs tracking-widest">
-            Connect
+          <h4 className="font-bold text-foreground mb-4 uppercase text-xs tracking-widest">
+            যোগাযোগ
           </h4>
-          <div className="flex gap-4 mb-6">
+          <div className="flex gap-3 mb-4">
             {socialLinks.map((link) => (
               <a
                 key={link.icon}
@@ -97,14 +112,14 @@ const Footer = () => {
       </div>
 
       {/* Copyright Bar */}
-      <div className="pt-8 border-t border-primary/5 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-xs text-muted-foreground">
-          © 2024 BankBujhi. All rights reserved. Registered in Bangladesh.
+      <div className="pt-6 border-t border-primary/5 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p className="text-xs text-muted-foreground text-center md:text-left">
+          © ২০২৫ BankBujhi। সর্বস্বত্ব সংরক্ষিত। বাংলাদেশে নিবন্ধিত।
         </p>
-        <div className="flex gap-6 text-xs text-muted-foreground">
-          <Link to="/privacy" className="hover:text-primary">Privacy Policy</Link>
-          <Link to="/terms" className="hover:text-primary">Terms of Service</Link>
-          <Link to="/help" className="hover:text-primary">Cookies</Link>
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-xs text-muted-foreground">
+          <Link to="/privacy" className="hover:text-primary">গোপনীয়তা নীতি</Link>
+          <Link to="/terms" className="hover:text-primary">ব্যবহারের শর্তাবলী</Link>
+          <Link to="/help" className="hover:text-primary">সাহায্য</Link>
         </div>
       </div>
     </footer>
