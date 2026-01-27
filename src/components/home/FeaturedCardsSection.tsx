@@ -67,18 +67,18 @@ const FeaturedCardsSection = () => {
   }
 
   return (
-    <section className="bg-primary/5 container-padding py-20">
+    <section className="bg-primary/5 container-padding py-16 md:py-20">
       <div className="max-w-[960px] mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-10 md:mb-12">
           <span className="bg-accent/20 text-accent font-bold text-xs uppercase tracking-widest px-3 py-1 rounded-full">
-            Top Recommendations
+            সেরা পছন্দ
           </span>
-          <h2 className="text-3xl md:text-4xl font-black text-foreground mt-4">
-            Featured Cards for 2025
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mt-4">
+            ২০২৫ সালের জনপ্রিয় কার্ড
           </h2>
-          <p className="text-muted-foreground mt-2">
-            Based on user reviews and benefit-to-cost ratio.
+          <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+            ব্যবহারকারীদের রিভিউ ও সুবিধা-খরচ অনুপাতের ভিত্তিতে নির্বাচিত
           </p>
         </div>
 
@@ -100,11 +100,11 @@ const FeaturedCardsSection = () => {
         </div>
 
         {/* View All CTA */}
-        <div className="text-center mt-10">
+        <div className="text-center mt-8 md:mt-10">
           <Button variant="outline" size="lg" className="font-bold gap-2" asChild>
             <Link to="/compare">
               <MaterialIcon name="grid_view" className="text-lg" />
-              View All Cards
+              সব কার্ড দেখুন
             </Link>
           </Button>
         </div>

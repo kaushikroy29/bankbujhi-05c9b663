@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
@@ -6,72 +7,80 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import SearchBar from "@/components/ui/SearchBar";
 import ArticleCard from "@/components/cards/ArticleCard";
 
-const categories = ["All", "Beginners", "Credit Score", "Tips", "Islamic Banking", "Investments"];
+const categories = ["সব", "শুরু করুন", "ক্রেডিট স্কোর", "টিপস", "ইসলামিক ব্যাংকিং"];
 
 const articles = [
   {
     id: 1,
-    title: "How to choose your first credit card",
-    category: "Beginners",
-    date: "Oct 24, 2023",
-    readTime: "5 min",
+    title: "ক্রেডিট কার্ড কী এবং কীভাবে কাজ করে?",
+    titleEn: "What is a credit card?",
+    category: "শুরু করুন",
+    date: "জানুয়ারি ২০২৫",
+    readTime: "৫ মিনিট",
     image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop",
-    excerpt: "A comprehensive guide for beginners to select the right credit card based on their spending habits and lifestyle.",
+    excerpt: "ক্রেডিট কার্ড কী, এটা কীভাবে কাজ করে এবং আপনার জন্য উপযুক্ত কিনা—সহজ বাংলায় জানুন।",
   },
   {
     id: 2,
-    title: "Understanding CIB reports in Bangladesh",
-    category: "Credit Score",
-    date: "Oct 18, 2023",
-    readTime: "8 min",
+    title: "সুদ কীভাবে কাজ করে? (APR বোঝা)",
+    titleEn: "Understanding interest rates",
+    category: "শুরু করুন",
+    date: "জানুয়ারি ২০২৫",
+    readTime: "৭ মিনিট",
     image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=250&fit=crop",
-    excerpt: "Learn how Credit Information Bureau (CIB) reports work and why they matter for your financial health.",
+    excerpt: "ক্রেডিট কার্ডে সুদ কীভাবে গণনা হয়, কবে চার্জ হয় এবং কীভাবে এড়ানো যায়।",
   },
   {
     id: 3,
-    title: "5 Tips for Islamic Banking",
-    category: "Islamic Banking",
-    date: "Oct 12, 2023",
-    readTime: "6 min",
-    image: "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=400&h=250&fit=crop",
-    excerpt: "Discover how Shariah-compliant banking works and the benefits it offers for ethical financial management.",
+    title: "মিনিমাম পেমেন্টের ফাঁদ",
+    titleEn: "The minimum payment trap",
+    category: "টিপস",
+    date: "জানুয়ারি ২০২৫",
+    readTime: "৬ মিনিট",
+    image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=250&fit=crop",
+    excerpt: "শুধু মিনিমাম পেমেন্ট দিলে কী হয়? কেন এটা আপনার জন্য ক্ষতিকর এবং কীভাবে এড়াবেন।",
   },
   {
     id: 4,
-    title: "Maximize your credit card rewards",
-    category: "Tips",
-    date: "Oct 8, 2023",
-    readTime: "7 min",
-    image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=250&fit=crop",
-    excerpt: "Strategic tips to earn more points, cashback, and miles from your everyday purchases.",
+    title: "ইসলামিক ক্রেডিট কার্ড কি হালাল?",
+    titleEn: "Are Islamic credit cards halal?",
+    category: "ইসলামিক ব্যাংকিং",
+    date: "জানুয়ারি ২০২৫",
+    readTime: "৮ মিনিট",
+    image: "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=400&h=250&fit=crop",
+    excerpt: "ইসলামিক ক্রেডিট কার্ড কীভাবে কাজ করে, প্রচলিত কার্ডের সাথে পার্থক্য কী এবং শরীয়াহ সম্মত কিনা।",
   },
   {
     id: 5,
-    title: "FDR vs. Savings Account: Which is better?",
-    category: "Investments",
-    date: "Oct 5, 2023",
-    readTime: "5 min",
-    image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&h=250&fit=crop",
-    excerpt: "Compare fixed deposits with high-interest savings accounts to find the best option for your money.",
+    title: "প্রথম ক্রেডিট কার্ড: কোনটা বাছবেন?",
+    titleEn: "Choosing your first credit card",
+    category: "শুরু করুন",
+    date: "জানুয়ারি ২০২৫",
+    readTime: "৫ মিনিট",
+    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=250&fit=crop",
+    excerpt: "নতুনদের জন্য কোন ধরনের কার্ড ভালো, কী দেখে বাছবেন এবং কোন ভুলগুলো এড়াবেন।",
   },
   {
     id: 6,
-    title: "Building credit history from scratch",
-    category: "Beginners",
-    date: "Oct 1, 2023",
-    readTime: "6 min",
-    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=250&fit=crop",
-    excerpt: "Step-by-step guide for young professionals to establish a solid credit history in Bangladesh.",
+    title: "CIB রিপোর্ট কী? কেন গুরুত্বপূর্ণ?",
+    titleEn: "Understanding CIB reports",
+    category: "ক্রেডিট স্কোর",
+    date: "জানুয়ারি ২০২৫",
+    readTime: "৬ মিনিট",
+    image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&h=250&fit=crop",
+    excerpt: "বাংলাদেশে ক্রেডিট রিপোর্ট কীভাবে কাজ করে এবং লোন বা কার্ড পেতে এর ভূমিকা কী।",
   },
 ];
 
 const Guides = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState("সব");
 
   const filteredArticles = articles.filter((article) => {
-    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === "All" || article.category === activeCategory;
+    const matchesSearch = 
+      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (article.titleEn?.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesCategory = activeCategory === "সব" || article.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -80,38 +89,39 @@ const Guides = () => {
       <Header />
       <main className="flex-1 max-w-[1200px] mx-auto px-4 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Hero */}
-        <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight text-foreground mb-3 sm:mb-4">
-            Knowledge <span className="text-primary">Center</span>
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight tracking-tight text-foreground mb-3">
+            আর্থিক <span className="text-primary">শিক্ষা কেন্দ্র</span>
           </h1>
-          <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-4 sm:mb-6">
-            BankBujhi simplifies finance for you. Expert advice to help you navigate the Bangladeshi financial landscape.
+          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
+            ক্রেডিট কার্ড, লোন, সেভিংস নিয়ে সহজ বাংলায় শিখুন। 
+            জটিল আর্থিক বিষয়গুলো বোঝার জন্য বিশেষজ্ঞদের গাইড।
           </p>
-          <div className="flex items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
-            <span className="flex items-center gap-1 text-primary">
-              <MaterialIcon name="verified" className="text-xs sm:text-sm" /> Expert Verified
+          <div className="flex items-center justify-center gap-4 text-xs sm:text-sm">
+            <span className="flex items-center gap-1.5 text-primary">
+              <MaterialIcon name="verified" className="text-sm" /> বিশেষজ্ঞ যাচাইকৃত
             </span>
-            <span className="flex items-center gap-1 text-muted-foreground">
-              <MaterialIcon name="article" className="text-xs sm:text-sm" /> 50+ Guides
+            <span className="flex items-center gap-1.5 text-muted-foreground">
+              <MaterialIcon name="article" className="text-sm" /> ৫০+ গাইড
             </span>
           </div>
         </div>
 
         {/* Search */}
-        <div className="max-w-xl mx-auto mb-6 sm:mb-8">
+        <div className="max-w-xl mx-auto mb-6">
           <SearchBar
-            placeholder="Search for guides..."
+            placeholder="গাইড খুঁজুন..."
             onSearch={setSearchQuery}
           />
         </div>
 
-        {/* Category Tabs - Scrollable on mobile */}
-        <div className="flex gap-2 mb-6 sm:mb-10 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center">
+        {/* Category Tabs */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${
                 activeCategory === category
                   ? "bg-primary text-primary-foreground"
                   : "bg-card border border-primary/10 text-muted-foreground hover:bg-muted"
@@ -122,37 +132,47 @@ const Guides = () => {
           ))}
         </div>
 
-        {/* Section Title */}
-        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Latest Financial Guides</h2>
+        {/* Featured Guides */}
+        <div className="mb-8">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">জনপ্রিয় গাইড</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {filteredArticles.slice(0, 3).map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
+        </div>
 
-        {/* Articles Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {filteredArticles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
-          ))}
+        {/* All Guides */}
+        <div>
+          <h2 className="text-lg sm:text-xl font-bold mb-4">সব গাইড</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {filteredArticles.map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
         </div>
 
         {filteredArticles.length === 0 && (
-          <div className="text-center py-12 sm:py-16">
-            <MaterialIcon name="article" className="text-5xl sm:text-6xl text-muted-foreground mb-4" />
-            <p className="text-base sm:text-lg text-muted-foreground">No guides found matching your criteria</p>
+          <div className="text-center py-12">
+            <MaterialIcon name="article" className="text-5xl text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">কোনো গাইড পাওয়া যায়নি</p>
           </div>
         )}
 
         {/* Newsletter CTA */}
-        <div className="mt-10 sm:mt-16 bg-primary/5 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 border border-primary/10 text-center">
-          <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Stay Updated</h3>
-          <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 max-w-md mx-auto">
-            Subscribe to our newsletter for the latest financial tips and exclusive offers.
+        <div className="mt-12 bg-primary/5 rounded-xl p-6 sm:p-8 border border-primary/10 text-center">
+          <h3 className="text-lg sm:text-xl font-bold mb-2">নতুন গাইড পেতে চান?</h3>
+          <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+            আমাদের নিউজলেটার সাবস্ক্রাইব করুন এবং নতুন আর্থিক টিপস সরাসরি ইনবক্সে পান।
           </p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-2.5 sm:py-3 rounded-lg border border-primary/20 bg-card focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+              placeholder="আপনার ইমেইল"
+              className="flex-1 px-4 py-2.5 rounded-lg border border-primary/20 bg-card focus:outline-none focus:ring-2 focus:ring-primary text-sm"
             />
-            <button className="bg-primary text-primary-foreground px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-sm">
-              Subscribe
+            <button className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-sm">
+              সাবস্ক্রাইব
             </button>
           </div>
         </div>

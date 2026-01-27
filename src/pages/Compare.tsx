@@ -13,29 +13,29 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 
 const categories = [
-  { value: "all", label: "All Categories" },
-  { value: "Lifestyle & Daily Essentials", label: "Lifestyle & Daily" },
-  { value: "Premium Travel & Rewards", label: "Travel & Rewards" },
-  { value: "Shopping & Utility Payments", label: "Shopping & Utility" },
-  { value: "Cashback & Rewards", label: "Cashback" },
-  { value: "Entry Level", label: "Entry Level" },
-  { value: "Premium Rewards", label: "Premium" },
+  { value: "all", label: "সব ক্যাটাগরি" },
+  { value: "Lifestyle & Daily Essentials", label: "লাইফস্টাইল ও দৈনন্দিন" },
+  { value: "Premium Travel & Rewards", label: "ট্রাভেল ও রিওয়ার্ড" },
+  { value: "Shopping & Utility Payments", label: "শপিং ও বিল" },
+  { value: "Cashback & Rewards", label: "ক্যাশব্যাক" },
+  { value: "Entry Level", label: "এন্ট্রি লেভেল" },
+  { value: "Premium Rewards", label: "প্রিমিয়াম" },
 ];
 
 const annualFeeOptions = [
-  { value: "all", label: "Any Fee" },
-  { value: "free", label: "Free (৳0)" },
-  { value: "0-2000", label: "Up to ৳2,000" },
-  { value: "2000-5000", label: "৳2,000 - ৳5,000" },
-  { value: "5000+", label: "৳5,000+" },
+  { value: "all", label: "যেকোনো ফি" },
+  { value: "free", label: "বিনামূল্যে (৳০)" },
+  { value: "0-2000", label: "৳২,০০০ পর্যন্ত" },
+  { value: "2000-5000", label: "৳২,০০০ - ৳৫,০০০" },
+  { value: "5000+", label: "৳৫,০০০+" },
 ];
 
 const incomeOptions = [
-  { value: "all", label: "Any Income" },
-  { value: "25000", label: "৳25,000+" },
-  { value: "50000", label: "৳50,000+" },
-  { value: "75000", label: "৳75,000+" },
-  { value: "100000", label: "৳1,00,000+" },
+  { value: "all", label: "যেকোনো আয়" },
+  { value: "25000", label: "৳২৫,০০০+" },
+  { value: "50000", label: "৳৫০,০০০+" },
+  { value: "75000", label: "৳৭৫,০০০+" },
+  { value: "100000", label: "৳১,০০,০০০+" },
 ];
 
 // Helper to parse fee string to number
@@ -246,18 +246,24 @@ const Compare = () => {
       <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 mb-4 sm:mb-6">
-          <Link to="/" className="text-muted-foreground text-xs sm:text-sm font-medium hover:underline">Home</Link>
+          <Link to="/" className="text-muted-foreground text-xs sm:text-sm font-medium hover:underline">হোম</Link>
           <MaterialIcon name="chevron_right" className="text-sm text-muted-foreground" />
-          <span className="text-primary text-xs sm:text-sm font-medium">Credit Cards</span>
+          <span className="text-primary text-xs sm:text-sm font-medium">ক্রেডিট কার্ড</span>
         </div>
 
         {/* Page Heading */}
         <div className="mb-6 sm:mb-8 flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight">Credit Card Search</h1>
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight">ক্রেডিট কার্ড তুলনা করুন</h1>
             <p className="text-sm sm:text-base text-muted-foreground font-medium">
-              Finding the best matches for your wallet in Bangladesh
+              ২–৪টি কার্ড নির্বাচন করে পাশাপাশি তুলনা করুন—ফি, ক্যাশব্যাক ও সুবিধা এক নজরে।
             </p>
+          </div>
+          
+          {/* Trust Note */}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg w-fit">
+            <MaterialIcon name="verified" className="text-primary text-sm" />
+            তথ্যসূত্র: সংশ্লিষ্ট ব্যাংকের অফিসিয়াল ওয়েবসাইট
           </div>
           
           {/* Mobile: Filter toggle and sort */}
@@ -267,7 +273,7 @@ const Compare = () => {
               className="lg:hidden flex items-center gap-2 bg-card px-4 py-2.5 rounded-xl border border-primary/10 text-sm font-medium"
             >
               <MaterialIcon name="tune" className="text-primary" />
-              Filters
+              ফিল্টার
               {activeFiltersCount > 0 && (
                 <span className="bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {activeFiltersCount}
@@ -275,17 +281,17 @@ const Compare = () => {
               )}
             </button>
             <div className="flex items-center gap-2 bg-card p-2 rounded-xl border border-primary/10 flex-1 sm:flex-none">
-              <span className="text-xs sm:text-sm font-medium pl-2 hidden sm:inline">Sort by:</span>
+              <span className="text-xs sm:text-sm font-medium pl-2 hidden sm:inline">সাজান:</span>
               <select 
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="bg-transparent border-none text-xs sm:text-sm font-bold focus:ring-0 text-primary cursor-pointer flex-1 sm:flex-none"
               >
-                <option value="popularity">Popularity</option>
-                <option value="fee-low">Annual Fee (Low-High)</option>
-                <option value="fee-high">Annual Fee (High-Low)</option>
-                <option value="income-low">Lowest Income Requirement</option>
-                <option value="rewards">Highest Rewards</option>
+                <option value="popularity">জনপ্রিয়তা</option>
+                <option value="fee-low">ফি (কম-বেশি)</option>
+                <option value="fee-high">ফি (বেশি-কম)</option>
+                <option value="income-low">কম আয়ে যোগ্য</option>
+                <option value="rewards">সেরা রিওয়ার্ড</option>
               </select>
             </div>
           </div>
@@ -297,26 +303,26 @@ const Compare = () => {
             <div className="lg:sticky lg:top-24 flex flex-col gap-4 sm:gap-6">
               <div className="bg-card rounded-2xl border border-primary/10 p-4 sm:p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-base sm:text-lg font-bold">Filters</h3>
+                  <h3 className="text-base sm:text-lg font-bold">ফিল্টার</h3>
                   <button 
                     onClick={clearFilters}
                     className="text-primary text-xs font-bold uppercase tracking-wider hover:underline"
                   >
-                    Clear All
+                    সব মুছুন
                   </button>
                 </div>
 
                 {/* Bank Filter */}
                 <div className="mb-4">
                   <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
-                    Bank
+                    ব্যাংক
                   </label>
                   <select
                     value={selectedBank}
                     onChange={(e) => setSelectedBank(e.target.value)}
                     className="w-full bg-background border border-primary/10 rounded-lg px-3 py-2 text-sm"
                   >
-                    <option value="all">All Banks</option>
+                    <option value="all">সব ব্যাংক</option>
                     {banks.map((bank) => (
                       <option key={bank.id} value={bank.id}>{bank.name}</option>
                     ))}
@@ -326,7 +332,7 @@ const Compare = () => {
                 {/* Category Filter */}
                 <div className="mb-4">
                   <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
-                    Category
+                    ক্যাটাগরি
                   </label>
                   <div className="flex flex-col gap-2">
                     {categories.map((cat) => (
@@ -350,7 +356,7 @@ const Compare = () => {
                 {/* Annual Fee Filter */}
                 <div className="mb-4">
                   <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
-                    Annual Fee
+                    বার্ষিক ফি
                   </label>
                   <div className="flex flex-col gap-1.5">
                     {annualFeeOptions.map((option) => (
@@ -375,10 +381,10 @@ const Compare = () => {
                 {/* Minimum Income Filter */}
                 <div>
                   <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
-                    Your Monthly Income
+                    আপনার মাসিক আয়
                   </label>
                   <p className="text-xs text-muted-foreground mb-2">
-                    Show cards you're eligible for
+                    আপনার জন্য যোগ্য কার্ড দেখুন
                   </p>
                   <div className="flex flex-col gap-1.5">
                     {incomeOptions.map((option) => (
@@ -404,18 +410,18 @@ const Compare = () => {
               {/* Help Card */}
               <div className="hidden sm:block bg-primary rounded-2xl p-5 sm:p-6 text-primary-foreground overflow-hidden relative">
                 <div className="relative z-10">
-                  <h4 className="font-bold text-base sm:text-lg mb-2">Need Help Choosing?</h4>
+                  <h4 className="font-bold text-base sm:text-lg mb-2">কার্ড বাছতে সাহায্য দরকার?</h4>
                   <p className="text-primary-foreground/80 text-xs sm:text-sm mb-4">
-                    Our financial experts are here to help you pick the right card.
+                    আমাদের সহজ কুইজে আপনার জন্য সঠিক কার্ড খুঁজুন।
                   </p>
-                  <Link to="/eligibility">
+                  <Link to="/quiz">
                     <Button variant="secondary" className="font-bold text-sm">
-                      Check Eligibility
+                      কুইজ শুরু করুন
                     </Button>
                   </Link>
                 </div>
                 <MaterialIcon 
-                  name="help" 
+                  name="quiz" 
                   className="absolute -bottom-4 -right-4 text-primary-foreground/10 text-8xl sm:text-9xl" 
                 />
               </div>
@@ -426,7 +432,7 @@ const Compare = () => {
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <p className="text-xs sm:text-sm font-bold text-muted-foreground">
-                SHOWING <span className="text-foreground">{filteredCards.length} CARDS</span> MATCHING YOUR CRITERIA
+                <span className="text-foreground">{filteredCards.length}টি কার্ড</span> পাওয়া গেছে
               </p>
             </div>
 
@@ -449,9 +455,9 @@ const Compare = () => {
               ) : filteredCards.length === 0 ? (
                 <div className="text-center py-12">
                   <MaterialIcon name="credit_card_off" className="text-5xl text-muted-foreground mb-4" />
-                  <p className="text-lg font-bold mb-2">No cards found</p>
-                  <p className="text-muted-foreground mb-4">Try adjusting your filters</p>
-                  <Button onClick={clearFilters}>Clear Filters</Button>
+                  <p className="text-lg font-bold mb-2">কোনো কার্ড পাওয়া যায়নি</p>
+                  <p className="text-muted-foreground mb-4">ফিল্টার পরিবর্তন করে আবার চেষ্টা করুন</p>
+                  <Button onClick={clearFilters}>ফিল্টার মুছুন</Button>
                 </div>
               ) : (
                 filteredCards.map((card) => (
@@ -473,17 +479,17 @@ const Compare = () => {
             <div className="max-w-[1280px] mx-auto flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <MaterialIcon name="compare_arrows" className="text-primary text-xl" />
-                <span className="font-bold">{compareList.length} cards selected</span>
+                <span className="font-bold">{compareList.length}টি কার্ড নির্বাচিত</span>
               </div>
               <div className="flex items-center gap-3">
                 <Button variant="outline" onClick={() => setCompareList([])}>
-                  Clear
+                  মুছুন
                 </Button>
                 <Button 
                   disabled={compareList.length < 2}
                   onClick={() => setShowCompareModal(true)}
                 >
-                  Compare Now
+                  তুলনা করুন
                 </Button>
               </div>
             </div>
