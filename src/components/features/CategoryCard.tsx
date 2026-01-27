@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +9,7 @@ interface CategoryCardProps {
   description: string;
   variant?: "primary" | "accent";
   className?: string;
+  categoryFilter?: string;
 }
 
 const CategoryCard = ({ 
@@ -16,14 +18,21 @@ const CategoryCard = ({
   title, 
   description, 
   variant = "primary",
-  className 
+  className,
+  categoryFilter
 }: CategoryCardProps) => {
   const isAccent = variant === "accent";
   
+  // Generate the link URL with category filter
+  const linkUrl = categoryFilter 
+    ? `/compare?category=${encodeURIComponent(categoryFilter)}`
+    : "/compare";
+  
   return (
-    <div
+    <Link
+      to={linkUrl}
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-primary/10 bg-card p-8 transition-all hover:shadow-xl hover:-translate-y-1",
+        "group relative overflow-hidden rounded-xl border border-primary/10 bg-card p-8 transition-all hover:shadow-xl hover:-translate-y-1 block",
         className
       )}
     >
@@ -60,11 +69,11 @@ const CategoryCard = ({
         </div>
 
         {/* Action Link */}
-        <button className="mt-2 text-primary font-bold text-sm flex items-center gap-2">
-          Explore <MaterialIcon name="open_in_new" className="text-xs" />
-        </button>
+        <span className="mt-2 text-primary font-bold text-sm flex items-center gap-2">
+          Explore Now <MaterialIcon name="arrow_forward" className="text-xs group-hover:translate-x-1 transition-transform" />
+        </span>
       </div>
-    </div>
+    </Link>
   );
 };
 

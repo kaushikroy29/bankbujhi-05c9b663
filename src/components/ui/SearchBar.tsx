@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MaterialIcon from "./MaterialIcon";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
@@ -17,9 +18,17 @@ const SearchBar = ({
   variant = "default"
 }: SearchBarProps) => {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
   const handleSearch = () => {
-    onSearch?.(query);
+    if (onSearch) {
+      onSearch(query);
+    } else if (query.trim()) {
+      // Navigate to compare page with search query
+      navigate(`/compare?search=${encodeURIComponent(query.trim())}`);
+    } else {
+      navigate('/compare');
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

@@ -9,6 +9,7 @@ const categories = [
     title: "Cashback Cards",
     description: "Get money back on your daily grocery, dining, and utility spends.",
     variant: "primary" as const,
+    categoryFilter: "Cashback & Rewards",
   },
   {
     icon: "airplane_ticket",
@@ -16,6 +17,7 @@ const categories = [
     title: "Travel & Lounge",
     description: "Unlock global lounge access and earn miles for your next adventure.",
     variant: "accent" as const,
+    categoryFilter: "Premium Travel & Rewards",
   },
   {
     icon: "shopping_bag",
@@ -23,6 +25,7 @@ const categories = [
     title: "Shopping Deals",
     description: "Exclusive discounts on top retail brands and e-commerce platforms.",
     variant: "primary" as const,
+    categoryFilter: "Shopping & Utility Payments",
   },
 ];
 
@@ -55,6 +58,7 @@ const CategoriesSection = () => {
             title={category.title}
             description={category.description}
             variant={category.variant}
+            categoryFilter={category.categoryFilter}
           />
         ))}
       </div>

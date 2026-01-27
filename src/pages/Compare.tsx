@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
@@ -21,6 +22,7 @@ const categories = [
 ];
 
 const Compare = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [cards, setCards] = useState<CreditCard[]>([]);
   const [banks, setBanks] = useState<Bank[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,11 +30,23 @@ const Compare = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   
+  // Get initial values from URL params
+  const urlCategory = searchParams.get("category") || "all";
+  const urlSearch = searchParams.get("search") || "";
+  const urlBank = searchParams.get("bank") || "all";
+
   // Filters
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedBank, setSelectedBank] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(urlCategory);
+  const [selectedBank, setSelectedBank] = useState(urlBank);
+  const [searchQuery, setSearchQuery] = useState(urlSearch);
   const [sortBy, setSortBy] = useState("popularity");
+
+  // Sync state with URL params on mount and URL change
+  useEffect(() => {
+    setSelectedCategory(urlCategory);
+    setSearchQuery(urlSearch);
+    setSelectedBank(urlBank);
+  }, [urlCategory, urlSearch, urlBank]);
 
   useEffect(() => {
     loadData();
@@ -70,6 +84,7 @@ const Compare = () => {
     setSelectedCategory("all");
     setSelectedBank("all");
     setSearchQuery("");
+    setSearchParams({});
   };
 
   const activeFiltersCount = 
