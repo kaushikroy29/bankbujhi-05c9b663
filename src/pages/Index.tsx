@@ -7,6 +7,7 @@ import HowItWorksSection from "@/components/home/HowItWorksSection";
 import CategoriesSection from "@/components/home/CategoriesSection";
 import FeaturedCardsSection from "@/components/home/FeaturedCardsSection";
 import QuizCTASection from "@/components/home/QuizCTASection";
+import WhatsNewSection from "@/components/home/WhatsNewSection";
 import SEOHead from "@/components/seo/SEOHead";
 
 const Index = () => {
@@ -22,6 +23,7 @@ const Index = () => {
         <Header />
         <main className="flex-1 pb-16 md:pb-0">
           <HeroSection />
+          <WhatsNewSection />
           <StatsSection />
           <HowItWorksSection />
           <CategoriesSection />
