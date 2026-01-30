@@ -2,22 +2,28 @@ import StatCard from "@/components/features/StatCard";
 
 const stats = [
   {
-    icon: "credit_card",
-    label: "কার্ড তালিকাভুক্ত",
-    value: "১০০+",
+    icon: "account_balance",
+    label: "ব্যাংক ও আর্থিক প্রতিষ্ঠান",
+    value: "৫০+",
     isPrimary: false,
   },
   {
-    icon: "account_balance",
-    label: "পার্টনার ব্যাংক",
-    value: "২০+",
+    icon: "credit_card",
+    label: "ক্রেডিট কার্ড অপশন",
+    value: "২০০+",
     isPrimary: false,
   },
   {
     icon: "volunteer_activism",
-    label: "সার্ভিস ফি",
-    value: "সম্পূর্ণ বিনামূল্যে",
+    label: "বিনামূল্যে সেবা",
+    value: "১০০%",
     isPrimary: true,
+  },
+  {
+    icon: "sentiment_satisfied",
+    label: "সন্তুষ্ট ব্যবহারকারী",
+    value: "৫,০০০+",
+    isPrimary: false,
   },
 ];
 

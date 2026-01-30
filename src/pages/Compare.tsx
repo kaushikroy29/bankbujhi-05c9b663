@@ -16,12 +16,15 @@ import SEOHead from "@/components/seo/SEOHead";
 
 const categories = [
   { value: "all", label: "সব ক্যাটাগরি" },
-  { value: "Lifestyle & Daily Essentials", label: "লাইফস্টাইল ও দৈনন্দিন" },
-  { value: "Premium Travel & Rewards", label: "ট্রাভেল ও রিওয়ার্ড" },
-  { value: "Shopping & Utility Payments", label: "শপিং ও বিল" },
-  { value: "Cashback & Rewards", label: "ক্যাশব্যাক" },
+  { value: "Premium Rewards", label: "প্রিমিয়াম রিওয়ার্ডস" },
+  { value: "Travel", label: "ট্রাভেল" },
+  { value: "Cashback", label: "ক্যাশব্যাক" },
+  { value: "Islamic Banking", label: "ইসলামিক ব্যাংকিং" },
+  { value: "Shopping & Lifestyle", label: "শপিং ও লাইফস্টাইল" },
+  { value: "Student Cards", label: "স্টুডেন্ট কার্ড" },
   { value: "Entry Level", label: "এন্ট্রি লেভেল" },
-  { value: "Premium Rewards", label: "প্রিমিয়াম" },
+  { value: "Business Cards", label: "বিজনেস কার্ড" },
+  { value: "Prepaid Cards", label: "প্রিপেইড কার্ড" },
 ];
 
 const annualFeeOptions = [
@@ -62,7 +65,7 @@ const Compare = () => {
   const [compareList, setCompareList] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
-  
+
   // Get initial values from URL params
   const urlCategory = searchParams.get("category") || "all";
   const urlSearch = searchParams.get("search") || "";
@@ -126,7 +129,7 @@ const Compare = () => {
       if (annualFeeFilter !== "all") {
         const feeAmount = parseFeeAmount(card.annual_fee);
         const isWaived = card.annual_fee_waived;
-        
+
         if (annualFeeFilter === "free") {
           if (feeAmount > 0 && !isWaived) return false;
         } else if (annualFeeFilter === "0-2000") {
@@ -178,8 +181,8 @@ const Compare = () => {
   }, [cards, annualFeeFilter, incomeFilter, sortBy]);
 
   const toggleCompare = (id: string) => {
-    setCompareList(prev => 
-      prev.includes(id) 
+    setCompareList(prev =>
+      prev.includes(id)
         ? prev.filter(item => item !== id)
         : prev.length < 3 ? [...prev, id] : prev
     );
@@ -194,8 +197,8 @@ const Compare = () => {
     setSearchParams({});
   };
 
-  const activeFiltersCount = 
-    (selectedCategory !== "all" ? 1 : 0) + 
+  const activeFiltersCount =
+    (selectedCategory !== "all" ? 1 : 0) +
     (selectedBank !== "all" ? 1 : 0) +
     (annualFeeFilter !== "all" ? 1 : 0) +
     (incomeFilter !== "all" ? 1 : 0);
@@ -244,7 +247,7 @@ const Compare = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOHead
         title="ক্রেডিট কার্ড তুলনা | BankBujhi"
         description="২০+ ব্যাংকের কার্ড পাশাপাশি তুলনা করুন—ফি, ক্যাশব্যাক ও সুবিধা এক নজরে।"
         image="https://bankbujhi.lovable.app/og/og-compare.jpg"
@@ -253,268 +256,265 @@ const Compare = () => {
       <div className="relative flex min-h-screen flex-col overflow-x-hidden">
         <Header />
         <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
-        {/* Breadcrumb */}
-        <PageBreadcrumb 
-          items={[{ label: "ক্রেডিট কার্ড" }]} 
-          className="mb-4 sm:mb-6"
-        />
+          {/* Breadcrumb */}
+          <PageBreadcrumb
+            items={[{ label: "ক্রেডিট কার্ড" }]}
+            className="mb-4 sm:mb-6"
+          />
 
-        {/* Page Heading */}
-        <div className="mb-6 sm:mb-8 flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight">ক্রেডিট কার্ড তুলনা করুন</h1>
-            <p className="text-sm sm:text-base text-muted-foreground font-medium">
-              ২–৪টি কার্ড নির্বাচন করে পাশাপাশি তুলনা করুন—ফি, ক্যাশব্যাক ও সুবিধা এক নজরে।
-            </p>
-          </div>
-          
-          {/* Trust Note */}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg w-fit">
-            <MaterialIcon name="verified" className="text-primary text-sm" />
-            তথ্যসূত্র: সংশ্লিষ্ট ব্যাংকের অফিসিয়াল ওয়েবসাইট
-          </div>
-          
-          {/* Mobile: Filter toggle and sort */}
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden flex items-center gap-2 bg-card px-4 py-2.5 rounded-xl border border-primary/10 text-sm font-medium"
-            >
-              <MaterialIcon name="tune" className="text-primary" />
-              ফিল্টার
-              {activeFiltersCount > 0 && (
-                <span className="bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {activeFiltersCount}
-                </span>
-              )}
-            </button>
-            <div className="flex items-center gap-2 bg-card p-2 rounded-xl border border-primary/10 flex-1 sm:flex-none">
-              <span className="text-xs sm:text-sm font-medium pl-2 hidden sm:inline">সাজান:</span>
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-transparent border-none text-xs sm:text-sm font-bold focus:ring-0 text-primary cursor-pointer flex-1 sm:flex-none"
-              >
-                <option value="popularity">জনপ্রিয়তা</option>
-                <option value="fee-low">ফি (কম-বেশি)</option>
-                <option value="fee-high">ফি (বেশি-কম)</option>
-                <option value="income-low">কম আয়ে যোগ্য</option>
-                <option value="rewards">সেরা রিওয়ার্ড</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-          {/* Sidebar Navigation & Filters */}
-          <aside className={`w-full lg:w-72 shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="lg:sticky lg:top-24 flex flex-col gap-4 sm:gap-6">
-              <div className="bg-card rounded-2xl border border-primary/10 p-4 sm:p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-base sm:text-lg font-bold">ফিল্টার</h3>
-                  <button 
-                    onClick={clearFilters}
-                    className="text-primary text-xs font-bold uppercase tracking-wider hover:underline"
-                  >
-                    সব মুছুন
-                  </button>
-                </div>
-
-                {/* Bank Filter */}
-                <div className="mb-4">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
-                    ব্যাংক
-                  </label>
-                  <select
-                    value={selectedBank}
-                    onChange={(e) => setSelectedBank(e.target.value)}
-                    className="w-full bg-background border border-primary/10 rounded-lg px-3 py-2 text-sm"
-                  >
-                    <option value="all">সব ব্যাংক</option>
-                    {banks.map((bank) => (
-                      <option key={bank.id} value={bank.id}>{bank.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Category Filter */}
-                <div className="mb-4">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
-                    ক্যাটাগরি
-                  </label>
-                  <div className="flex flex-col gap-2">
-                    {categories.map((cat) => (
-                      <button
-                        key={cat.value}
-                        onClick={() => setSelectedCategory(cat.value)}
-                        className={`flex items-center justify-between p-2.5 sm:p-3 rounded-xl cursor-pointer transition-colors text-left ${
-                          selectedCategory === cat.value
-                            ? "bg-primary/5 border border-primary/20"
-                            : "hover:bg-background border border-transparent"
-                        }`}
-                      >
-                        <span className="text-xs sm:text-sm font-semibold">{cat.label}</span>
-                        {selectedCategory === cat.value && (
-                          <MaterialIcon name="check" className="text-primary" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                {/* Annual Fee Filter */}
-                <div className="mb-4">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
-                    বার্ষিক ফি
-                  </label>
-                  <div className="flex flex-col gap-1.5">
-                    {annualFeeOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => setAnnualFeeFilter(option.value)}
-                        className={`flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition-colors text-left ${
-                          annualFeeFilter === option.value
-                            ? "bg-primary/5 border border-primary/20"
-                            : "hover:bg-background border border-transparent"
-                        }`}
-                      >
-                        <span className="text-xs sm:text-sm font-medium">{option.label}</span>
-                        {annualFeeFilter === option.value && (
-                          <MaterialIcon name="check" className="text-primary text-sm" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Minimum Income Filter */}
-                <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
-                    আপনার মাসিক আয়
-                  </label>
-                  <p className="text-xs text-muted-foreground mb-2">
-                    আপনার জন্য যোগ্য কার্ড দেখুন
-                  </p>
-                  <div className="flex flex-col gap-1.5">
-                    {incomeOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => setIncomeFilter(option.value)}
-                        className={`flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition-colors text-left ${
-                          incomeFilter === option.value
-                            ? "bg-primary/5 border border-primary/20"
-                            : "hover:bg-background border border-transparent"
-                        }`}
-                      >
-                        <span className="text-xs sm:text-sm font-medium">{option.label}</span>
-                        {incomeFilter === option.value && (
-                          <MaterialIcon name="check" className="text-primary text-sm" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Help Card */}
-              <div className="hidden sm:block bg-primary rounded-2xl p-5 sm:p-6 text-primary-foreground overflow-hidden relative">
-                <div className="relative z-10">
-                  <h4 className="font-bold text-base sm:text-lg mb-2">কার্ড বাছতে সাহায্য দরকার?</h4>
-                  <p className="text-primary-foreground/80 text-xs sm:text-sm mb-4">
-                    আমাদের সহজ কুইজে আপনার জন্য সঠিক কার্ড খুঁজুন।
-                  </p>
-                  <Link to="/quiz">
-                    <Button variant="secondary" className="font-bold text-sm">
-                      কুইজ শুরু করুন
-                    </Button>
-                  </Link>
-                </div>
-                <MaterialIcon 
-                  name="quiz" 
-                  className="absolute -bottom-4 -right-4 text-primary-foreground/10 text-8xl sm:text-9xl" 
-                />
-              </div>
-            </div>
-          </aside>
-
-          {/* Results Content Area */}
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <p className="text-xs sm:text-sm font-bold text-muted-foreground">
-                <span className="text-foreground">{filteredCards.length}টি কার্ড</span> পাওয়া গেছে
+          {/* Page Heading */}
+          <div className="mb-6 sm:mb-8 flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight">ক্রেডিট কার্ড তুলনা করুন</h1>
+              <p className="text-sm sm:text-base text-muted-foreground font-medium">
+                ২–৪টি কার্ড নির্বাচন করে পাশাপাশি তুলনা করুন—ফি, ক্যাশব্যাক ও সুবিধা এক নজরে।
               </p>
             </div>
 
-            {/* Card List */}
-            <div className="flex flex-col gap-3 sm:gap-4">
-              {loading ? (
-                // Loading skeletons
-                Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="bg-card border border-primary/10 rounded-2xl p-5">
-                    <div className="flex gap-6">
-                      <Skeleton className="w-52 h-32 rounded-xl" />
-                      <div className="flex-1 space-y-3">
-                        <Skeleton className="h-4 w-24" />
-                        <Skeleton className="h-6 w-48" />
-                        <Skeleton className="h-4 w-32" />
-                      </div>
+            {/* Trust Note */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg w-fit">
+              <MaterialIcon name="verified" className="text-primary text-sm" />
+              তথ্যসূত্র: সংশ্লিষ্ট ব্যাংকের অফিসিয়াল ওয়েবসাইট
+            </div>
+
+            {/* Mobile: Filter toggle and sort */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="lg:hidden flex items-center gap-2 bg-card px-4 py-2.5 rounded-xl border border-primary/10 text-sm font-medium"
+              >
+                <MaterialIcon name="tune" className="text-primary" />
+                ফিল্টার
+                {activeFiltersCount > 0 && (
+                  <span className="bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {activeFiltersCount}
+                  </span>
+                )}
+              </button>
+              <div className="flex items-center gap-2 bg-card p-2 rounded-xl border border-primary/10 flex-1 sm:flex-none">
+                <span className="text-xs sm:text-sm font-medium pl-2 hidden sm:inline">সাজান:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="bg-transparent border-none text-xs sm:text-sm font-bold focus:ring-0 text-primary cursor-pointer flex-1 sm:flex-none"
+                >
+                  <option value="popularity">জনপ্রিয়তা</option>
+                  <option value="fee-low">ফি (কম-বেশি)</option>
+                  <option value="fee-high">ফি (বেশি-কম)</option>
+                  <option value="income-low">কম আয়ে যোগ্য</option>
+                  <option value="rewards">সেরা রিওয়ার্ড</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+            {/* Sidebar Navigation & Filters */}
+            <aside className={`w-full lg:w-72 shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+              <div className="lg:sticky lg:top-24 flex flex-col gap-4 sm:gap-6">
+                <div className="bg-card rounded-2xl border border-primary/10 p-4 sm:p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-base sm:text-lg font-bold">ফিল্টার</h3>
+                    <button
+                      onClick={clearFilters}
+                      className="text-primary text-xs font-bold uppercase tracking-wider hover:underline"
+                    >
+                      সব মুছুন
+                    </button>
+                  </div>
+
+                  {/* Bank Filter */}
+                  <div className="mb-4">
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
+                      ব্যাংক
+                    </label>
+                    <select
+                      value={selectedBank}
+                      onChange={(e) => setSelectedBank(e.target.value)}
+                      className="w-full bg-background border border-primary/10 rounded-lg px-3 py-2 text-sm"
+                    >
+                      <option value="all">সব ব্যাংক</option>
+                      {banks.map((bank) => (
+                        <option key={bank.id} value={bank.id}>{bank.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Category Filter */}
+                  <div className="mb-4">
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
+                      ক্যাটাগরি
+                    </label>
+                    <div className="flex flex-col gap-2">
+                      {categories.map((cat) => (
+                        <button
+                          key={cat.value}
+                          onClick={() => setSelectedCategory(cat.value)}
+                          className={`flex items-center justify-between p-2.5 sm:p-3 rounded-xl cursor-pointer transition-colors text-left ${selectedCategory === cat.value
+                              ? "bg-primary/5 border border-primary/20"
+                              : "hover:bg-background border border-transparent"
+                            }`}
+                        >
+                          <span className="text-xs sm:text-sm font-semibold">{cat.label}</span>
+                          {selectedCategory === cat.value && (
+                            <MaterialIcon name="check" className="text-primary" />
+                          )}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                ))
-              ) : filteredCards.length === 0 ? (
-                <div className="text-center py-12">
-                  <MaterialIcon name="credit_card_off" className="text-5xl text-muted-foreground mb-4" />
-                  <p className="text-lg font-bold mb-2">কোনো কার্ড পাওয়া যায়নি</p>
-                  <p className="text-muted-foreground mb-4">ফিল্টার পরিবর্তন করে আবার চেষ্টা করুন</p>
-                  <Button onClick={clearFilters}>ফিল্টার মুছুন</Button>
+                  {/* Annual Fee Filter */}
+                  <div className="mb-4">
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
+                      বার্ষিক ফি
+                    </label>
+                    <div className="flex flex-col gap-1.5">
+                      {annualFeeOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => setAnnualFeeFilter(option.value)}
+                          className={`flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition-colors text-left ${annualFeeFilter === option.value
+                              ? "bg-primary/5 border border-primary/20"
+                              : "hover:bg-background border border-transparent"
+                            }`}
+                        >
+                          <span className="text-xs sm:text-sm font-medium">{option.label}</span>
+                          {annualFeeFilter === option.value && (
+                            <MaterialIcon name="check" className="text-primary text-sm" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Minimum Income Filter */}
+                  <div>
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
+                      আপনার মাসিক আয়
+                    </label>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      আপনার জন্য যোগ্য কার্ড দেখুন
+                    </p>
+                    <div className="flex flex-col gap-1.5">
+                      {incomeOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => setIncomeFilter(option.value)}
+                          className={`flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition-colors text-left ${incomeFilter === option.value
+                              ? "bg-primary/5 border border-primary/20"
+                              : "hover:bg-background border border-transparent"
+                            }`}
+                        >
+                          <span className="text-xs sm:text-sm font-medium">{option.label}</span>
+                          {incomeFilter === option.value && (
+                            <MaterialIcon name="check" className="text-primary text-sm" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                filteredCards.map((card) => (
-                  <CreditCardListing
-                    key={card.id}
-                    card={transformCard(card)}
-                    isComparing={compareList.includes(card.id)}
-                    onToggleCompare={() => toggleCompare(card.id)}
+
+                {/* Help Card */}
+                <div className="hidden sm:block bg-primary rounded-2xl p-5 sm:p-6 text-primary-foreground overflow-hidden relative">
+                  <div className="relative z-10">
+                    <h4 className="font-bold text-base sm:text-lg mb-2">কার্ড বাছতে সাহায্য দরকার?</h4>
+                    <p className="text-primary-foreground/80 text-xs sm:text-sm mb-4">
+                      আমাদের সহজ কুইজে আপনার জন্য সঠিক কার্ড খুঁজুন।
+                    </p>
+                    <Link to="/quiz">
+                      <Button variant="secondary" className="font-bold text-sm">
+                        কুইজ শুরু করুন
+                      </Button>
+                    </Link>
+                  </div>
+                  <MaterialIcon
+                    name="quiz"
+                    className="absolute -bottom-4 -right-4 text-primary-foreground/10 text-8xl sm:text-9xl"
                   />
-                ))
-              )}
+                </div>
+              </div>
+            </aside>
+
+            {/* Results Content Area */}
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <p className="text-xs sm:text-sm font-bold text-muted-foreground">
+                  <span className="text-foreground">{filteredCards.length}টি কার্ড</span> পাওয়া গেছে
+                </p>
+              </div>
+
+              {/* Card List */}
+              <div className="flex flex-col gap-3 sm:gap-4">
+                {loading ? (
+                  // Loading skeletons
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="bg-card border border-primary/10 rounded-2xl p-5">
+                      <div className="flex gap-6">
+                        <Skeleton className="w-52 h-32 rounded-xl" />
+                        <div className="flex-1 space-y-3">
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-6 w-48" />
+                          <Skeleton className="h-4 w-32" />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : filteredCards.length === 0 ? (
+                  <div className="text-center py-12">
+                    <MaterialIcon name="credit_card_off" className="text-5xl text-muted-foreground mb-4" />
+                    <p className="text-lg font-bold mb-2">কোনো কার্ড পাওয়া যায়নি</p>
+                    <p className="text-muted-foreground mb-4">ফিল্টার পরিবর্তন করে আবার চেষ্টা করুন</p>
+                    <Button onClick={clearFilters}>ফিল্টার মুছুন</Button>
+                  </div>
+                ) : (
+                  filteredCards.map((card) => (
+                    <CreditCardListing
+                      key={card.id}
+                      card={transformCard(card)}
+                      isComparing={compareList.includes(card.id)}
+                      onToggleCompare={() => toggleCompare(card.id)}
+                    />
+                  ))
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Compare Bar - Fixed at bottom */}
-        {compareList.length > 0 && (
-          <div className="fixed bottom-16 md:bottom-4 left-4 right-4 bg-card border border-primary/20 rounded-xl p-4 shadow-lg z-40">
-            <div className="max-w-[1280px] mx-auto flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <MaterialIcon name="compare_arrows" className="text-primary text-xl" />
-                <span className="font-bold">{compareList.length}টি কার্ড নির্বাচিত</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Button variant="outline" onClick={() => setCompareList([])}>
-                  মুছুন
-                </Button>
-                <Button 
-                  disabled={compareList.length < 2}
-                  onClick={() => setShowCompareModal(true)}
-                >
-                  তুলনা করুন
-                </Button>
+          {/* Compare Bar - Fixed at bottom */}
+          {compareList.length > 0 && (
+            <div className="fixed bottom-16 md:bottom-4 left-4 right-4 bg-card border border-primary/20 rounded-xl p-4 shadow-lg z-40">
+              <div className="max-w-[1280px] mx-auto flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <MaterialIcon name="compare_arrows" className="text-primary text-xl" />
+                  <span className="font-bold">{compareList.length}টি কার্ড নির্বাচিত</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button variant="outline" onClick={() => setCompareList([])}>
+                    মুছুন
+                  </Button>
+                  <Button
+                    disabled={compareList.length < 2}
+                    onClick={() => setShowCompareModal(true)}
+                  >
+                    তুলনা করুন
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Compare Modal */}
-        <CompareModal
-          open={showCompareModal}
-          onOpenChange={setShowCompareModal}
-          cards={cardsForCompare}
-          onRemoveCard={handleRemoveFromCompare}
-        />
-      </main>
-      <Footer />
-      <BottomNav />
-    </div>
+          {/* Compare Modal */}
+          <CompareModal
+            open={showCompareModal}
+            onOpenChange={setShowCompareModal}
+            cards={cardsForCompare}
+            onRemoveCard={handleRemoveFromCompare}
+          />
+        </main>
+        <Footer />
+        <BottomNav />
+      </div>
     </>
   );
 };

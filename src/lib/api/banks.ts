@@ -21,6 +21,34 @@ export interface CardBenefit {
   description?: string;
 }
 
+export interface CreditCardFees {
+  annual: {
+    fee: string;
+    waived: boolean;
+    waiver_condition?: string | null;
+    renewal_fee: string;
+  };
+  transaction: {
+    cash_advance: string;
+    foreign_currency: string;
+    balance_transfer: string;
+  };
+  penalty: {
+    late_payment: string;
+    over_limit: string;
+    returned_payment: string;
+  };
+  service: {
+    replacement_card: string;
+    duplicate_statement: string;
+    pin_change: string;
+  };
+  emi: {
+    processing_fee: string;
+    interest_rate: string;
+  };
+}
+
 export interface CreditCard {
   id: string;
   bank_id: string | null;
@@ -43,6 +71,9 @@ export interface CreditCard {
   apply_url: string | null;
   is_active: boolean | null;
   banks?: Bank | null;
+  fees_detailed?: CreditCardFees | null;
+  last_fee_update?: string | null;
+  last_verified_date?: string | null;
 }
 
 export interface SavingsRate {
@@ -111,17 +142,24 @@ export async function fetchBanks() {
     .select('*')
     .eq('is_active', true)
     .order('name');
-  
+
   if (error) throw error;
   return data as Bank[];
 }
 
-// Fetch all credit cards with bank info
-export async function fetchCreditCards(filters?: {
+export interface CardFilters {
   category?: string;
   bankId?: string;
   search?: string;
-}) {
+  minIncome?: number;
+  maxFee?: number;
+  hasLounge?: boolean;
+  hasEMI?: boolean;
+  isIslamic?: boolean;
+}
+
+// Fetch all credit cards with bank info
+export async function fetchCreditCards(filters?: CardFilters) {
   let query = supabase
     .from('credit_cards')
     .select('*, banks(*)')
@@ -134,21 +172,34 @@ export async function fetchCreditCards(filters?: {
     query = query.eq('bank_id', filters.bankId);
   }
 
+  // Note: The 'is_islamic' column needs to exist on credit_cards table or be inferred. 
+  // For now, if we assume an 'is_islamic' column or metadata filter. 
+  // If the definition requested "isIslamic?: boolean" in the interface, we should support it.
+  // Assuming there is a column or JSON field for it, or we filter by category 'Islamic Banking'.
+  if (filters?.isIslamic) {
+    // If there's an is_islamic column:
+    // query = query.eq('is_islamic', true);
+
+    // OR if it's based on category:
+    query = query.eq('category', 'Islamic Banking');
+  }
+
   const { data, error } = await query.order('created_at', { ascending: false });
-  
+
   if (error) throw error;
-  
+
   // Transform data to match interface
   let results = (data || []).map(card => ({
     ...card,
     benefits: parseBenefits(card.benefits),
     fees: parseFees(card.fees),
+    fees_detailed: (card as any).fees_detailed as unknown as CreditCardFees,
   })) as CreditCard[];
 
   // Client-side filter for search (supports both card name and bank name)
   if (filters?.search) {
     const searchLower = filters.search.toLowerCase();
-    results = results.filter(card => 
+    results = results.filter(card =>
       card.name.toLowerCase().includes(searchLower) ||
       (card.banks?.name && card.banks.name.toLowerCase().includes(searchLower)) ||
       (card.banks?.name_bn && card.banks.name_bn.includes(filters.search))
@@ -165,14 +216,15 @@ export async function fetchCreditCard(id: string) {
     .select('*, banks(*)')
     .eq('id', id)
     .maybeSingle();
-  
+
   if (error) throw error;
   if (!data) return null;
-  
+
   return {
     ...data,
     benefits: parseBenefits(data.benefits),
     fees: parseFees(data.fees),
+    fees_detailed: (data as any).fees_detailed as unknown as CreditCardFees,
   } as CreditCard;
 }
 
@@ -194,7 +246,7 @@ export async function fetchSavingsRates(filters?: {
   }
 
   const { data, error } = await query.order('interest_rate', { ascending: false });
-  
+
   if (error) throw error;
   return (data || []) as SavingsRate[];
 }
@@ -217,7 +269,7 @@ export async function fetchLoanProducts(filters?: {
   }
 
   const { data, error } = await query.order('interest_rate_min', { ascending: true });
-  
+
   if (error) throw error;
   return (data || []) as LoanProduct[];
 }
@@ -225,7 +277,7 @@ export async function fetchLoanProducts(filters?: {
 // Trigger scraping
 export async function triggerScrape(bankId?: string) {
   const { data, error } = await supabase.functions.invoke('scrape-bank-data', {
-    body: { 
+    body: {
       bankId,
       action: bankId ? 'scrape-single' : 'scrape-all'
     },

@@ -2,19 +2,19 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 
 const steps = [
   {
+    icon: "search",
+    title: "১. খুঁজুন",
+    description: "আপনার চাহিদা অনুযায়ী কার্ড বা লোন খুঁজুন",
+  },
+  {
     icon: "compare_arrows",
-    title: "কার্ড তুলনা করুন",
-    description: "আপনার প্রয়োজন অনুযায়ী বিভিন্ন ব্যাংকের কার্ড পাশাপাশি তুলনা করুন",
+    title: "২. তুলনা করুন",
+    description: "সুদের হার, ফি ও সুবিধা তুলনা করুন",
   },
   {
     icon: "verified_user",
-    title: "যোগ্যতা যাচাই করুন",
-    description: "আয়, বয়স ও চাকরির ধরন দিয়ে জানুন কোন কার্ডে আপনি যোগ্য",
-  },
-  {
-    icon: "thumb_up",
-    title: "সঠিক সিদ্ধান্ত নিন",
-    description: "সব তথ্য জেনে আত্মবিশ্বাসের সাথে আবেদন করুন",
+    title: "৩. আবেদন করুন",
+    description: "সরাসরি ব্যাংকে আবেদন করুন",
   },
 ];
 
@@ -40,7 +40,7 @@ const HowItWorksSection = () => {
               <div className="absolute -top-3 -left-3 md:left-auto md:-top-4 size-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-black shadow-md">
                 {index + 1}
               </div>
-              
+
               {/* Icon */}
               <div className="size-16 md:size-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4">
                 <MaterialIcon name={step.icon} className="text-3xl md:text-4xl" />

@@ -12,9 +12,9 @@ import SEOHead from "@/components/seo/SEOHead";
 const Index = () => {
   return (
     <>
-      <SEOHead 
-        title="বাংলাদেশের ব্যাংক ও ক্রেডিট কার্ড তুলনা | BankBujhi"
-        description="সব ফি, ক্যাশব্যাক ও সুবিধা এক জায়গায়—সহজ Bangla ভাষায়। বিনামূল্যে, নিরপেক্ষ তথ্য।"
+      <SEOHead
+        title="ব্যাংক ও ক্রেডিট কার্ড তুলনা করুন - BankBujhi বাংলাদেশ"
+        description="বাংলাদেশের সব ব্যাংকের ক্রেডিট কার্ড, লোন, এফডিআর ও সঞ্চয় স্কিম এক জায়গায় তুলনা করুন। বিনামূল্যে, নিরপেক্ষ তথ্য।"
         image="https://bankbujhi.lovable.app/og/og-home.jpg"
         path="/"
       />
