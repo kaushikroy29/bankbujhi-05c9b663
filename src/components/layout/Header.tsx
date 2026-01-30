@@ -4,6 +4,7 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import MobileNav from "./MobileNav";
+import LanguageToggle from "./LanguageToggle";
 
 const navLinks = [
   { href: "/compare", label: "কার্ড", icon: "credit_card" },
@@ -34,11 +35,10 @@ const Header = () => {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                    isActive 
-                      ? "bg-primary/10 text-primary" 
-                      : "hover:bg-muted hover:text-primary"
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${isActive
+                    ? "bg-primary/10 text-primary"
+                    : "hover:bg-muted hover:text-primary"
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -56,13 +56,11 @@ const Header = () => {
             </Link>
 
             {/* Language Toggle - Hidden on very small screens */}
-            <button className="hidden xs:flex items-center gap-1 sm:gap-2 rounded-lg h-9 sm:h-10 px-2 sm:px-3 bg-primary/10 text-primary text-xs sm:text-sm font-bold border border-primary/20">
-              <MaterialIcon name="language" className="text-sm" />
-              <span className="hidden sm:inline">EN/BN</span>
-            </button>
+            {/* Language Toggle */}
+            <LanguageToggle />
 
             {/* User Avatar - Desktop only */}
-            <Link 
+            <Link
               to="/dashboard"
               className="hidden md:block bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20 hover:border-primary transition-colors"
               style={{
@@ -71,7 +69,7 @@ const Header = () => {
             />
 
             {/* Mobile Menu Button */}
-            <button 
+            <button
               className="lg:hidden flex items-center justify-center size-10 rounded-lg bg-primary/10 text-primary"
               onClick={() => setIsMobileNavOpen(true)}
             >
@@ -82,8 +80,8 @@ const Header = () => {
       </header>
 
       {/* Mobile Navigation */}
-      <MobileNav 
-        isOpen={isMobileNavOpen} 
+      <MobileNav
+        isOpen={isMobileNavOpen}
         onClose={() => setIsMobileNavOpen(false)}
         links={navLinks}
       />
