@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { fetchCreditCard, type CreditCard } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeeBreakdown } from "@/components/cards/FeeBreakdown";
+import HiddenFeesAlert from "@/components/cards/HiddenFeesAlert";
 import SEOHead from "@/components/seo/SEOHead";
 
 const CardDetails = () => {
@@ -437,6 +438,9 @@ const CardDetails = () => {
                   </ul>
                 </div>
               </div>
+
+              {/* Hidden Fees Alert */}
+              <HiddenFeesAlert card={card} />
             </section>
 
             {/* Source & Disclaimer */}

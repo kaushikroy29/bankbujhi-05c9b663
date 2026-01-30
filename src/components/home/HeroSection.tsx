@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import SearchBar from "@/components/ui/SearchBar";
+import SmartSearch from "@/components/ui/SmartSearch";
 import { Button } from "@/components/ui/button";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 
@@ -39,10 +39,10 @@ const HeroSection = () => {
           </Button>
         </div>
 
-        {/* Search Bar */}
-        <SearchBar 
-          variant="hero" 
-          placeholder="ব্যাংক বা ক্যাটাগরি খুঁজুন..." 
+        {/* Smart Search Bar */}
+        <SmartSearch
+          variant="hero"
+          placeholder="ব্যাংক বা ক্যাটাগরি খুঁজুন... (যেমন: কম ফি, লাউঞ্জ)"
           className="relative z-10"
         />
 
