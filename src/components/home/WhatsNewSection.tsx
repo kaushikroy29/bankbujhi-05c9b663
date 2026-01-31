@@ -9,7 +9,7 @@ interface ProductChangeLog {
     product_type: string;
     product_id: string;
     change_type: string; // 'fee_update', 'rate_change', etc.
-    field_name: string;
+    field_changed: string;
     old_value: string | null;
     new_value: string;
     change_reason: string | null;
@@ -41,6 +41,7 @@ const WhatsNewSection = () => {
         return () => {
             supabase.removeChannel(channel);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleNewChange = async (newLog: ProductChangeLog) => {
@@ -153,7 +154,7 @@ const WhatsNewSection = () => {
 
                                 <div className="text-sm text-foreground/80 bg-muted/30 p-3 rounded-lg border border-dashed border-primary/10">
                                     <p className="font-medium text-xs text-muted-foreground mb-1">
-                                        {formatFieldName(changeLog.field_name)}
+                                        {formatFieldName(changeLog.field_changed)}
                                     </p>
                                     <div className="flex items-center gap-2 flex-wrap">
                                         {changeLog.old_value && (

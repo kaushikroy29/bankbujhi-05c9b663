@@ -11,6 +11,7 @@ import {
     type Notification
 } from '@/lib/api/watchlist';
 import { supabase } from '@/integrations/supabase/client';
+import { realtimeService } from '@/services/realtimeService';
 
 const NotificationBell = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -30,7 +31,19 @@ const NotificationBell = () => {
         };
 
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+
+        // Setup Realtime Subscription
+        const channel = realtimeService.subscribeToNotifications((newNotif) => {
+            setNotifications(prev => [newNotif, ...prev]);
+            setUnreadCount(prev => prev + 1);
+        });
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            // We don't unsubscribe here if we want the service to handle singleton persistence, 
+            // but for safety in this component's lifecycle:
+            // supabase.removeChannel(channel); 
+        };
     }, []);
 
     const checkAuthAndLoadNotifications = async () => {

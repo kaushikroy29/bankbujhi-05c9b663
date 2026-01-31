@@ -12,6 +12,7 @@ const FeaturedCardsSection = () => {
 
   useEffect(() => {
     loadFeaturedCards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadFeaturedCards = async () => {

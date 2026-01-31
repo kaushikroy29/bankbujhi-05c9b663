@@ -166,4 +166,14 @@ FOR EACH ROW EXECUTE FUNCTION notify_users_on_change();
 
 -- 8. REALTIME PUBLICATION
 -- Enable realtime for specific tables
-ALTER PUBLICATION supabase_realtime ADD TABLE product_change_log, notifications;
+DO $$
+BEGIN
+    BEGIN
+        ALTER PUBLICATION supabase_realtime ADD TABLE product_change_log, notifications;
+    EXCEPTION
+        WHEN duplicate_object THEN
+            NULL; -- Ignore error if table is already in publication
+        WHEN OTHERS THEN
+            RAISE; -- Re-raise other errors
+    END;
+END $$;

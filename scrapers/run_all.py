@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+import requests
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -10,40 +11,48 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scrapers.banks.brac_bank import BracBankScraper
 from scrapers.banks.dbbl import DbblScraper
 from scrapers.banks.ebl import EblScraper
-from supabase import create_client
 
-# Load env variables from .env file for local testing
-load_dotenv()
+# Load env variables from .env file in parent directory
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(parent_dir, '.env'))
 
 SCRAPERS = [
     BracBankScraper(),
     DbblScraper(),
     EblScraper(),
-    # Add other scrapers here as they are implemented
 ]
 
 def main():
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_SERVICE_KEY")
+    url = os.environ.get("SUPABASE_URL") or os.environ.get("VITE_SUPABASE_URL")
+    key = os.environ.get("SUPABASE_SERVICE_KEY") or os.environ.get("VITE_SUPABASE_ANON_KEY")
     
     if not url or not key:
-        print("Error: SUPABASE_URL or SUPABASE_SERVICE_KEY not set")
+        print("Error: Supabase credentials not found")
         return
 
-    supabase = create_client(url, key)
+    headers = {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
     
     # Create run record
     run_type = os.environ.get("RUN_TYPE", "manual")
-    run_res = supabase.table("scraper_runs").insert({
+    run_data = {
         "run_type": run_type,
         "github_run_id": os.environ.get("GITHUB_RUN_ID", "local")
-    }).execute()
+    }
     
-    if not run_res.data:
-        print("Error creating run record")
+    run_endpoint = f"{url}/rest/v1/scraper_runs"
+    resp = requests.post(run_endpoint, json=run_data, headers=headers)
+    
+    if resp.status_code >= 400:
+        print(f"Error creating run record: {resp.text}")
         return
         
-    run_id = run_res.data[0]["id"]
+    run_body = resp.json()
+    run_id = run_body[0]["id"] if run_body else None
     print(f"Started scraper run: {run_id}")
     
     errors = []
@@ -55,15 +64,15 @@ def main():
         print(f"Scraping {slug}...")
         try:
             # Get bank ID
-            bank_res = supabase.table("banks").select("id").ilike("name", f"%{slug.replace('-', ' ')}%").execute()
+            # Use 'ilike' operator for case-insensitive search
+            bank_url = f"{url}/rest/v1/banks?name=ilike.*{slug.replace('-', ' ')}*&select=id"
+            bank_resp = requests.get(bank_url, headers=headers)
+            bank_data = bank_resp.json()
             
-            # Fallback if slug search fails, try broad search or skip
             bank_id = None
-            if bank_res.data:
-                bank_id = bank_res.data[0]["id"]
+            if bank_data:
+                bank_id = bank_data[0]["id"]
             else:
-                # Try to find a bank that might match or insert a placeholder?
-                # For now, let's log error if bank not found in DB
                 print(f"Bank {slug} not found in database. Skipping.")
                 errors.append({"bank": slug, "error": "Bank not found in DB"})
                 continue
@@ -92,13 +101,16 @@ def main():
     if errors:
         status = "partial" if items_found > 0 else "failed"
         
-    supabase.table("scraper_runs").update({
-        "completed_at": datetime.utcnow().isoformat(),
-        "status": status,
-        "items_found": items_found,
-        "banks_scraped": banks_scraped,
-        "errors": errors
-    }).eq("id", run_id).execute()
+    if run_id:
+        update_url = f"{url}/rest/v1/scraper_runs?id=eq.{run_id}"
+        update_data = {
+            "completed_at": datetime.utcnow().isoformat(),
+            "status": status,
+            "items_found": items_found,
+            "banks_scraped": banks_scraped,
+            "errors": errors
+        }
+        requests.patch(update_url, json=update_data, headers=headers)
     
     print(f"Run completed with status: {status}. Total items: {items_found}")
 

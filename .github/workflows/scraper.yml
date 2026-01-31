@@ -1,0 +1,48 @@
+name: Bank Data Scraper
+
+on:
+  schedule:
+    # 2 AM Bangladesh Time = 8 PM UTC (previous day)
+    # Cron uses UTC. 2:00 AM BST (UTC+6) is 20:00 UTC (previous day)
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+    inputs:
+      run_type:
+        description: 'Run type (manual/test)'
+        required: false
+        default: 'manual'
+        type: choice
+        options:
+        - manual
+        - test
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        cd scrapers
+        pip install -r requirements.txt
+        playwright install chromium
+    
+    - name: Run scrapers
+      env:
+        # Supabase Credentials (Required)
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        
+        # Optional: Auth token for triggered runs
+        RUN_TYPE: ${{ inputs.run_type || 'scheduled' }}
+        GITHUB_RUN_ID: ${{ github.run_id }}
+      run: |
+        cd scrapers
+        python run_all.py

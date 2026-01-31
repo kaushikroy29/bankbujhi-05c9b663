@@ -7,11 +7,13 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { getUserWatchlist } from "@/lib/api/watchlist";
-import { fetchCreditCard, fetchCreditCards, type CreditCard } from "@/lib/api/banks"; // Import types
+import { fetchCreditCard, fetchCreditCards, fetchBanks, type CreditCard } from "@/lib/api/banks"; // Import types
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Database } from "@/integrations/supabase/types";
+import { realtimeService } from "@/services/realtimeService";
+import ActivityFeed from "@/components/dashboard/ActivityFeed";
 
 type Notification = Database['public']['Tables']['notifications']['Row'];
 
@@ -38,36 +40,24 @@ const Dashboard = () => {
   // Data State
   const [watchlist, setWatchlist] = useState<WatchlistCard[]>([]);
   const [recommendations, setRecommendations] = useState<CreditCard[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string>("");
+  const [stats, setStats] = useState({ banks: 0, cards: 0, loans: 0 });
 
   useEffect(() => {
     loadDashboardData();
 
-    // Realtime Subscription
-    const channel = supabase
-      .channel('public:notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-        },
-        (payload) => {
-          const newNotif = payload.new as Notification;
-          toast.info(newNotif.title_bn, {
-            description: newNotif.message_bn,
-          });
-          setNotifications((prev) => [newNotif, ...prev]);
-        }
-      )
-      .subscribe();
+    // Setup Toasts for Realtime Notifications across the app (when on Dashboard)
+    const channel = realtimeService.subscribeToNotifications((newNotif) => {
+      toast.info(newNotif.title_bn, {
+        description: newNotif.message_bn,
+      });
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      // realtimeService handles channel management
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDashboardData = async () => {
@@ -80,7 +70,7 @@ const Dashboard = () => {
       const { data: watchlistData } = await getUserWatchlist();
       if (watchlistData) {
         const watchlistDetails = await Promise.all(
-          watchlistData.slice(0, 5).map(async (item) => {
+          watchlistData.slice(0, 5).map(async (item): Promise<WatchlistCard | null> => {
             if (item.product_type === 'credit_card') {
               const card = await fetchCreditCard(item.product_id);
               if (card) {
@@ -105,16 +95,15 @@ const Dashboard = () => {
       const featured = allCards.filter(c => c.badge).slice(0, 2);
       setRecommendations(featured.length > 0 ? featured : allCards.slice(0, 2));
 
-      // 3. Load Notifications (Recent 5)
-      const { data: notifData } = await supabase
-        .from('notifications')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(3);
+      // 3. Load Stats
+      const banks = await fetchBanks();
+      setStats({
+        banks: banks.length,
+        cards: allCards.length,
+        loans: 0 // Will add loan fetch later if needed
+      });
 
-      if (notifData) {
-        setNotifications(notifData);
-      }
+      // 4. Load Notifications (Handled by ActivityFeed component initially)
 
     } catch (error) {
       console.error("Error loading dashboard:", error);
@@ -228,6 +217,22 @@ const Dashboard = () => {
 
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6 sm:space-y-8">
+            {/* Dashboard Stats */}
+            <section className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
+                <div className="text-2xl sm:text-3xl font-bold text-primary">{loading ? "..." : stats.banks}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">পার্টনার ব্যাংক</div>
+              </div>
+              <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
+                <div className="text-2xl sm:text-3xl font-bold text-primary">{loading ? "..." : stats.cards}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">ক্রেডিট কার্ড</div>
+              </div>
+              <div className="hidden md:block bg-primary/5 rounded-xl p-4 border border-primary/10">
+                <div className="text-2xl sm:text-3xl font-bold text-primary">{profileCompletion}%</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">প্রোফাইল সম্পন্ন</div>
+              </div>
+            </section>
+
             {/* Quick Actions - Mobile first */}
             <section className="lg:order-last">
               <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">দ্রুত অ্যাকশন</h2>
@@ -251,28 +256,13 @@ const Dashboard = () => {
             </section>
 
             {/* Notifications Section */}
-            {notifications.length > 0 && (
-              <section className="mb-6">
-                <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
-                  <MaterialIcon name="notifications" className="text-primary" />
-                  আপডেট এবং নোটিফিকেশন
-                </h2>
-                <div className="space-y-3">
-                  {notifications.map((notif) => (
-                    <div key={notif.id} className="bg-card/50 p-4 rounded-xl border border-primary/10 flex items-start gap-3">
-                      <div className={`mt-1 w-2 h-2 rounded-full shrink-0 ${notif.severity === 'critical' ? 'bg-destructive' : 'bg-primary'}`} />
-                      <div>
-                        <h4 className="font-bold text-sm text-foreground">{notif.title_bn}</h4>
-                        <p className="text-sm text-muted-foreground">{notif.message_bn}</p>
-                        <span className="text-[10px] text-muted-foreground/60 mt-1 block">
-                          {new Date(notif.created_at || '').toLocaleDateString('bn-BD')}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+            <section className="mb-6">
+              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+                <MaterialIcon name="notifications" className="text-primary" />
+                আপডেট এবং নোটিফিকেশন
+              </h2>
+              <ActivityFeed />
+            </section>
 
             {/* Saved Cards */}
             <section>
