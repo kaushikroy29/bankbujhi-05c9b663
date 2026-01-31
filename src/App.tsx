@@ -38,6 +38,7 @@ import FDRCalculator from "./components/calculators/FDRCalculator";
 import Calculators from "./pages/Calculators";
 import GuideDetail from "./pages/GuideDetail";
 import QuickUpdate from "./pages/admin/QuickUpdate";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = () => (
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/admin/updates" element={<PendingUpdates />} />
             <Route path="/admin/quick-update" element={<QuickUpdate />} />
+            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

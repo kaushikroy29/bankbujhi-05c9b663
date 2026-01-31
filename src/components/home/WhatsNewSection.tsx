@@ -3,28 +3,56 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import { format } from "date-fns";
-import { CreditCard } from "@/lib/api/banks";
 
-interface ProductChange {
+interface ProductChangeLog {
     id: string;
-    change_type: string;
-    field_changed: string;
-    change_description: string;
-    effective_date: string;
-    created_at: string;
-    new_value: string;
-    old_value: string;
-    source_url?: string;
+    product_type: string;
     product_id: string;
+    change_type: string; // 'fee_update', 'rate_change', etc.
+    field_name: string;
+    old_value: string | null;
+    new_value: string;
+    change_reason: string | null;
+    source_url: string | null;
+    effective_date: string;
+    verified: boolean;
+    created_at: string;
 }
 
 const WhatsNewSection = () => {
-    const [changes, setChanges] = useState<(ProductChange & { product_name?: string })[]>([]);
+    const [changes, setChanges] = useState<(ProductChangeLog & { product_name?: string })[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         loadChanges();
+
+        // Real-time subscription
+        const channel = supabase
+            .channel('public:product_change_log')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'product_change_log', filter: 'verified=eq.true' },
+                (payload) => {
+                    handleNewChange(payload.new as ProductChangeLog);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
+
+    const handleNewChange = async (newLog: ProductChangeLog) => {
+        // Fetch product name for the new log
+        const { data } = await supabase
+            .from(newLog.product_type === 'credit_card' ? 'credit_cards' : 'loan_products')
+            .select('name')
+            .eq('id', newLog.product_id)
+            .single();
+
+        setChanges(prev => [{ ...newLog, product_name: data?.name || 'Unknown Product' }, ...prev].slice(0, 6));
+    };
 
     const loadChanges = async () => {
         try {
@@ -34,7 +62,7 @@ const WhatsNewSection = () => {
                 .select('*')
                 .eq('verified', true)
                 .order('effective_date', { ascending: false })
-                .limit(5);
+                .limit(6);
 
             if (error) throw error;
             if (!logs || logs.length === 0) {
@@ -42,20 +70,25 @@ const WhatsNewSection = () => {
                 return;
             }
 
-            // 2. Fetch product names manually (since no foreign key relation in Supabase types setup yet)
-            // Ideally we would use a join, but for now separate fetch is safer with dynamic types
-            const productIds = logs.map(l => l.product_id);
+            // 2. Fetch product names manually
+            const cardIds = logs.filter(l => l.product_type === 'credit_card').map(l => l.product_id);
+            const loanIds = logs.filter(l => l.product_type === 'loan').map(l => l.product_id);
 
-            const { data: products } = await supabase
-                .from('credit_cards')
-                .select('id, name')
-                .in('id', productIds);
+            const namesMap = new Map<string, string>();
 
-            const productMap = new Map(products?.map(p => [p.id, p.name]));
+            if (cardIds.length > 0) {
+                const { data: cards } = await supabase.from('credit_cards').select('id, name').in('id', cardIds);
+                cards?.forEach(c => namesMap.set(c.id, c.name));
+            }
+
+            if (loanIds.length > 0) {
+                const { data: loans } = await supabase.from('loan_products').select('id, name').in('id', loanIds);
+                loans?.forEach(l => namesMap.set(l.id, l.name));
+            }
 
             const enrichedLogs = logs.map(log => ({
                 ...log,
-                product_name: productMap.get(log.product_id) || "Unknown Product"
+                product_name: namesMap.get(log.product_id) || "Unknown Product"
             }));
 
             setChanges(enrichedLogs);
@@ -67,43 +100,80 @@ const WhatsNewSection = () => {
         }
     };
 
-    if (loading || changes.length === 0) return null;
+    if (loading) return null; // Or a skeleton
+    if (changes.length === 0) return null;
+
+    const getBadge = (type: string) => {
+        switch (type) {
+            case 'fee_update': return { label: 'ফি আপডেট', variant: 'destructive' as const, icon: 'payments' };
+            case 'rate_change': return { label: 'ইটারেস্ট রেট', variant: 'default' as const, icon: 'trending_up' };
+            case 'benefit_change': return { label: 'নতুন সুবিধা', variant: 'secondary' as const, icon: 'diamond' };
+            default: return { label: 'আপডেট', variant: 'outline' as const, icon: 'info' };
+        }
+    };
+
+    const formatFieldName = (field: string) => {
+        if (field === 'annual_fee') return 'বার্ষিক ফি';
+        if (field === 'interest_rate') return 'ইটারেস্ট রেট';
+        return field;
+    };
 
     return (
-        <section className="bg-muted/50 border-y py-8">
+        <section className="bg-muted/30 border-y py-10">
             <div className="container mx-auto px-4">
-                <div className="flex items-center gap-2 mb-6">
-                    <MaterialIcon name="notifications_active" className="text-primary text-2xl" />
-                    <h2 className="text-xl font-bold">What's New: Rates & Fees Updates</h2>
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="bg-primary/10 p-2 rounded-full text-primary">
+                        <MaterialIcon name="campaign" className="text-2xl" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl sm:text-2xl font-bold">সর্বশেষ আপডেট</h2>
+                        <p className="text-sm text-muted-foreground">ব্যাংক ফি এবং রেটের সবশেষ পরিবর্তন</p>
+                    </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {changes.map(change => (
-                        <div key={change.id} className="bg-card border rounded-lg p-4 shadow-sm flex flex-col gap-2">
-                            <div className="flex justify-between items-start">
-                                <Badge variant={change.change_type === 'fee_update' ? "destructive" : "default"}>
-                                    {change.change_type === 'fee_update' ? 'Fee Updated' : 'New Update'}
-                                </Badge>
-                                <span className="text-xs text-muted-foreground">{format(new Date(change.effective_date), "dd MMM yyyy")}</span>
-                            </div>
+                    {changes.map(changeLog => {
+                        const badge = getBadge(changeLog.change_type);
 
-                            <h3 className="font-bold text-sm">{change.product_name}</h3>
+                        return (
+                            <div key={changeLog.id} className="bg-card border rounded-xl p-5 shadow-sm hover:shadow-md transition-all group">
+                                <div className="flex justify-between items-start mb-3">
+                                    <Badge variant={badge.variant} className="gap-1">
+                                        <MaterialIcon name={badge.icon} className="text-[10px]" />
+                                        {badge.label}
+                                    </Badge>
+                                    <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                                        {format(new Date(changeLog.effective_date), "dd MMM, yyyy")}
+                                    </span>
+                                </div>
 
-                            <p className="text-sm text-foreground/80 leading-relaxed">
-                                {change.change_description || (
-                                    <>
-                                        {change.field_changed} changed from <span className="line-through text-muted-foreground">{change.old_value}</span> to <span className="font-bold text-primary">{change.new_value}</span>
-                                    </>
+                                <h3 className="font-bold text-base mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                                    {changeLog.product_name}
+                                </h3>
+
+                                <div className="text-sm text-foreground/80 bg-muted/30 p-3 rounded-lg border border-dashed border-primary/10">
+                                    <p className="font-medium text-xs text-muted-foreground mb-1">
+                                        {formatFieldName(changeLog.field_name)}
+                                    </p>
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        {changeLog.old_value && (
+                                            <>
+                                                <span className="line-through text-muted-foreground/70 text-xs">{changeLog.old_value}</span>
+                                                <MaterialIcon name="arrow_forward" className="text-muted-foreground text-xs" />
+                                            </>
+                                        )}
+                                        <span className="font-bold text-primary">{changeLog.new_value}</span>
+                                    </div>
+                                </div>
+
+                                {changeLog.change_reason && (
+                                    <p className="text-xs text-muted-foreground mt-3 italic">
+                                        " {changeLog.change_reason} "
+                                    </p>
                                 )}
-                            </p>
-
-                            {change.source_url && (
-                                <a href={change.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline mt-auto flex items-center gap-1">
-                                    Source <MaterialIcon name="open_in_new" className="text-[10px]" />
-                                </a>
-                            )}
-                        </div>
-                    ))}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

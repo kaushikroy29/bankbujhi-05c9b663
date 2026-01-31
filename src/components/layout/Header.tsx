@@ -57,6 +57,11 @@ const Header = () => {
               </Button>
             </Link>
 
+            {/* Admin Link - Temporary for MVP */}
+            <Link to="/admin" className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-primary transition-colors" title="Admin Dashboard">
+              <MaterialIcon name="admin_panel_settings" className="text-2xl" />
+            </Link>
+
             {/* Notification Bell */}
             <NotificationBell />
 

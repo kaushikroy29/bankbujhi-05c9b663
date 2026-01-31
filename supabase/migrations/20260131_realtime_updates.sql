@@ -65,4 +65,92 @@ CREATE POLICY "Allow public read access to change logs" ON product_change_log FO
 -- or restrict read to admins. Let's restrict write to auth users.
 CREATE POLICY "Allow auth users to insert pending updates" ON pending_updates FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY "Allow public read pending updates" ON pending_updates FOR SELECT USING (true);
-CREATE POLICY "Allow admins to update pending updates" ON pending_updates FOR UPDATE TO authenticated USING (true); -- Ideally check for role
+-- Allow admins to update pending updates
+CREATE POLICY "Allow admins to update pending updates" ON pending_updates FOR UPDATE TO authenticated USING (true); 
+
+-- 5. FUNCTION: Log Product Changes
+CREATE OR REPLACE FUNCTION log_product_changes()
+RETURNS TRIGGER AS $$
+DECLARE
+    prod_type TEXT;
+BEGIN
+    prod_type := TG_ARGV[0]; -- 'credit_card' or 'loan' passed as arg
+
+    -- Detect specific changes
+    IF NEW.annual_fee IS DISTINCT FROM OLD.annual_fee THEN
+        INSERT INTO product_change_log (product_type, product_id, change_type, field_name, old_value, new_value, verified)
+        VALUES (prod_type, NEW.id, 'fee_update', 'annual_fee', OLD.annual_fee, NEW.annual_fee, true);
+    END IF;
+
+    IF NEW.interest_rate IS DISTINCT FROM OLD.interest_rate THEN
+        INSERT INTO product_change_log (product_type, product_id, change_type, field_name, old_value, new_value, verified)
+        VALUES (prod_type, NEW.id, 'rate_change', 'interest_rate', OLD.interest_rate, NEW.interest_rate, true);
+    END IF;
+    
+    -- Check for benefits change (Simple cast to text for comparison)
+    IF NEW.benefits::text IS DISTINCT FROM OLD.benefits::text THEN
+         INSERT INTO product_change_log (product_type, product_id, change_type, field_name, old_value, new_value, verified)
+        VALUES (prod_type, NEW.id, 'benefit_change', 'benefits', 'Details', 'See Updated Benefits', true);
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 6. FUNCTION: Notify Users
+CREATE OR REPLACE FUNCTION notify_users_on_change()
+RETURNS TRIGGER AS $$
+DECLARE
+    product_name_val TEXT;
+BEGIN
+    -- Only notify for verified changes
+    IF NEW.verified = false THEN
+        RETURN NEW;
+    END IF;
+
+    -- Fetch product name
+    IF NEW.product_type = 'credit_card' THEN
+        SELECT name INTO product_name_val FROM credit_cards WHERE id = NEW.product_id;
+    ELSIF NEW.product_type = 'loan' THEN
+        SELECT name INTO product_name_val FROM loan_products WHERE id = NEW.product_id;
+    ELSE 
+        product_name_val := 'Product';
+    END IF;
+
+    -- Construct Notification
+    INSERT INTO notifications (type, title_bn, message_bn, product_id, severity)
+    VALUES (
+        NEW.change_type,
+        'আপডেট: ' || COALESCE(product_name_val, 'Unknown'),
+        CASE 
+            WHEN NEW.field_name = 'annual_fee' THEN 'বার্ষিক ফি পরিবর্তন হয়েছে: ' || NEW.new_value
+            WHEN NEW.field_name = 'interest_rate' THEN 'ইটারেস্ট রেট পরিবর্তন হয়েছে: ' || NEW.new_value
+            ELSE 'প্রোডাক্টের তথ্যে গুরুত্বপূর্ণ পরিবর্তন এসেছে।'
+        END,
+        NEW.product_id,
+        'info'
+    );
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 7. TRIGGERS
+DROP TRIGGER IF EXISTS on_credit_card_change ON credit_cards;
+CREATE TRIGGER on_credit_card_change
+AFTER UPDATE ON credit_cards
+FOR EACH ROW EXECUTE FUNCTION log_product_changes('credit_card');
+
+DROP TRIGGER IF EXISTS on_loan_change ON loan_products;
+CREATE TRIGGER on_loan_change
+AFTER UPDATE ON loan_products
+FOR EACH ROW EXECUTE FUNCTION log_product_changes('loan');
+
+DROP TRIGGER IF EXISTS on_log_created ON product_change_log;
+CREATE TRIGGER on_log_created
+AFTER INSERT ON product_change_log
+FOR EACH ROW EXECUTE FUNCTION notify_users_on_change();
+
+-- 8. REALTIME PUBLICATION
+-- Enable realtime for specific tables
+ALTER PUBLICATION supabase_realtime ADD TABLE product_change_log, notifications;
