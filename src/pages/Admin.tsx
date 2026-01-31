@@ -8,6 +8,8 @@ import { fetchPendingUpdates } from "@/lib/api/updates";
 import BankManager from "@/components/admin/BankManager";
 import ProductManager from "@/components/admin/ProductManager";
 import PendingUpdatesList from "@/components/admin/PendingUpdatesList";
+import ScrapedDataManager from "@/components/admin/ScrapedDataManager";
+import ScraperHistory from "@/components/admin/ScraperHistory";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Building2, CreditCard, AlertCircle } from "lucide-react";
 
@@ -58,6 +60,8 @@ export default function Admin() {
                                 </span>
                             )}
                         </TabsTrigger>
+                        <TabsTrigger value="scraped">Scraped Data</TabsTrigger>
+                        <TabsTrigger value="history">History</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="overview" className="space-y-6">
@@ -112,6 +116,14 @@ export default function Admin() {
 
                     <TabsContent value="updates">
                         <PendingUpdatesList />
+                    </TabsContent>
+
+                    <TabsContent value="scraped">
+                        <ScrapedDataManager />
+                    </TabsContent>
+
+                    <TabsContent value="history">
+                        <ScraperHistory />
                     </TabsContent>
                 </Tabs>
             </main>
