@@ -177,3 +177,25 @@ export async function getUnreadNotificationCount(): Promise<number> {
 
     return error ? 0 : (count || 0);
 }
+
+// Update watchlist item settings
+export async function updateWatchlistSettings(
+    productId: string,
+    productType: 'credit_card' | 'loan' | 'savings',
+    notifyOn: string[]
+): Promise<{ error: any }> {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { error: new Error('User not authenticated') };
+    }
+
+    const { error } = await supabase
+        .from('user_watchlist')
+        .update({ notify_on: notifyOn })
+        .eq('user_id', user.id)
+        .eq('product_id', productId)
+        .eq('product_type', productType);
+
+    return { error };
+}

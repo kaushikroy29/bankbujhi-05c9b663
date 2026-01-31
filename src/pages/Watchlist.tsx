@@ -7,11 +7,18 @@ import { Button } from "@/components/ui/button";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import SEOHead from "@/components/seo/SEOHead";
 import { Link, useNavigate } from "react-router-dom";
-import { getUserWatchlist, removeFromWatchlist, WatchlistItem } from "@/lib/api/watchlist";
+import { getUserWatchlist, removeFromWatchlist, updateWatchlistSettings } from "@/lib/api/watchlist";
 import { fetchCreditCard } from "@/lib/api/banks";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface ProductDetails {
     id: string;
@@ -19,6 +26,7 @@ interface ProductDetails {
     bankName: string;
     image_url?: string | null;
     type: 'credit_card' | 'loan' | 'savings';
+    notify_on: string[];
 }
 
 const Watchlist = () => {
@@ -61,7 +69,8 @@ const Watchlist = () => {
                                     name: card.name,
                                     bankName: card.banks?.name || "Unknown Bank",
                                     image_url: card.image_url,
-                                    type: 'credit_card'
+                                    type: 'credit_card',
+                                    notify_on: item.notify_on || []
                                 } as ProductDetails;
                             }
                         }
@@ -94,6 +103,34 @@ const Watchlist = () => {
             toast.success("ওয়াচলিস্ট থেকে সরানো হয়েছে");
         } catch (error) {
             toast.error("মুছতে ব্যর্থ হয়েছে");
+        }
+    };
+
+    const handleNotificationToggle = async (product: ProductDetails, setting: string) => {
+        const currentSettings = product.notify_on;
+        let newSettings: string[];
+
+        if (currentSettings.includes(setting)) {
+            newSettings = currentSettings.filter(s => s !== setting);
+        } else {
+            newSettings = [...currentSettings, setting];
+        }
+
+        // Optimistic update
+        setProducts(prev => prev.map(p =>
+            p.id === product.id ? { ...p, notify_on: newSettings } : p
+        ));
+
+        try {
+            const { error } = await updateWatchlistSettings(product.id, product.type, newSettings);
+            if (error) throw error;
+            toast.success("নোটিফিকেশন সেটিংস আপডেট হয়েছে");
+        } catch (error) {
+            // Revert
+            setProducts(prev => prev.map(p =>
+                p.id === product.id ? { ...p, notify_on: currentSettings } : p
+            ));
+            toast.error("সেটিংস আপডেট করতে ব্যর্থ হয়েছে");
         }
     };
 
@@ -169,9 +206,51 @@ const Watchlist = () => {
                                                     <MaterialIcon name="credit_card" className="text-muted-foreground" />
                                                 </div>
                                             )}
-                                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => handleRemove(product)}>
-                                                <MaterialIcon name="close" />
-                                            </Button>
+
+                                            <div className="flex gap-2">
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-8 w-8">
+                                                            <MaterialIcon name="notifications" />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-64">
+                                                        <div className="space-y-4">
+                                                            <h4 className="font-semibold text-sm">নোটিফিকেশন সেটিংস</h4>
+                                                            <div className="space-y-3">
+                                                                <div className="flex items-center justify-between">
+                                                                    <Label htmlFor={`fee-${product.id}`} className="text-sm">ফি পরিবর্তন</Label>
+                                                                    <Switch
+                                                                        id={`fee-${product.id}`}
+                                                                        checked={product.notify_on.includes('fee_change')}
+                                                                        onCheckedChange={() => handleNotificationToggle(product, 'fee_change')}
+                                                                    />
+                                                                </div>
+                                                                <div className="flex items-center justify-between">
+                                                                    <Label htmlFor={`rate-${product.id}`} className="text-sm">সুদের হার</Label>
+                                                                    <Switch
+                                                                        id={`rate-${product.id}`}
+                                                                        checked={product.notify_on.includes('rate_change')}
+                                                                        onCheckedChange={() => handleNotificationToggle(product, 'rate_change')}
+                                                                    />
+                                                                </div>
+                                                                <div className="flex items-center justify-between">
+                                                                    <Label htmlFor={`benefit-${product.id}`} className="text-sm">নতুন সুবিধা</Label>
+                                                                    <Switch
+                                                                        id={`benefit-${product.id}`}
+                                                                        checked={product.notify_on.includes('new_benefit')}
+                                                                        onCheckedChange={() => handleNotificationToggle(product, 'new_benefit')}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </PopoverContent>
+                                                </Popover>
+
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => handleRemove(product)}>
+                                                    <MaterialIcon name="close" />
+                                                </Button>
+                                            </div>
                                         </div>
                                         <div>
                                             <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">

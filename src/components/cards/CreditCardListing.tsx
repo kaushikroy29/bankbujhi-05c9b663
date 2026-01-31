@@ -2,6 +2,7 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import WatchlistButton from "@/components/ui/WatchlistButton";
 
 interface CardBenefit {
   icon: string;
@@ -29,7 +30,7 @@ interface CreditCardListingProps {
 
 const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardListingProps) => {
   return (
-    <div className="bg-card border border-primary/10 rounded-2xl p-4 sm:p-5 hover:shadow-xl transition-all group">
+    <div className="bg-card border border-primary/10 rounded-2xl p-4 sm:p-5 hover:shadow-xl transition-all group relative">
       <div className="flex flex-col gap-4">
         {/* Mobile: Header with badge and bank */}
         <div className="flex items-start justify-between md:hidden">
@@ -44,8 +45,8 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
           <div className="text-right">
             <span className={cn(
               "text-xl font-black",
-              card.annualFee === "Free" || card.annualFee === "৳0" 
-                ? "text-primary" 
+              card.annualFee === "Free" || card.annualFee === "৳0"
+                ? "text-primary"
                 : "text-foreground"
             )}>
               {card.annualFee}
@@ -61,13 +62,23 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
 
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           {/* Card Image */}
-          <div className="w-full sm:w-44 md:w-52 h-28 sm:h-32 bg-muted rounded-xl overflow-hidden shrink-0 relative flex items-center justify-center">
-            <img 
-              className="w-full h-full object-cover" 
+          <div className="w-full sm:w-44 md:w-52 h-28 sm:h-32 bg-muted rounded-xl overflow-hidden shrink-0 relative flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-300">
+            <img
+              className="w-full h-full object-cover"
               src={card.image}
               alt={card.name}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+
+            {/* Mobile Watchlist Button Overlay */}
+            <div className="absolute top-2 right-2 md:hidden">
+              <WatchlistButton
+                productType="credit_card"
+                productId={card.id}
+                variant="icon"
+                className="bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm"
+              />
+            </div>
           </div>
 
           {/* Card Details */}
@@ -83,14 +94,18 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
                   )}
                   <p className="text-sm font-bold text-muted-foreground">{card.bank}</p>
                 </div>
-                <h3 className="text-xl font-black leading-tight">{card.name}</h3>
+                <h3 className="text-xl font-black leading-tight group-hover:text-primary transition-colors">
+                  <Link to={`/cards/${card.id}`}>
+                    {card.name}
+                  </Link>
+                </h3>
                 <p className="text-sm text-muted-foreground mt-1">{card.category}</p>
               </div>
               <div className="flex flex-col items-end shrink-0">
                 <span className={cn(
                   "text-2xl font-black",
-                  card.annualFee === "Free" || card.annualFee === "৳0" 
-                    ? "text-primary" 
+                  card.annualFee === "Free" || card.annualFee === "৳0"
+                    ? "text-primary"
                     : "text-foreground"
                 )}>
                   {card.annualFee}
@@ -106,7 +121,11 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
 
             {/* Mobile: Card name and category */}
             <div className="md:hidden mb-3">
-              <h3 className="text-lg font-black leading-tight">{card.name}</h3>
+              <h3 className="text-lg font-black leading-tight">
+                <Link to={`/cards/${card.id}`}>
+                  {card.name}
+                </Link>
+              </h3>
               <p className="text-sm text-muted-foreground">{card.category}</p>
             </div>
 
@@ -124,33 +143,46 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
           </div>
 
           {/* Actions - Desktop */}
-          <div className="hidden md:flex w-48 flex-col justify-between border-l border-primary/10 pl-6">
-            <label className="flex items-center gap-3 cursor-pointer select-none group/check mb-4">
-              <div className="relative">
-                <input 
-                  type="checkbox" 
-                  className="peer hidden" 
-                  checked={isComparing}
-                  onChange={onToggleCompare}
-                />
-                <div className={cn(
-                  "size-5 rounded border-2 transition-all flex items-center justify-center",
-                  isComparing 
-                    ? "bg-primary border-primary" 
-                    : "border-primary/20"
-                )}>
-                  {isComparing && (
-                    <MaterialIcon name="check" className="text-primary-foreground text-sm" />
-                  )}
+          <div className="hidden md:flex w-48 flex-col justify-between border-l border-primary/10 pl-6 gap-2">
+            <div className="space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer select-none group/check">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    className="peer hidden"
+                    checked={isComparing}
+                    onChange={onToggleCompare}
+                  />
+                  <div className={cn(
+                    "size-5 rounded border-2 transition-all flex items-center justify-center",
+                    isComparing
+                      ? "bg-primary border-primary"
+                      : "border-primary/20"
+                  )}>
+                    {isComparing && (
+                      <MaterialIcon name="check" className="text-primary-foreground text-sm" />
+                    )}
+                  </div>
                 </div>
+                <span className={cn(
+                  "text-sm font-bold transition-colors",
+                  isComparing ? "text-primary" : "group-hover/check:text-primary"
+                )}>
+                  {isComparing ? "Compared" : "Compare"}
+                </span>
+              </label>
+
+              <div className="flex items-center gap-2">
+                <WatchlistButton
+                  productType="credit_card"
+                  productId={card.id}
+                  variant="icon"
+                  className="bg-muted/50 hover:bg-primary/10"
+                />
+                <span className="text-xs font-bold text-muted-foreground">Watchlist</span>
               </div>
-              <span className={cn(
-                "text-sm font-bold transition-colors",
-                isComparing ? "text-primary" : "group-hover/check:text-primary"
-              )}>
-                {isComparing ? "Compared" : "Compare"}
-              </span>
-            </label>
+            </div>
+
             <Link to={`/cards/${card.id}`}>
               <Button className="w-full font-bold">
                 View Details
@@ -163,16 +195,16 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
         <div className="flex md:hidden items-center gap-3 pt-3 border-t border-primary/10">
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <div className="relative">
-              <input 
-                type="checkbox" 
-                className="peer hidden" 
+              <input
+                type="checkbox"
+                className="peer hidden"
                 checked={isComparing}
                 onChange={onToggleCompare}
               />
               <div className={cn(
                 "size-5 rounded border-2 transition-all flex items-center justify-center",
-                isComparing 
-                  ? "bg-primary border-primary" 
+                isComparing
+                  ? "bg-primary border-primary"
                   : "border-primary/20"
               )}>
                 {isComparing && (

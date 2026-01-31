@@ -1,4 +1,27 @@
-﻿export type Json =
+﻿[?25l[?2004h
+
+                                                                                                                
+  >  1. ikniewnxrlejzwvjonas [name: tripurateer, org: miarysljifsugbmvzvkd, region: ap-south-1]                 
+    2. ifwtxgxgsxkgygqhnano [name: bankbujhi, org: vercel_icfg_YEzZFSb8NBQoaAEeqzuOmIrG, region: ap-southeast-2]
+                                                                                                                
+                                                                                                                
+                                                                                                                
+                                                                                                                
+    Γåæ/k up ΓÇó Γåô/j down ΓÇó / filter ΓÇó q quit ΓÇó ? more                                                              
+                                                                                                                
+[9A
+[K
+    Select a project:               
+                                    
+  >  1. ikniewnxrlejzwvjonas [name: 
+    2. ifwtxgxgsxkgygqhnano [name: b
+                                    
+                                    
+    Γåæ/k up ΓÇó Γåô/j down ΓÇó / filter ΓÇª  
+                                    [J
+[8A [K[J
+[2K
+[?2004l[?25h[?1002l[?1003l[?1006lexport type Json =
   | string
   | number
   | boolean
@@ -14,339 +37,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      banks: {
+      results: {
         Row: {
-          created_at: string
-          description: string | null
-          established_year: number | null
-          headquarters: string | null
-          id: string
-          is_active: boolean | null
-          logo_url: string | null
-          name: string
-          name_bn: string | null
-          search_vector: unknown
-          swift_code: string | null
-          type: string
-          updated_at: string
-          website_url: string | null
+          created_at: string | null
+          date: string
+          id: number
+          night_round1: string | null
+          night_round2: string | null
+          round1: string | null
+          round2: string | null
         }
         Insert: {
-          created_at?: string
-          description?: string | null
-          established_year?: number | null
-          headquarters?: string | null
-          id?: string
-          is_active?: boolean | null
-          logo_url?: string | null
-          name: string
-          name_bn?: string | null
-          search_vector?: unknown
-          swift_code?: string | null
-          type?: string
-          updated_at?: string
-          website_url?: string | null
+          created_at?: string | null
+          date: string
+          id?: number
+          night_round1?: string | null
+          night_round2?: string | null
+          round1?: string | null
+          round2?: string | null
         }
         Update: {
-          created_at?: string
-          description?: string | null
-          established_year?: number | null
-          headquarters?: string | null
-          id?: string
-          is_active?: boolean | null
-          logo_url?: string | null
-          name?: string
-          name_bn?: string | null
-          search_vector?: unknown
-          swift_code?: string | null
-          type?: string
-          updated_at?: string
-          website_url?: string | null
+          created_at?: string | null
+          date?: string
+          id?: number
+          night_round1?: string | null
+          night_round2?: string | null
+          round1?: string | null
+          round2?: string | null
         }
         Relationships: []
       }
-      credit_cards: {
+      settings: {
         Row: {
-          annual_fee: string | null
-          annual_fee_note: string | null
-          annual_fee_waived: boolean | null
-          apply_url: string | null
-          badge: string | null
-          bank_id: string | null
-          benefits: Json | null
-          category: string | null
-          created_at: string
-          credit_score: string | null
-          employment_types: string[] | null
-          fee_change_note: string | null
-          fees: Json | null
-          fees_detailed: Json | null
-          id: string
-          image_url: string | null
-          interest_rate: string | null
-          is_active: boolean | null
-          last_fee_update: string | null
-          last_verified_date: string | null
-          max_age: number | null
-          min_age: number | null
-          min_income: string | null
-          name: string
-          required_documents: string[] | null
-          updated_at: string
-        }
-        Insert: {
-          annual_fee?: string | null
-          annual_fee_note?: string | null
-          annual_fee_waived?: boolean | null
-          apply_url?: string | null
-          badge?: string | null
-          bank_id?: string | null
-          benefits?: Json | null
-          category?: string | null
-          created_at?: string
-          credit_score?: string | null
-          employment_types?: string[] | null
-          fee_change_note?: string | null
-          fees?: Json | null
-          fees_detailed?: Json | null
-          id?: string
-          image_url?: string | null
-          interest_rate?: string | null
-          is_active?: boolean | null
-          last_fee_update?: string | null
-          last_verified_date?: string | null
-          max_age?: number | null
-          min_age?: number | null
-          min_income?: string | null
-          name: string
-          required_documents?: string[] | null
-          updated_at?: string
-        }
-        Update: {
-          annual_fee?: string | null
-          annual_fee_note?: string | null
-          annual_fee_waived?: boolean | null
-          apply_url?: string | null
-          badge?: string | null
-          bank_id?: string | null
-          benefits?: Json | null
-          category?: string | null
-          created_at?: string
-          credit_score?: string | null
-          employment_types?: string[] | null
-          fee_change_note?: string | null
-          fees?: Json | null
-          fees_detailed?: Json | null
-          id?: string
-          image_url?: string | null
-          interest_rate?: string | null
-          is_active?: boolean | null
-          last_fee_update?: string | null
-          last_verified_date?: string | null
-          max_age?: number | null
-          min_age?: number | null
-          min_income?: string | null
-          name?: string
-          required_documents?: string[] | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "credit_cards_bank_id_fkey"
-            columns: ["bank_id"]
-            isOneToOne: false
-            referencedRelation: "banks"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      loan_products: {
-        Row: {
-          apply_url: string | null
-          badge: string | null
-          bank_id: string | null
-          created_at: string
-          features: string[] | null
-          id: string
-          interest_rate_max: number | null
-          interest_rate_min: number | null
-          is_active: boolean | null
-          loan_type: string
-          max_amount: string | null
-          max_tenure_months: number | null
-          min_income: string | null
-          name: string
-          processing_fee: string | null
-          updated_at: string
-        }
-        Insert: {
-          apply_url?: string | null
-          badge?: string | null
-          bank_id?: string | null
-          created_at?: string
-          features?: string[] | null
-          id?: string
-          interest_rate_max?: number | null
-          interest_rate_min?: number | null
-          is_active?: boolean | null
-          loan_type?: string
-          max_amount?: string | null
-          max_tenure_months?: number | null
-          min_income?: string | null
-          name: string
-          processing_fee?: string | null
-          updated_at?: string
-        }
-        Update: {
-          apply_url?: string | null
-          badge?: string | null
-          bank_id?: string | null
-          created_at?: string
-          features?: string[] | null
-          id?: string
-          interest_rate_max?: number | null
-          interest_rate_min?: number | null
-          is_active?: boolean | null
-          loan_type?: string
-          max_amount?: string | null
-          max_tenure_months?: number | null
-          min_income?: string | null
-          name?: string
-          processing_fee?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "loan_products_bank_id_fkey"
-            columns: ["bank_id"]
-            isOneToOne: false
-            referencedRelation: "banks"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      savings_rates: {
-        Row: {
-          bank_id: string | null
-          created_at: string
-          id: string
-          interest_rate: number | null
-          is_active: boolean | null
-          min_deposit: string | null
-          product_type: string
-          special_offer: string | null
-          tenure_label: string | null
-          tenure_months: number | null
-          updated_at: string
-        }
-        Insert: {
-          bank_id?: string | null
-          created_at?: string
-          id?: string
-          interest_rate?: number | null
-          is_active?: boolean | null
-          min_deposit?: string | null
-          product_type?: string
-          special_offer?: string | null
-          tenure_label?: string | null
-          tenure_months?: number | null
-          updated_at?: string
-        }
-        Update: {
-          bank_id?: string | null
-          created_at?: string
-          id?: string
-          interest_rate?: number | null
-          is_active?: boolean | null
-          min_deposit?: string | null
-          product_type?: string
-          special_offer?: string | null
-          tenure_label?: string | null
-          tenure_months?: number | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "savings_rates_bank_id_fkey"
-            columns: ["bank_id"]
-            isOneToOne: false
-            referencedRelation: "banks"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_notifications: {
-        Row: {
-          bank_name: string | null
-          created_at: string | null
-          id: string
-          message_bn: string
-          notification_type: string
-          product_id: string
-          product_name: string
-          product_type: string
-          read: boolean | null
-          severity: string
-          title_bn: string
-          user_id: string
-        }
-        Insert: {
-          bank_name?: string | null
-          created_at?: string | null
-          id?: string
-          message_bn: string
-          notification_type: string
-          product_id: string
-          product_name: string
-          product_type: string
-          read?: boolean | null
-          severity?: string
-          title_bn: string
-          user_id: string
-        }
-        Update: {
-          bank_name?: string | null
-          created_at?: string | null
-          id?: string
-          message_bn?: string
-          notification_type?: string
-          product_id?: string
-          product_name?: string
-          product_type?: string
-          read?: boolean | null
-          severity?: string
-          title_bn?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_watchlist: {
-        Row: {
-          created_at: string | null
-          id: string
-          notify_on: string[] | null
-          product_id: string
-          product_type: string
+          id: number
+          notice_text: string | null
           updated_at: string | null
-          user_id: string
+          youtube_video_id: string | null
         }
         Insert: {
-          created_at?: string | null
-          id?: string
-          notify_on?: string[] | null
-          product_id: string
-          product_type: string
+          id?: number
+          notice_text?: string | null
           updated_at?: string | null
-          user_id: string
+          youtube_video_id?: string | null
         }
         Update: {
-          created_at?: string | null
-          id?: string
-          notify_on?: string[] | null
-          product_id?: string
-          product_type?: string
+          id?: number
+          notice_text?: string | null
           updated_at?: string | null
-          user_id?: string
+          youtube_video_id?: string | null
         }
         Relationships: []
       }
