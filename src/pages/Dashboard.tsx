@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -6,52 +6,18 @@ import BottomNav from "@/components/layout/BottomNav";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { getUserWatchlist } from "@/lib/api/watchlist";
+import { fetchCreditCard, fetchCreditCards, type CreditCard } from "@/lib/api/banks"; // Import types
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const savedCards = [
-  {
-    id: 1,
-    bank: "City Bank",
-    bankCode: "City",
-    name: "American Express",
-    lastFour: "4291",
-    color: "bg-green-800",
-  },
-  {
-    id: 2,
-    bank: "Eastern Bank",
-    bankCode: "EBL",
-    name: "Skybanking Visa",
-    lastFour: "8820",
-    color: "bg-blue-900",
-  },
-  {
-    id: 3,
-    bank: "Mutual Trust Bank",
-    bankCode: "MTB",
-    name: "Titanium Mastercard",
-    lastFour: "1104",
-    color: "bg-red-800",
-  },
-];
-
-const recommendations = [
-  {
-    id: 1,
-    bank: "Standard Chartered",
-    name: "Visa Platinum",
-    tag: "গ্রোসারি কেনাকাটায় সেরা",
-    benefit: "12% ছাড়",
-    score: 750,
-  },
-  {
-    id: 2,
-    bank: "BRAC Bank",
-    name: "World Mastercard",
-    tag: "ভ্রমণে সেরা",
-    benefit: "Buy 1 Get 1",
-    score: null,
-  },
-];
+interface WatchlistCard {
+  id: string;
+  name: string;
+  bankName: string;
+  image_url?: string | null;
+  type: string;
+}
 
 const menuItems = [
   { icon: "dashboard", label: "ড্যাশবোর্ড", active: true },
@@ -64,6 +30,58 @@ const menuItems = [
 const Dashboard = () => {
   const [profileCompletion] = useState(65);
   const [showSidebar, setShowSidebar] = useState(false);
+
+  // Data State
+  const [watchlist, setWatchlist] = useState<WatchlistCard[]>([]);
+  const [recommendations, setRecommendations] = useState<CreditCard[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) setUserEmail(user.email);
+
+      // 1. Load Watchlist
+      const { data: watchlistData } = await getUserWatchlist();
+      if (watchlistData) {
+        const watchlistDetails = await Promise.all(
+          watchlistData.slice(0, 5).map(async (item) => {
+            if (item.product_type === 'credit_card') {
+              const card = await fetchCreditCard(item.product_id);
+              if (card) {
+                return {
+                  id: card.id,
+                  name: card.name,
+                  bankName: card.banks?.name || "Unknown",
+                  image_url: card.image_url,
+                  type: 'credit_card'
+                };
+              }
+            }
+            return null;
+          })
+        );
+        setWatchlist(watchlistDetails.filter((item): item is WatchlistCard => item !== null));
+      }
+
+      // 2. Load Recommendations (Featured Cards)
+      const allCards = await fetchCreditCards();
+      // Simple logic: Pick random 2 featured cards or just top 2
+      const featured = allCards.filter(c => c.badge).slice(0, 2);
+      setRecommendations(featured.length > 0 ? featured : allCards.slice(0, 2));
+
+    } catch (error) {
+      console.error("Error loading dashboard:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
@@ -78,7 +96,7 @@ const Dashboard = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold truncate">স্বাগতম!</h3>
-                <p className="text-sm text-muted-foreground truncate">user@example.com</p>
+                <p className="text-sm text-muted-foreground truncate">{userEmail || "Guest"}</p>
               </div>
               <button
                 onClick={() => setShowSidebar(!showSidebar)}
@@ -131,7 +149,7 @@ const Dashboard = () => {
                   <MaterialIcon name="person" className="text-4xl text-primary" />
                 </div>
                 <h3 className="font-bold">স্বাগতম!</h3>
-                <p className="text-sm text-muted-foreground">user@example.com</p>
+                <p className="text-sm text-muted-foreground">{userEmail || "Guest"}</p>
               </div>
 
               {/* Profile Completion */}
@@ -177,7 +195,7 @@ const Dashboard = () => {
                 {[
                   { icon: "add_card", label: "কার্ড যোগ", href: "/compare" },
                   { icon: "compare_arrows", label: "তুলনা করুন", href: "/compare" },
-                  { icon: "calculate", label: "ইএমআই ক্যালক", href: "/loans" },
+                  { icon: "calculate", label: "ইএমআই ক্যালক", href: "/calculator/emi" }, // Updated Link
                   { icon: "support_agent", label: "সহায়তা", href: "/contact" },
                 ].map((action) => (
                   <Link
@@ -197,7 +215,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h2 className="text-lg sm:text-2xl font-bold">সংরক্ষিত কার্ড</h2>
                 <Button variant="outline" size="sm" className="text-primary border-primary text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3" asChild>
-                  <Link to="/compare">
+                  <Link to="/watchlist">
                     <MaterialIcon name="visibility" className="mr-1 text-sm" />
                     <span className="hidden xs:inline">সবগুলো দেখুন</span>
                     <span className="xs:hidden">সব</span>
@@ -205,63 +223,100 @@ const Dashboard = () => {
                 </Button>
               </div>
 
-              {/* Horizontal scroll on mobile */}
-              <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible">
-                {savedCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className="bg-card rounded-xl border border-primary/10 p-3 sm:p-4 hover:shadow-lg transition-shadow shrink-0 w-[260px] sm:w-auto"
-                  >
-                    <div className={`${card.color} rounded-lg p-3 sm:p-4 mb-3 sm:mb-4`}>
-                      <div className="flex justify-between items-start mb-4 sm:mb-6">
-                        <span className="text-white text-[10px] sm:text-xs font-bold uppercase">{card.bank}</span>
+              {/* Display Logic */}
+              {loading ? (
+                <div className="flex gap-4 overflow-hidden">
+                  {[1, 2, 3].map(i => (
+                    <Skeleton key={i} className="w-[260px] h-[180px] rounded-xl shrink-0" />
+                  ))}
+                </div>
+              ) : watchlist.length === 0 ? (
+                <div className="text-center py-10 bg-muted/20 rounded-xl border border-dashed border-primary/20">
+                  <p className="text-muted-foreground mb-4">কোনো কার্ড সেভ করা নেই</p>
+                  <Button size="sm" asChild><Link to="/compare">কার্ড খুঁজুন</Link></Button>
+                </div>
+              ) : (
+                <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible">
+                  {watchlist.map((card) => (
+                    <div
+                      key={card.id}
+                      className="bg-card rounded-xl border border-primary/10 p-3 sm:p-4 hover:shadow-lg transition-shadow shrink-0 w-[260px] sm:w-auto flex flex-col justify-between"
+                    >
+                      <div>
+                        {card.image_url ? (
+                          <div className="h-32 rounded-lg overflow-hidden mb-3">
+                            <img src={card.image_url} alt={card.name} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="h-32 bg-primary/10 rounded-lg mb-3 flex items-center justify-center text-primary">
+                            <MaterialIcon name="credit_card" className="text-4xl" />
+                          </div>
+                        )}
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="text-primary text-[10px] sm:text-xs font-bold uppercase">{card.bankName}</span>
+                        </div>
+                        <div className="font-bold text-sm sm:text-base line-clamp-1">{card.name}</div>
                       </div>
-                      <div className="text-white/80 text-xs sm:text-sm tracking-widest mb-1 sm:mb-2">
-                        **** **** **** {card.lastFour}
+
+                      <div className="flex gap-2 mt-4">
+                        <Button size="sm" variant="outline" className="flex-1 text-[10px] sm:text-xs h-8" asChild>
+                          <Link to={`/cards/${card.id}`}>বিস্তারিত</Link>
+                        </Button>
+                        <Button size="sm" className="flex-1 text-[10px] sm:text-xs h-8" asChild>
+                          <Link to="/eligibility">আবেদন</Link>
+                        </Button>
                       </div>
-                      <div className="text-white text-[10px] sm:text-xs">{card.name}</div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1 text-[10px] sm:text-xs h-8" asChild>
-                        <Link to="/compare">বিস্তারিত</Link>
-                      </Button>
-                      <Button size="sm" className="flex-1 text-[10px] sm:text-xs h-8" asChild>
-                        <Link to="/eligibility">আবেদন</Link>
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </section>
 
             {/* Recommendations */}
             <section>
               <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">আপনার জন্য সুপারিশকৃত</h2>
-              <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-                {recommendations.map((rec) => (
-                  <div
-                    key={rec.id}
-                    className="bg-card rounded-xl border border-primary/10 p-4 sm:p-6 hover:shadow-lg transition-shadow"
-                  >
-                    <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
-                      <div className="min-w-0">
-                        <span className="text-[10px] sm:text-xs font-semibold text-primary uppercase">{rec.tag}</span>
-                        <h3 className="font-bold mt-0.5 sm:mt-1 truncate">{rec.bank}</h3>
-                        <p className="text-xs sm:text-sm text-muted-foreground truncate">{rec.name}</p>
+              {loading ? (
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <Skeleton className="h-32 w-full rounded-xl" />
+                  <Skeleton className="h-32 w-full rounded-xl" />
+                </div>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+                  {recommendations.map((rec) => (
+                    <div
+                      key={rec.id}
+                      className="bg-card rounded-xl border border-primary/10 p-4 sm:p-6 hover:shadow-lg transition-shadow"
+                    >
+                      <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
+                        <div className="min-w-0">
+                          {rec.badge && (
+                            <span className="text-[10px] sm:text-xs font-semibold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded-full inline-block mb-1">
+                              {rec.badge}
+                            </span>
+                          )}
+                          <h3 className="font-bold mt-0.5 sm:mt-1 truncate">{rec.banks?.name}</h3>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{rec.name}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          {/* Show Annual Fee or a Benefit */}
+                          <div className="text-sm sm:text-base font-bold text-primary">
+                            {rec.annual_fee === "৳0" ? "ফ্রি" : rec.annual_fee}
+                          </div>
+                          <div className="text-[10px] sm:text-xs text-muted-foreground">বার্ষিক ফি</div>
+                        </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <div className="text-lg sm:text-2xl font-bold text-primary">{rec.benefit}</div>
-                        {rec.score && (
-                          <div className="text-[10px] sm:text-xs text-muted-foreground">{rec.score} ভালো (Score)</div>
-                        )}
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button size="sm" variant="outline" className="w-full h-9" asChild>
+                          <Link to={`/cards/${rec.id}`}>বিস্তারিত</Link>
+                        </Button>
+                        <Button size="sm" className="w-full h-9" asChild>
+                          <Link to="/compare">তুলনা করুন</Link>
+                        </Button>
                       </div>
                     </div>
-                    <Button size="sm" className="w-full h-9" asChild>
-                      <Link to="/compare">বিস্তারিত দেখুন</Link>
-                    </Button>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </section>
           </div>
         </div>

@@ -1,21 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import QuizQuestion from "@/components/quiz/QuizQuestion";
-import QuizResults from "@/components/quiz/QuizResults";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import SEOHead from "@/components/seo/SEOHead";
+import { UserProfile } from "@/lib/recommendations/matcher";
 
 export interface QuizAnswer {
   questionId: string;
   value: string;
 }
 
-export interface QuizQuestion {
+export interface QuizQuestionType {
   id: string;
   question: string;
   description?: string;
@@ -28,7 +28,7 @@ export interface QuizQuestion {
   }[];
 }
 
-const quizQuestions: QuizQuestion[] = [
+const quizQuestions: QuizQuestionType[] = [
   {
     id: "primary_use",
     question: "আপনি মূলত কী ধরনের কাজে ক্রেডিট কার্ড ব্যবহার করবেন?",
@@ -38,19 +38,7 @@ const quizQuestions: QuizQuestion[] = [
       { value: "travel", label: "ভ্রমণ ও এয়ার টিকিট", icon: "flight", description: "ফ্লাইট, হোটেল বুকিং এবং ভ্রমণের খরচ" },
       { value: "shopping", label: "শপিং ও রিটেইল", icon: "shopping_bag", description: "অনলাইন এবং দোকানে কেনাকাটা" },
       { value: "dining", label: "ডাইনিং ও বিনোদন", icon: "restaurant", description: "রেস্তোরাঁ, সিনেমা এবং বিভিন্ন অনুষ্ঠান" },
-      { value: "bills", label: "বিল ও ইউটিলিটি", icon: "receipt_long", description: "মাসিক বিল, সাবস্ক্রিপশন এবং গ্রোসারি কেনাকাটা" },
-    ],
-  },
-  {
-    id: "monthly_spend",
-    question: "আপনি মাসে সাধারণত কত টাকা খরচ করেন?",
-    description: "এটি আপনার খরচের ধরন আনুযায়ী সেরা রিওয়ার্ড যুক্ত কার্ড খুঁজে পেতে সাহায্য করবে",
-    icon: "account_balance_wallet",
-    options: [
-      { value: "low", label: "৩০,০০০ টাকার নিচে", icon: "savings", description: "শুধুমাত্র প্রয়োজনীয় খরচপাতি" },
-      { value: "medium", label: "৩০,০০০ - ৭৫,০০০ টাকা", icon: "payments", description: "নিয়মিত জীবনমানের খরচ" },
-      { value: "high", label: "৭৫,০০০ - ১,৫০,০০০ টাকা", icon: "account_balance", description: "প্রিমিয়াম জীবনমান" },
-      { value: "premium", label: "১,৫০,০০০ টাকার উপরে", icon: "diamond", description: "অধিক পরিমাণে খরচ" },
+      { value: "daily", label: "தினందిన খরচ", icon: "receipt_long", description: "মাসিক বিল, সাবস্ক্রিপশন এবং গ্রোসারি" },
     ],
   },
   {
@@ -59,10 +47,10 @@ const quizQuestions: QuizQuestion[] = [
     description: "এটি আপনি কোন কার্ডগুলোর যোগ্য তা নির্ধারণ করে",
     icon: "monetization_on",
     options: [
-      { value: "entry", label: "২০,০০০ - ৪০,০০০ টাকা", icon: "trending_up", description: "এন্ট্রি-লেভেল কার্ড পাওয়া যাবে" },
-      { value: "mid", label: "৪০,০০০ - ৭৫,০০০ টাকা", icon: "show_chart", description: "স্ট্যান্ডার্ড থেকে প্রিমিয়াম কার্ড" },
-      { value: "high", label: "৭৫,০০০ - ১,৫০,০০০ টাকা", icon: "insights", description: "অধিক সুবিধাযুক্ত প্রিমিয়াম কার্ড" },
-      { value: "premium", label: "১,৫০,০০০ টাকার উপরে", icon: "workspace_premium", description: "এলিট টিয়ারসহ সব কার্ড" },
+      { value: "20000", label: "২০,০০০ - ৪০,০০০ টাকা", icon: "trending_up", description: "এন্ট্রি-লেভেল কার্ড পাওয়া যাবে" },
+      { value: "40000", label: "৪০,০০০ - ৭৫,০০০ টাকা", icon: "show_chart", description: "স্ট্যান্ডার্ড থেকে প্রিমিয়াম কার্ড" },
+      { value: "75000", label: "৭৫,০০০ - ১,৫০,০০০ টাকা", icon: "insights", description: "অধিক সুবিধাযুক্ত প্রিমিয়াম কার্ড" },
+      { value: "150000", label: "১,৫০,০০০ টাকার উপরে", icon: "workspace_premium", description: "এলিট টিয়ারসহ সব কার্ড" },
     ],
   },
   {
@@ -74,7 +62,7 @@ const quizQuestions: QuizQuestion[] = [
       { value: "salaried", label: "চাকরিজীবী", icon: "badge", description: "কোনো প্রতিষ্ঠানে কাজ করছেন" },
       { value: "self_employed", label: "পেশাজীবী", icon: "person", description: "ফ্রিল্যান্সার বা পেশাজীবী" },
       { value: "business", label: "ব্যবসায়ী", icon: "store", description: "নিজের ব্যবসা বা কোম্পানি আছে" },
-      { value: "other", label: "অন্যান্য", icon: "more_horiz", description: "শিক্ষার্থী, অবসরপ্রাপ্ত ইত্যাদি" },
+      { value: "student", label: "ছাত্র / ছাত্রী", icon: "school", description: "শিক্ষার্থী" },
     ],
   },
   {
@@ -84,9 +72,9 @@ const quizQuestions: QuizQuestion[] = [
     icon: "redeem",
     options: [
       { value: "cashback", label: "ক্যাশব্যাক", icon: "savings", description: "কেনাকাটার ওপর টাকা ফেরত পান" },
-      { value: "points", label: "রিওয়ার্ড পয়েন্ট", icon: "stars", description: "গিফট কার্ড বা ভাউচারের জন্য পয়েন্ট অর্জন করুন" },
-      { value: "travel", label: "ভ্রমণ সুবিধা", icon: "flight_takeoff", description: "লাউঞ্জ অ্যাক্সেস, মাইলস এবং অন্যান্য সুবিধা" },
-      { value: "discounts", label: "ডিসকাউন্ট ও অফার", icon: "local_offer", description: "পার্টনারদের থেকে বিশেষ ডিসকাউন্ট এবং ডিল" },
+      { value: "lounge", label: "এয়ারপোর্ট লাউঞ্জ", icon: "flight_takeoff", description: "ফ্রি বলাকা বা ইন্টারন্যাশনল লাউঞ্জ" },
+      { value: "points", label: "গিফট ভাউচার / পয়েন্ট", icon: "stars", description: "পয়েন্ট জমিয়ে গিফট ভাউচার" },
+      { value: "discounts", label: "শপিং ডিসকাউন্ট", icon: "local_offer", description: "লাইফস্টাইল এবং ডাইনিং ডিসকাউন্ট" },
     ],
   },
   {
@@ -96,9 +84,8 @@ const quizQuestions: QuizQuestion[] = [
     icon: "payments",
     options: [
       { value: "free", label: "বার্ষিক ফি নেই", icon: "money_off", description: "শুধুমাত্র ফ্রি কার্ড" },
-      { value: "low", label: "৩,০০০ টাকা পর্যন্ত", icon: "paid", description: "সাশ্রয়ী প্রিমিয়াম কার্ড" },
-      { value: "medium", label: "৩,০০০ - ১০,০০০ টাকা", icon: "credit_score", description: "ফি এবং সুবিধার ভালো ভারসাম্য" },
-      { value: "high", label: "যেকোনো পরিমাণ", icon: "diamond", description: "ফির চিন্তা না করে সেরা সব সুবিধা" },
+      { value: "low", label: "কম ফি (৩০০০ পর্যন্ত)", icon: "paid", description: "সাশ্রয়ী কার্ড" },
+      { value: "any", label: "ফি সমস্যা না", icon: "diamond", description: "সুবিধাই আমার কাছে মুখ্য" },
     ],
   },
 ];
@@ -107,7 +94,6 @@ const CardQuiz = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
-  const [showResults, setShowResults] = useState(false);
 
   const progress = ((currentStep + 1) / quizQuestions.length) * 100;
   const currentQuestion = quizQuestions[currentStep];
@@ -124,15 +110,42 @@ const CardQuiz = () => {
 
     setAnswers(newAnswers);
 
-    // Auto-advance after short delay
+    // Auto-advance
     setTimeout(() => {
       if (currentStep < quizQuestions.length - 1) {
         setCurrentStep(currentStep + 1);
       } else {
-        setShowResults(true);
+        finishQuiz(newAnswers);
       }
-    }, 300);
+    }, 400);
   };
+
+  const finishQuiz = (finalAnswers: QuizAnswer[]) => {
+    // Convert answers to UserProfile
+    const getVal = (id: string) => finalAnswers.find(a => a.questionId === id)?.value;
+
+    const profile: UserProfile = {
+      monthly_income: parseInt(getVal('income') || "0"),
+      employment_type: getVal('employment'),
+      priorities: [],
+      preferred_persona: isStudent(getVal('employment')) ? 'student' : undefined
+    };
+
+    // Map priorities
+    const rewardPref = getVal('reward_preference');
+    if (rewardPref) profile.priorities.push(rewardPref);
+
+    const feePref = getVal('annual_fee');
+    if (feePref === 'free' || feePref === 'low') profile.priorities.push('low_fee');
+
+    const usage = getVal('primary_use');
+    if (usage === 'travel') profile.priorities.push('travel');
+    if (usage === 'shopping') profile.priorities.push('shopping');
+
+    navigate("/recommendations", { state: { profile } });
+  };
+
+  const isStudent = (empType?: string) => empType === 'student';
 
   const handleBack = () => {
     if (currentStep > 0) {
@@ -140,36 +153,9 @@ const CardQuiz = () => {
     }
   };
 
-  const handleRestart = () => {
-    setAnswers([]);
-    setCurrentStep(0);
-    setShowResults(false);
-  };
-
   const getCurrentAnswer = () => {
     return answers.find(a => a.questionId === currentQuestion?.id)?.value;
   };
-
-  if (showResults) {
-    return (
-      <>
-        <SEOHead
-          title="কার্ড কুইজ | BankBujhi"
-          description="৩০ সেকেন্ডে সেরা কার্ড খুঁজুন। আপনার জন্য উপযুক্ত ক্রেডিট কার্ড সুপারিশ।"
-          image="https://bankbujhi.lovable.app/og/og-quiz.jpg"
-          path="/quiz"
-        />
-        <div className="min-h-screen bg-background flex flex-col">
-          <Header />
-          <main className="flex-1 pb-20 md:pb-0">
-            <QuizResults answers={answers} onRestart={handleRestart} />
-          </main>
-          <Footer />
-          <BottomNav />
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -209,11 +195,13 @@ const CardQuiz = () => {
           {/* Question Section */}
           <section className="container mx-auto px-4 py-8 md:py-12">
             <div className="max-w-2xl mx-auto">
-              <QuizQuestion
-                question={currentQuestion}
-                selectedValue={getCurrentAnswer()}
-                onSelect={handleAnswer}
-              />
+              {currentQuestion && (
+                <QuizQuestion
+                  question={currentQuestion}
+                  selectedValue={getCurrentAnswer()}
+                  onSelect={handleAnswer}
+                />
+              )}
             </div>
           </section>
         </main>
