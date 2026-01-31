@@ -6,55 +6,32 @@ import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { Link } from "react-router-dom";
 import SEOHead from "@/components/seo/SEOHead";
 
+import { articles, getArticlesByCategory } from "@/data/guides";
+
 const tips = [
   {
     category: "ক্রেডিট কার্ড",
     icon: "credit_card",
-    articles: [
-      { title: "বাংলাদেশে আপনার প্রথম ক্রেডিট কার্ড কীভাবে বেছে নেবেন", readTime: "৫ মিনিট" },
-      { title: "ক্রেডিট কার্ডের সুদের হার বুঝুন", readTime: "৪ মিনিট" },
-      { title: "ক্যাশব্যাক রিওয়ার্ড বাড়ান: একটি পূর্ণাঙ্গ গাইড", readTime: "৬ মিনিট" },
-      { title: "ক্রেডিট কার্ডে সচরাচর করা ভুলগুলো এড়িয়ে চলুন", readTime: "৪ মিনিট" },
-    ],
+    articles: getArticlesByCategory("ক্রেডিট কার্ড"),
   },
   {
     category: "সেভিংস ও এফডিআর",
     icon: "savings",
-    articles: [
-      { title: "বাংলাদেশে ২০২৪ সালের সেরা এফডিআর (FDR) রেট", readTime: "৫ মিনিট" },
-      { title: "ডিপিএস বনাম এফডিআর: আপনার জন্য কোনটি ভালো?", readTime: "৪ মিনিট" },
-      { title: "ইমার্জেন্সি ফান্ড: আপনার কত সঞ্চয় করা উচিত?", readTime: "৩ মিনিট" },
-      { title: "চক্রবৃদ্ধি সুদ: সময়ের শক্তি", readTime: "৫ মিনিট" },
-    ],
+    articles: getArticlesByCategory("সেভিংস ও এফডিআর"),
   },
   {
     category: "পার্সোনাল লোন",
     icon: "account_balance",
-    articles: [
-      { title: "পার্সোনাল লোন পাওয়ার যোগ্যতা: ব্যাংকগুলো কী দেখে", readTime: "৬ মিনিট" },
-      { title: "ফিক্সড বনাম ফ্লোটিং সুদের হারের ব্যাখ্যা", readTime: "৪ মিনিট" },
-      { title: "লোন অনুমোদনের সম্ভাবনা কীভাবে বাড়াবেন", readTime: "৫ মিনিট" },
-      { title: "ঋণ সমন্বয়: এটি কি আপনার জন্য সঠিক?", readTime: "৫ মিনিট" },
-    ],
+    articles: getArticlesByCategory("পার্সোনাল লোন"),
   },
   {
     category: "বাজেট ব্যবস্থাপনা",
     icon: "pie_chart",
-    articles: [
-      { title: "৫০/৩০/২০ নিয়ম: নতুনদের জন্য সহজ বাজেট পরিকল্পনা", readTime: "৪ মিনিট" },
-      { title: "খরচ ট্র্যাকিং: অ্যাপ বনাম স্প্রেডশিট", readTime: "৩ মিনিট" },
-      { title: "ঢাকায় আয়ের মধ্যে স্বাচ্ছন্দ্যে জীবনযাপন", readTime: "৫ মিনিট" },
-      { title: "বাংলাদেশিদের জন্য মাসিক বাজেট টেমপ্লেট", readTime: "৪ মিনিট" },
-    ],
+    articles: getArticlesByCategory("বাজেট ব্যবস্থাপনা"),
   },
 ];
 
-const featuredTip = {
-  title: "বাংলাদেশে ক্রেডিট ইতিহাস তৈরির পূর্ণাঙ্গ গাইড",
-  description: "লোন এবং কার্ড দ্রুত অনুমোদনের জন্য একটি ভালো ক্রেডিট স্কোর তৈরি এবং বজায় রাখার বিষয়ে আপনার যা জানা প্রয়োজন সব কিছু।",
-  readTime: "১২ মিনিট পড়ুন",
-  category: "ক্রেডিট স্কোর",
-};
+const featuredTip = articles.find(a => a.isFeatured) || articles[0];
 
 const FinancialTips = () => {
   return (
@@ -92,16 +69,16 @@ const FinancialTips = () => {
               <span className="text-sm text-muted-foreground">{featuredTip.category}</span>
             </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-3">{featuredTip.title}</h2>
-            <p className="text-muted-foreground mb-4">{featuredTip.description}</p>
+            <p className="text-muted-foreground mb-4">{featuredTip.excerpt}</p>
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground flex items-center gap-1">
                 <MaterialIcon name="schedule" className="text-sm" />
                 {featuredTip.readTime}
               </span>
-              <button className="text-primary font-semibold flex items-center gap-1 hover:underline">
+              <Link to={`/guides/${featuredTip.id}`} className="text-primary font-semibold flex items-center gap-1 hover:underline">
                 আর্টিকেলটি পড়ুন
                 <MaterialIcon name="arrow_forward" className="text-sm" />
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -120,8 +97,11 @@ const FinancialTips = () => {
                 </div>
                 <ul className="space-y-3">
                   {category.articles.map((article) => (
-                    <li key={article.title}>
-                      <button className="w-full text-left group flex items-start gap-3 p-2 rounded-lg hover:bg-muted transition-colors">
+                    <li key={article.id}>
+                      <Link
+                        to={`/guides/${article.id}`}
+                        className="w-full text-left group flex items-start gap-3 p-2 rounded-lg hover:bg-muted transition-colors"
+                      >
                         <MaterialIcon name="article" className="text-muted-foreground mt-0.5" />
                         <div className="flex-1">
                           <p className="font-medium group-hover:text-primary transition-colors">
@@ -130,7 +110,7 @@ const FinancialTips = () => {
                           <span className="text-xs text-muted-foreground">{article.readTime}</span>
                         </div>
                         <MaterialIcon name="arrow_forward" className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </button>
+                      </Link>
                     </li>
                   ))}
                 </ul>

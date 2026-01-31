@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 
 interface Article {
-  id: number;
+  id: string | number;
   title: string;
   category: string;
-  date: string;
+  date?: string;
   readTime: string;
-  image: string;
-  excerpt: string;
+  image?: string;
+  excerpt?: string;
 }
 
 interface ArticleCardProps {

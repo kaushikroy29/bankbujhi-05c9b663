@@ -1,144 +1,113 @@
 import { CreditCard } from "@/lib/api/banks";
-import { Persona } from "./personas";
 
-export interface UserPreferences {
-    monthlyIncome: number;
+export interface UserProfile {
+    monthly_income: number;
     age?: number;
-    employmentType?: string;
-    selectedPersonaId?: string;
-    spendingPattern?: {
+    employment_type?: string;
+    spending_pattern?: {
         groceries?: number;
         fuel?: number;
         dining?: number;
         travel?: number;
-        online?: number;
+        online_shopping?: number;
+        bills?: number;
     };
+    priorities: string[]; // e.g., 'low_fee', 'lounge', 'cashback'
+    preferred_persona?: string; // e.g., 'student', 'traveler'
 }
 
 export interface CardRecommendation {
     card: CreditCard;
     score: number;
-    matchPercentage: number;
+    match_percentage: number;
     reasons: string[];
-    netValue: number;
+    annual_net_value?: number;
 }
 
-// Extract numeric value from string (e.g., "৳50,000" -> 50000)
-function parseAmount(amountStr?: string | null): number {
+// Helper to parse "৳৫০,০০০" or "BDT 50,000" to number
+export const parseAmount = (amountStr: string | undefined): number => {
     if (!amountStr) return 0;
-    const matches = amountStr.match(/[\d,]+/);
-    if (!matches) return 0;
-    return parseInt(matches[0].replace(/,/g, ""), 10);
-}
+    // Remove non-numeric chars except for digits
+    const cleanStr = amountStr.replace(/[^\d]/g, '');
+    return parseInt(cleanStr, 10) || 0;
+};
 
-// Calculate estimated annual value based on spending
-function calculateNetValue(card: CreditCard, prefs: UserPreferences): number {
-    let benefitValue = 0;
-
-    // Simple heuristic for now: 
-    // - 1% general cashback estimate
-    // - Bonus for matching categories
-
-    const totalMonthlySpend = Object.values(prefs.spendingPattern || {}).reduce((a, b) => a + (b || 0), 0);
-    const totalAnnualSpend = totalMonthlySpend * 12;
-
-    // Base reward rate (conservative estimate)
-    benefitValue += totalAnnualSpend * 0.005;
-
-    // Spending bonuses
-    const benefitsText = JSON.stringify(card.benefits).toLowerCase();
-
-    if (prefs.spendingPattern?.travel && benefitsText.includes('travel')) {
-        benefitValue += (prefs.spendingPattern.travel * 12) * 0.02; // Extra 2% on travel
-    }
-
-    if (prefs.spendingPattern?.dining && (benefitsText.includes('dining') || benefitsText.includes('food'))) {
-        benefitValue += (prefs.spendingPattern.dining * 12) * 0.02; // Extra 2% on dining
-    }
-
-    if (prefs.spendingPattern?.groceries && benefitsText.includes('grocery')) {
-        benefitValue += (prefs.spendingPattern.groceries * 12) * 0.01; // Extra 1% on groceries
-    }
-
-    // Subtract Annual Fee
-    const annualFee = parseAmount(card.annual_fee);
-
-    // If wafer condition met, fee is 0
-    // (We'd need structured wafer logic to be precise, simplfying for now)
-    // Assuming if spend > 5L, fee is waived for robust cards
-    let effectiveFee = annualFee;
-    if (totalAnnualSpend > 500000 && card.annual_fee_waived) {
-        effectiveFee = 0;
-    }
-
-    return benefitValue - effectiveFee;
-}
-
-export function findBestCards(allCards: CreditCard[], prefs: UserPreferences, persona?: Persona): CardRecommendation[] {
+export function findBestCards(userProfile: UserProfile, allCards: CreditCard[]): CardRecommendation[] {
     return allCards
         .map(card => {
             let score = 0;
             const reasons: string[] = [];
+            const cardCategory = (card.category || "").toLowerCase();
+            const benefitsText = card.benefits.map(b => `${b.text} ${b.description || ""}`).join(" ").toLowerCase();
 
-            // 1. Eligibility Check (Hard Filters)
-            // Income
+            // 1. Eligibility Check (Income)
             const cardMinIncome = parseAmount(card.min_income);
-            if (cardMinIncome > 0 && prefs.monthlyIncome < cardMinIncome) {
-                return null; // Not eligible
+            if (userProfile.monthly_income >= cardMinIncome) {
+                score += 20; // Base score for being eligible
+                reasons.push("Income requirement met");
+            } else {
+                score -= 50; // Heavy penalty if not eligible
+                // We still return it but with low score, maybe UI filters it out or shows as "Ineligible"
             }
 
-            // Age (if provided)
-            if (prefs.age) {
-                if (card.min_age && prefs.age < card.min_age) return null;
-                if (card.max_age && prefs.age > card.max_age) return null;
-            }
-
-            // 2. Persona Matching
-            if (persona) {
-                // Category Match
-                const cardCategory = (card.category || "").toLowerCase();
-                const matchesType = persona.recommended_types.some(t => cardCategory.includes(t.toLowerCase()));
-                if (matchesType) {
-                    score += 30;
-                    reasons.push(`Perfect for ${persona.title}`);
+            // 2. Persona / User Type Match
+            if (userProfile.preferred_persona) {
+                // Simple keyword matching for now
+                if (userProfile.preferred_persona === 'student' && (cardCategory.includes('student') || cardCategory.includes('entry'))) {
+                    score += 25;
+                    reasons.push("Perfect for Students");
                 }
-
-                // Benefit Match
-                const benefitsText = JSON.stringify(card.benefits).toLowerCase();
-                let matchesBenefits = 0;
-                persona.criteria.preferred_benefits.forEach(pb => {
-                    if (benefitsText.includes(pb) || cardCategory.includes(pb)) {
-                        matchesBenefits++;
-                    }
-                });
-
-                if (matchesBenefits > 0) {
-                    score += (matchesBenefits * 10);
-                    reasons.push(`${matchesBenefits} key benefits match your needs`);
+                if (userProfile.preferred_persona === 'traveler' && (cardCategory.includes('travel') || benefitsText.includes('lounge') || benefitsText.includes('air'))) {
+                    score += 25;
+                    reasons.push("Great Travel Benefits");
+                }
+                if (userProfile.preferred_persona === 'shopper' && (cardCategory.includes('shopping') || benefitsText.includes('discount'))) {
+                    score += 25;
+                    reasons.push("Top Shopping Card");
                 }
             }
 
-            // 3. Financial Value
-            const netValue = calculateNetValue(card, prefs);
-            if (netValue > 0) {
-                score += Math.min(30, netValue / 1000); // Cap value score
-                reasons.push("Positive estimated annual value");
+            // 3. Priorities Match
+            if (userProfile.priorities.includes('lounge') && (benefitsText.includes('lounge') || benefitsText.includes('launche'))) {
+                score += 20;
+                reasons.push("Includes Lounge Access");
+            }
+            if (userProfile.priorities.includes('cashback') && (benefitsText.includes('cashback') || cardCategory.includes('cashback'))) {
+                score += 20;
+                reasons.push("High Cashback");
+            }
+            if (userProfile.priorities.includes('low_fee')) {
+                const fee = parseAmount(card.annual_fee);
+                if (fee === 0 || card.annual_fee?.toLowerCase().includes('free')) {
+                    score += 25;
+                    reasons.push("No Annual Fee");
+                } else if (fee <= 3000) {
+                    score += 15;
+                    reasons.push("Low Annual Fee");
+                }
             }
 
-            // 4. Feature Matching (General)
-            if (card.fees_detailed?.annual?.waived) {
-                score += 10;
-                reasons.push("Annual fee waiver available");
+            // 4. Employment Type Match (Bonus)
+            if (userProfile.employment_type && card.employment_types && card.employment_types.length > 0) {
+                const empMatch = card.employment_types.some(type =>
+                    type.toLowerCase().includes(userProfile.employment_type!.toLowerCase())
+                );
+                if (empMatch) {
+                    score += 10;
+                }
             }
+
+            // Normalize score
+            const matchPercentage = Math.min(100, Math.max(0, score));
 
             return {
                 card,
                 score,
-                matchPercentage: Math.min(100, Math.round(score)),
-                reasons: reasons.slice(0, 3), // Top 3 reasons
-                netValue: Math.round(netValue)
+                match_percentage: matchPercentage,
+                reasons: [...new Set(reasons)].slice(0, 3) // Top 3 unique reasons
             };
+
         })
-        .filter((item): item is CardRecommendation => item !== null)
+        .filter(rec => rec.score > 0) // Filter out clearly bad matches
         .sort((a, b) => b.score - a.score);
 }

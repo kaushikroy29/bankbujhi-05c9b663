@@ -1,62 +1,74 @@
 import { useState } from "react";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createPendingUpdate } from "@/lib/api/updates";
+import { fetchCreditCards } from "@/lib/api/banks";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import MaterialIcon from "@/components/ui/MaterialIcon";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
-import MaterialIcon from "@/components/ui/MaterialIcon";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
-import { fetchCreditCards } from "@/lib/api/banks";
 
 const QuickUpdate = () => {
-    const [date, setDate] = useState<Date>();
-    const [selectedCard, setSelectedCard] = useState("");
-    const [updateType, setUpdateType] = useState("");
+    const queryClient = useQueryClient();
+    const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
     const [submitting, setSubmitting] = useState(false);
 
     // Fetch cards for dropdown
-    const { data: cards, isLoading } = useQuery({
+    const { data: cards, isLoading: cardsLoading } = useQuery({
         queryKey: ['credit-cards-admin'],
         queryFn: () => fetchCreditCards({})
     });
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const mutation = useMutation({
+        mutationFn: createPendingUpdate,
+        onSuccess: () => {
+            toast.success("আপডেট সফলভাবে সাবমিট করা হয়েছে!");
+            reset();
+            queryClient.invalidateQueries({ queryKey: ['pending-updates'] });
+        },
+        onError: (error) => {
+            toast.error(`Error: ${error.message}`);
+        }
+    });
+
+    const onSubmit = (data: any) => {
         setSubmitting(true);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        let productName = data.product_name;
+        // If an existing product is selected, use its name
+        if (data.product_id && cards) {
+            const card = cards.find(c => c.id === data.product_id);
+            if (card) productName = card.name;
+        }
 
-        toast.success("আপডেট সফলভাবে জমা দেওয়া হয়েছে", {
-            description: "যাচাইকরণের পর এটি প্রকাশ করা হবে।"
-        });
+        const payload = {
+            bank_name: data.bank_name || "Unknown Bank", // Should be derived from product or input
+            product_type: data.product_type,
+            product_name: productName,
+            field_name: data.field_name,
+            old_value: data.old_value,
+            new_value: data.new_value,
+            source_url: data.source_url,
+            product_id: data.product_id === 'new' ? null : data.product_id
+        };
 
+        mutation.mutate(payload);
         setSubmitting(false);
-        // Reset form would go here
     };
 
+    const productType = watch('product_type');
+
     return (
-        <div className="relative flex min-h-screen flex-col">
+        <div className="flex min-h-screen flex-col bg-slate-50">
             <Header />
             <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full pb-20 md:pb-8">
                 <PageBreadcrumb
@@ -69,129 +81,98 @@ const QuickUpdate = () => {
 
                 <div className="flex items-center gap-3 mb-8">
                     <div className="bg-primary/10 p-3 rounded-xl">
-                        <MaterialIcon name="update" className="text-primary text-2xl" />
+                        <MaterialIcon name="flash_on" className="text-primary text-2xl" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold">প্রোডাক্ট আপডেট ড্যাশবোর্ড</h1>
-                        <p className="text-muted-foreground">কার্ডের ফি বা সুবিধাদি পরিবর্তন হলে এখানে এন্ট্রি দিন</p>
+                        <h1 className="text-3xl font-bold">Quick Update</h1>
+                        <p className="text-muted-foreground">Submit manual updates for approval.</p>
                     </div>
                 </div>
 
-                <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-sm">
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>নতুন আপডেট তথ্য</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-                        <div className="grid sm:grid-cols-2 gap-6">
-                            {/* Product Select */}
-                            <div className="space-y-2">
-                                <Label>কার্ড নির্বাচন করুন</Label>
-                                <Select value={selectedCard} onValueChange={setSelectedCard}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="কার্ড খুঁজুন..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {isLoading ? (
-                                            <SelectItem value="loading" disabled>লোড হচ্ছে...</SelectItem>
-                                        ) : (
-                                            cards?.map(card => (
-                                                <SelectItem key={card.id} value={card.id}>
-                                                    {card.name}
-                                                </SelectItem>
-                                            ))
-                                        )}
-                                    </SelectContent>
-                                </Select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Product Type</Label>
+                                    <Select onValueChange={(val) => setValue('product_type', val)} required>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="credit_card">Credit Card</SelectItem>
+                                            <SelectItem value="loan">Personal Loan</SelectItem>
+                                            <SelectItem value="savings">FDR / Savings</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Bank Name</Label>
+                                    <Input {...register('bank_name')} placeholder="e.g. City Bank" />
+                                </div>
                             </div>
 
-                            {/* Update Type */}
-                            <div className="space-y-2">
-                                <Label>আপডেটের ধরন</Label>
-                                <Select value={updateType} onValueChange={setUpdateType}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="ধরন নির্বাচন করুন" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="fee_change">ফি পরিবর্তন (Fee Change)</SelectItem>
-                                        <SelectItem value="benefit_added">নতুন সুবিধা (Benefit Added)</SelectItem>
-                                        <SelectItem value="benefit_removed">সুবিধা বাতিল (Benefit Removed)</SelectItem>
-                                        <SelectItem value="rate_change">সুদের হার পরিবর্তন (Rate Change)</SelectItem>
-                                        <SelectItem value="new_offer">নতুন অফার (New Offer)</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                            {/* Conditional Product Select */}
+                            {productType === 'credit_card' && (
+                                <div className="space-y-2">
+                                    <Label>Select Existing Card (Optional)</Label>
+                                    <Select onValueChange={(val) => setValue('product_id', val)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Card" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="new">-- New Product --</SelectItem>
+                                            {cards?.map(card => (
+                                                <SelectItem key={card.id} value={card.id}>{card.name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
 
-                        <div className="grid sm:grid-cols-2 gap-6">
-                            {/* Old Value */}
                             <div className="space-y-2">
-                                <Label>পুরাতন ভ্যালু (ঐচ্ছিক)</Label>
-                                <Input placeholder="উদাহরণ: ৳৫,০০০" />
+                                <Label>Product Name</Label>
+                                <Input {...register('product_name', { required: true })} placeholder="e.g. Agora Amex Gold" />
                             </div>
 
-                            {/* New Value */}
                             <div className="space-y-2">
-                                <Label>নতুন ভ্যালু</Label>
-                                <Input placeholder="উদাহরণ: ৳৬,০০০" required />
+                                <Label>Field Changed</Label>
+                                <Input {...register('field_name', { required: true })} placeholder="e.g. Annual Fee, Interest Rate" />
                             </div>
-                        </div>
 
-                        {/* Effective Date */}
-                        <div className="space-y-2 flex flex-col">
-                            <Label>কার্যকর হওয়ার তারিখ</Label>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant={"outline"}
-                                        className={cn(
-                                            "w-full pl-3 text-left font-normal",
-                                            !date && "text-muted-foreground"
-                                        )}
-                                    >
-                                        {date ? (
-                                            format(date, "PPP")
-                                        ) : (
-                                            <span>তারিখ নির্বাচন করুন</span>
-                                        )}
-                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                    <Calendar
-                                        mode="single"
-                                        selected={date}
-                                        onSelect={setDate}
-                                        disabled={(date) =>
-                                            date < new Date("1900-01-01")
-                                        }
-                                        initialFocus
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                        </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Old Value (Optional)</Label>
+                                    <Input {...register('old_value')} placeholder="e.g. 5000" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>New Value</Label>
+                                    <Input {...register('new_value', { required: true })} placeholder="e.g. 6000" />
+                                </div>
+                            </div>
 
-                        {/* Reason/Description */}
-                        <div className="space-y-2">
-                            <Label>পরিবর্তনের কারণ / বিস্তারিত</Label>
-                            <Textarea
-                                placeholder="কেন পরিবর্তন করা হলো বা বিস্তারিত লিখুন..."
-                                className="min-h-[100px]"
-                            />
-                        </div>
+                            <div className="space-y-2">
+                                <Label>Source URL (Verification)</Label>
+                                <Input {...register('source_url')} placeholder="https://bank-website.com/notice" />
+                            </div>
 
-                        {/* Source URL */}
-                        <div className="space-y-2">
-                            <Label>সূত্র (লিংক)</Label>
-                            <Input placeholder="https://bank-website.com/announcement" />
-                            <p className="text-xs text-muted-foreground">ব্যাংকের অফিশিয়াল নোটিশের লিংক দিন</p>
-                        </div>
+                            <div className="space-y-2">
+                                <Label>Change Reason</Label>
+                                <Textarea {...register('change_reason')} placeholder="Details about this change..." />
+                            </div>
 
-                        <div className="pt-4">
-                            <Button type="submit" className="w-full" size="lg" disabled={submitting}>
-                                {submitting ? "প্রসেসিং হচ্ছে..." : "আপডেট জমা দিন"}
+                            <Button type="submit" className="w-full" size="lg" disabled={mutation.isPending || submitting}>
+                                {mutation.isPending || submitting ? "Submitting..." : "Submit Update"}
                             </Button>
-                        </div>
 
-                    </form>
-                </div>
+                        </form>
+                    </CardContent>
+                </Card>
             </main>
             <Footer />
             <BottomNav />

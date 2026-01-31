@@ -34,6 +34,9 @@ import Watchlist from "./pages/Watchlist";
 import PendingUpdates from "./pages/admin/PendingUpdates";
 import CreditCardCostCalculator from "./components/calculators/CreditCardCostCalculator";
 import EMICalculator from "./components/calculators/EMICalculator";
+import Calculators from "./pages/Calculators";
+import GuideDetail from "./pages/GuideDetail";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -50,6 +53,7 @@ const App = () => (
             <Route path="/savings" element={<FDRSavings />} />
             <Route path="/banks" element={<Banks />} />
             <Route path="/guides" element={<Guides />} />
+            <Route path="/guides/:id" element={<GuideDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/team" element={<Team />} />
@@ -70,6 +74,7 @@ const App = () => (
             <Route path="/glossary" element={<Glossary />} />
             <Route path="/calculator/emi" element={<div className="container py-10 max-w-4xl"><div className="mb-6"><h1 className="text-3xl font-black mb-2 text-center">EMI ক্যালকুলেটর</h1></div><EMICalculator /></div>} />
             <Route path="/tools/calculator" element={<div className="container py-10 max-w-4xl"><CreditCardCostCalculator /></div>} />
+            <Route path="/tools" element={<Calculators />} />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/admin/updates" element={<PendingUpdates />} />
