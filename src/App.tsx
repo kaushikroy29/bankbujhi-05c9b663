@@ -34,8 +34,10 @@ import Watchlist from "./pages/Watchlist";
 import PendingUpdates from "./pages/admin/PendingUpdates";
 import CreditCardCostCalculator from "./components/calculators/CreditCardCostCalculator";
 import EMICalculator from "./components/calculators/EMICalculator";
+import FDRCalculator from "./components/calculators/FDRCalculator";
 import Calculators from "./pages/Calculators";
 import GuideDetail from "./pages/GuideDetail";
+import QuickUpdate from "./pages/admin/QuickUpdate";
 
 const queryClient = new QueryClient();
 
@@ -73,11 +75,13 @@ const App = () => (
             <Route path="/mfs" element={<MFS />} />
             <Route path="/glossary" element={<Glossary />} />
             <Route path="/calculator/emi" element={<div className="container py-10 max-w-4xl"><div className="mb-6"><h1 className="text-3xl font-black mb-2 text-center">EMI ক্যালকুলেটর</h1></div><EMICalculator /></div>} />
+            <Route path="/calculator/fdr" element={<FDRCalculator />} />
             <Route path="/tools/calculator" element={<div className="container py-10 max-w-4xl"><CreditCardCostCalculator /></div>} />
             <Route path="/tools" element={<Calculators />} />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/admin/updates" element={<PendingUpdates />} />
+            <Route path="/admin/quick-update" element={<QuickUpdate />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

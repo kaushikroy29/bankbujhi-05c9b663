@@ -1,181 +1,180 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createPendingUpdate } from "@/lib/api/updates";
-import { fetchCreditCards } from "@/lib/api/banks";
-import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import MaterialIcon from "@/components/ui/MaterialIcon";
+import { supabase } from "@/integrations/supabase/client";
+import { fetchCreditCards, CreditCard } from "@/lib/api/banks";
+import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import MaterialIcon from "@/components/ui/MaterialIcon";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import BottomNav from "@/components/layout/BottomNav";
-import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 
 const QuickUpdate = () => {
-    const queryClient = useQueryClient();
-    const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
-    const [submitting, setSubmitting] = useState(false);
+    const [cards, setCards] = useState<CreditCard[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [selectedCardId, setSelectedCardId] = useState("");
 
-    // Fetch cards for dropdown
-    const { data: cards, isLoading: cardsLoading } = useQuery({
-        queryKey: ['credit-cards-admin'],
-        queryFn: () => fetchCreditCards({})
+    const [formData, setFormData] = useState({
+        change_type: "fee_update",
+        field_changed: "annual_fee",
+        old_value: "",
+        new_value: "",
+        change_description: "",
+        source_url: "",
     });
 
-    const mutation = useMutation({
-        mutationFn: createPendingUpdate,
-        onSuccess: () => {
-            toast.success("আপডেট সফলভাবে সাবমিট করা হয়েছে!");
-            reset();
-            queryClient.invalidateQueries({ queryKey: ['pending-updates'] });
-        },
-        onError: (error) => {
-            toast.error(`Error: ${error.message}`);
-        }
-    });
+    useEffect(() => {
+        loadCards();
+    }, []);
 
-    const onSubmit = (data: any) => {
-        setSubmitting(true);
-
-        let productName = data.product_name;
-        // If an existing product is selected, use its name
-        if (data.product_id && cards) {
-            const card = cards.find(c => c.id === data.product_id);
-            if (card) productName = card.name;
-        }
-
-        const payload = {
-            bank_name: data.bank_name || "Unknown Bank", // Should be derived from product or input
-            product_type: data.product_type,
-            product_name: productName,
-            field_name: data.field_name,
-            old_value: data.old_value,
-            new_value: data.new_value,
-            source_url: data.source_url,
-            product_id: data.product_id === 'new' ? null : data.product_id
-        };
-
-        mutation.mutate(payload);
-        setSubmitting(false);
+    const loadCards = async () => {
+        const data = await fetchCreditCards();
+        setCards(data);
     };
 
-    const productType = watch('product_type');
+    const handleCardSelect = (id: string) => {
+        setSelectedCardId(id);
+        const card = cards.find(c => c.id === id);
+        if (card) {
+            // Auto-fill old value if possible based on field selection
+            // Simplified logic for demo
+            if (formData.field_changed === "annual_fee") {
+                setFormData(prev => ({ ...prev, old_value: card.annual_fee || "" }));
+            }
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("Not authenticated");
+
+            const { error } = await supabase
+                .from('product_change_log')
+                .insert({
+                    product_type: 'credit_card',
+                    product_id: selectedCardId,
+                    change_type: formData.change_type,
+                    field_changed: formData.field_changed,
+                    old_value: formData.old_value,
+                    new_value: formData.new_value,
+                    change_description: formData.change_description,
+                    source_url: formData.source_url,
+                    created_by: user.id,
+                    verified: true // Admin updates are auto-verified
+                });
+
+            if (error) throw error;
+
+            toast.success("আপডেট সফলভাবে লগ করা হয়েছে");
+            // Reset form
+            setFormData(prev => ({ ...prev, new_value: "", change_description: "" }));
+        } catch (error) {
+            console.error(error);
+            toast.error("আপডেট করতে ব্যর্থ হয়েছে");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <div className="flex min-h-screen flex-col bg-slate-50">
-            <Header />
-            <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full pb-20 md:pb-8">
-                <PageBreadcrumb
-                    items={[
-                        { label: "অ্যাডমিন", href: "/admin" },
-                        { label: "কুইক আপডেট" }
-                    ]}
-                    className="mb-6"
-                />
+        <div className="container py-8 max-w-2xl mx-auto">
+            <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
+                <MaterialIcon name="admin_panel_settings" />
+                Quick Update Panel
+            </h1>
 
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="bg-primary/10 p-3 rounded-xl">
-                        <MaterialIcon name="flash_on" className="text-primary text-2xl" />
+            <div className="bg-card border rounded-xl p-6 shadow-sm">
+                <form onSubmit={handleSubmit} className="space-y-4">
+
+                    <div className="space-y-2">
+                        <Label>Product / Card</Label>
+                        <Select onValueChange={handleCardSelect} value={selectedCardId}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a card to update" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {cards.map(card => (
+                                    <SelectItem key={card.id} value={card.id}>{card.name} ({card.banks?.name})</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
-                    <div>
-                        <h1 className="text-3xl font-bold">Quick Update</h1>
-                        <p className="text-muted-foreground">Submit manual updates for approval.</p>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label>Change Type</Label>
+                            <Select
+                                value={formData.change_type}
+                                onValueChange={(val) => setFormData(p => ({ ...p, change_type: val }))}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="fee_update">Fee Update</SelectItem>
+                                    <SelectItem value="rate_change">Rate Change</SelectItem>
+                                    <SelectItem value="benefit_added">New Benefit</SelectItem>
+                                    <SelectItem value="benefit_removed">Benefit Removed</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Field Changed</Label>
+                            <Input
+                                value={formData.field_changed}
+                                onChange={e => setFormData(p => ({ ...p, field_changed: e.target.value }))}
+                                placeholder="e.g. annual_fee"
+                            />
+                        </div>
                     </div>
-                </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>নতুন আপডেট তথ্য</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label>Old Value</Label>
+                            <Input
+                                value={formData.old_value}
+                                onChange={e => setFormData(p => ({ ...p, old_value: e.target.value }))}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>New Value</Label>
+                            <Input
+                                value={formData.new_value}
+                                onChange={e => setFormData(p => ({ ...p, new_value: e.target.value }))}
+                                className="border-green-500 bg-green-50/50"
+                            />
+                        </div>
+                    </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>Product Type</Label>
-                                    <Select onValueChange={(val) => setValue('product_type', val)} required>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="credit_card">Credit Card</SelectItem>
-                                            <SelectItem value="loan">Personal Loan</SelectItem>
-                                            <SelectItem value="savings">FDR / Savings</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                    <div className="space-y-2">
+                        <Label>Description (Bangla)</Label>
+                        <Textarea
+                            placeholder="e.g. সিটি ব্যাংক আমেরিকান এক্সপ্রেস গোল্ড কার্ডের বার্ষিক ফি ৫,০০০ টাকা থেকে বেড়ে ৬,০০০ টাকা হয়েছে।"
+                            value={formData.change_description}
+                            onChange={e => setFormData(p => ({ ...p, change_description: e.target.value }))}
+                        />
+                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Bank Name</Label>
-                                    <Input {...register('bank_name')} placeholder="e.g. City Bank" />
-                                </div>
-                            </div>
+                    <div className="space-y-2">
+                        <Label>Source URL (Optional)</Label>
+                        <Input
+                            placeholder="https://..."
+                            value={formData.source_url}
+                            onChange={e => setFormData(p => ({ ...p, source_url: e.target.value }))}
+                        />
+                    </div>
 
-                            {/* Conditional Product Select */}
-                            {productType === 'credit_card' && (
-                                <div className="space-y-2">
-                                    <Label>Select Existing Card (Optional)</Label>
-                                    <Select onValueChange={(val) => setValue('product_id', val)}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select Card" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="new">-- New Product --</SelectItem>
-                                            {cards?.map(card => (
-                                                <SelectItem key={card.id} value={card.id}>{card.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            )}
+                    <Button type="submit" className="w-full font-bold" disabled={loading || !selectedCardId}>
+                        {loading ? "Updating..." : "Publish Update"}
+                    </Button>
 
-                            <div className="space-y-2">
-                                <Label>Product Name</Label>
-                                <Input {...register('product_name', { required: true })} placeholder="e.g. Agora Amex Gold" />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label>Field Changed</Label>
-                                <Input {...register('field_name', { required: true })} placeholder="e.g. Annual Fee, Interest Rate" />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>Old Value (Optional)</Label>
-                                    <Input {...register('old_value')} placeholder="e.g. 5000" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>New Value</Label>
-                                    <Input {...register('new_value', { required: true })} placeholder="e.g. 6000" />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label>Source URL (Verification)</Label>
-                                <Input {...register('source_url')} placeholder="https://bank-website.com/notice" />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label>Change Reason</Label>
-                                <Textarea {...register('change_reason')} placeholder="Details about this change..." />
-                            </div>
-
-                            <Button type="submit" className="w-full" size="lg" disabled={mutation.isPending || submitting}>
-                                {mutation.isPending || submitting ? "Submitting..." : "Submit Update"}
-                            </Button>
-
-                        </form>
-                    </CardContent>
-                </Card>
-            </main>
-            <Footer />
-            <BottomNav />
+                </form>
+            </div>
         </div>
     );
 };

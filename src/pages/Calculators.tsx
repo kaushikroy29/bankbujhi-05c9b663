@@ -8,7 +8,18 @@ import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { Button } from "@/components/ui/button";
 
 const Calculators = () => {
-    const tools = [
+    interface Tool {
+        id: string;
+        title: string;
+        description: string;
+        icon: string;
+        link: string;
+        color: string;
+        bgColor: string;
+        badge?: string;
+    }
+
+    const tools: Tool[] = [
         {
             id: "credit-card-payoff",
             title: "ক্রেডিট কার্ড বিল ক্যালকুলেটর",
@@ -32,10 +43,9 @@ const Calculators = () => {
             title: "FDR মুনাফা ক্যালকুলেটর",
             description: "মেয়াদ শেষে আপনার ফিক্সড ডিপোজিট (FDR) থেকে কত লাভ পাবেন তা দেখুন।",
             icon: "savings",
-            link: "/savings",
+            link: "/calculator/fdr",
             color: "text-purple-600",
-            bgColor: "bg-purple-100/50",
-            badge: "শীঘ্রই আসছে"
+            bgColor: "bg-purple-100/50"
         }
     ];
 
