@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
@@ -34,9 +34,47 @@ const Watchlist = () => {
     const [products, setProducts] = useState<ProductDetails[]>([]);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
+    const productsRef = useRef<ProductDetails[]>([]);
+
+    useEffect(() => {
+        productsRef.current = products;
+    }, [products]);
 
     useEffect(() => {
         checkAuthAndLoad();
+
+        // Realtime Subscription for Product Changes
+        const channel = supabase
+            .channel('public:product_change_log')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'product_change_log',
+                },
+                (payload) => {
+                    const newChange = payload.new as any; // Cast if needed
+                    const watchedProduct = productsRef.current.find(p => p.id === newChange.product_id);
+
+                    if (watchedProduct) {
+                        toast.info(`আপডেট: ${watchedProduct.name}`, {
+                            description: 'এই পণ্যটির তথ্যে পরিবর্তন এসেছে।',
+                            action: {
+                                label: 'রিফ্রেশ',
+                                onClick: () => loadWatchlist()
+                            }
+                        });
+                        // Auto refresh
+                        loadWatchlist();
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     const checkAuthAndLoad = async () => {

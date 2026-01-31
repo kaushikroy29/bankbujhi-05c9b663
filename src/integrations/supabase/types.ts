@@ -1,27 +1,4 @@
-﻿[?25l[?2004h
-
-                                                                                                                
-  >  1. ikniewnxrlejzwvjonas [name: tripurateer, org: miarysljifsugbmvzvkd, region: ap-south-1]                 
-    2. ifwtxgxgsxkgygqhnano [name: bankbujhi, org: vercel_icfg_YEzZFSb8NBQoaAEeqzuOmIrG, region: ap-southeast-2]
-                                                                                                                
-                                                                                                                
-                                                                                                                
-                                                                                                                
-    Γåæ/k up ΓÇó Γåô/j down ΓÇó / filter ΓÇó q quit ΓÇó ? more                                                              
-                                                                                                                
-[9A
-[K
-    Select a project:               
-                                    
-  >  1. ikniewnxrlejzwvjonas [name: 
-    2. ifwtxgxgsxkgygqhnano [name: b
-                                    
-                                    
-    Γåæ/k up ΓÇó Γåô/j down ΓÇó / filter ΓÇª  
-                                    [J
-[8A [K[J
-[2K
-[?2004l[?25h[?1002l[?1003l[?1006lexport type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -30,61 +7,162 @@
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.1"
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
-      results: {
+      notifications: {
         Row: {
           created_at: string | null
-          date: string
-          id: number
-          night_round1: string | null
-          night_round2: string | null
-          round1: string | null
-          round2: string | null
+          expires_at: string | null
+          id: string
+          message_bn: string
+          product_id: string | null
+          severity: string
+          title_bn: string
+          type: string
         }
         Insert: {
           created_at?: string | null
-          date: string
-          id?: number
-          night_round1?: string | null
-          night_round2?: string | null
-          round1?: string | null
-          round2?: string | null
+          expires_at?: string | null
+          id?: string
+          message_bn: string
+          product_id?: string | null
+          severity?: string
+          title_bn: string
+          type: string
         }
         Update: {
           created_at?: string | null
-          date?: string
-          id?: number
-          night_round1?: string | null
-          night_round2?: string | null
-          round1?: string | null
-          round2?: string | null
+          expires_at?: string | null
+          id?: string
+          message_bn?: string
+          product_id?: string | null
+          severity?: string
+          title_bn?: string
+          type?: string
         }
         Relationships: []
       }
-      settings: {
+      pending_updates: {
         Row: {
-          id: number
-          notice_text: string | null
+          bank_name: string
+          created_at: string | null
+          field_name: string
+          id: string
+          new_value: string
+          old_value: string | null
+          product_id: string | null
+          product_name: string
+          product_type: string
+          reviewed_by: string | null
+          source_url: string | null
+          status: string
+          submitted_by: string | null
           updated_at: string | null
-          youtube_video_id: string | null
         }
         Insert: {
-          id?: number
-          notice_text?: string | null
+          bank_name: string
+          created_at?: string | null
+          field_name: string
+          id?: string
+          new_value: string
+          old_value?: string | null
+          product_id?: string | null
+          product_name: string
+          product_type: string
+          reviewed_by?: string | null
+          source_url?: string | null
+          status?: string
+          submitted_by?: string | null
           updated_at?: string | null
-          youtube_video_id?: string | null
         }
         Update: {
-          id?: number
-          notice_text?: string | null
+          bank_name?: string
+          created_at?: string | null
+          field_name?: string
+          id?: string
+          new_value?: string
+          old_value?: string | null
+          product_id?: string | null
+          product_name?: string
+          product_type?: string
+          reviewed_by?: string | null
+          source_url?: string | null
+          status?: string
+          submitted_by?: string | null
           updated_at?: string | null
-          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
+      product_change_log: {
+        Row: {
+          change_description: string | null
+          change_type: string
+          created_at: string
+          created_by: string | null
+          effective_date: string
+          field_changed: string
+          id: string
+          new_value: string
+          old_value: string | null
+          product_id: string
+          product_type: string
+          source_url: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          change_description?: string | null
+          change_type: string
+          created_at?: string
+          created_by?: string | null
+          effective_date?: string
+          field_changed: string
+          id?: string
+          new_value: string
+          old_value?: string | null
+          product_id: string
+          product_type: string
+          source_url?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          change_description?: string | null
+          change_type?: string
+          created_at?: string
+          created_by?: string | null
+          effective_date?: string
+          field_changed?: string
+          id?: string
+          new_value?: string
+          old_value?: string | null
+          product_id?: string
+          product_type?: string
+          source_url?: string | null
+          verified?: boolean | null
         }
         Relationships: []
       }
@@ -222,7 +300,11 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },
 } as const
+

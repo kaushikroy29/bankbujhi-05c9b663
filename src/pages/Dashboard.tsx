@@ -8,8 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { getUserWatchlist } from "@/lib/api/watchlist";
 import { fetchCreditCard, fetchCreditCards, type CreditCard } from "@/lib/api/banks"; // Import types
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Database } from "@/integrations/supabase/types";
+
+type Notification = Database['public']['Tables']['notifications']['Row'];
 
 interface WatchlistCard {
   id: string;
@@ -34,11 +38,36 @@ const Dashboard = () => {
   // Data State
   const [watchlist, setWatchlist] = useState<WatchlistCard[]>([]);
   const [recommendations, setRecommendations] = useState<CreditCard[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string>("");
 
   useEffect(() => {
     loadDashboardData();
+
+    // Realtime Subscription
+    const channel = supabase
+      .channel('public:notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+        },
+        (payload) => {
+          const newNotif = payload.new as Notification;
+          toast.info(newNotif.title_bn, {
+            description: newNotif.message_bn,
+          });
+          setNotifications((prev) => [newNotif, ...prev]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const loadDashboardData = async () => {
@@ -75,6 +104,17 @@ const Dashboard = () => {
       // Simple logic: Pick random 2 featured cards or just top 2
       const featured = allCards.filter(c => c.badge).slice(0, 2);
       setRecommendations(featured.length > 0 ? featured : allCards.slice(0, 2));
+
+      // 3. Load Notifications (Recent 5)
+      const { data: notifData } = await supabase
+        .from('notifications')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (notifData) {
+        setNotifications(notifData);
+      }
 
     } catch (error) {
       console.error("Error loading dashboard:", error);
@@ -209,6 +249,30 @@ const Dashboard = () => {
                 ))}
               </div>
             </section>
+
+            {/* Notifications Section */}
+            {notifications.length > 0 && (
+              <section className="mb-6">
+                <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+                  <MaterialIcon name="notifications" className="text-primary" />
+                  আপডেট এবং নোটিফিকেশন
+                </h2>
+                <div className="space-y-3">
+                  {notifications.map((notif) => (
+                    <div key={notif.id} className="bg-card/50 p-4 rounded-xl border border-primary/10 flex items-start gap-3">
+                      <div className={`mt-1 w-2 h-2 rounded-full shrink-0 ${notif.severity === 'critical' ? 'bg-destructive' : 'bg-primary'}`} />
+                      <div>
+                        <h4 className="font-bold text-sm text-foreground">{notif.title_bn}</h4>
+                        <p className="text-sm text-muted-foreground">{notif.message_bn}</p>
+                        <span className="text-[10px] text-muted-foreground/60 mt-1 block">
+                          {new Date(notif.created_at || '').toLocaleDateString('bn-BD')}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Saved Cards */}
             <section>
