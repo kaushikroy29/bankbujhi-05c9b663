@@ -6,38 +6,38 @@ import { Button } from "@/components/ui/button";
 const picks = [
   {
     id: 1,
-    bank: "City Bank",
+    bank: " সিটি ব্যাংক",
     bankCode: "City",
-    name: "American Express",
-    benefit: "5% Cashback",
+    name: "আমেরিকান এক্সপ্রেস (Amex)",
+    benefit: "৫% ক্যাশব্যাক",
     color: "bg-green-800",
   },
   {
     id: 2,
-    bank: "Eastern Bank",
+    bank: "ইস্টার্ন ব্যাংক",
     bankCode: "EBL",
-    name: "Visa Signature (Skylounge)",
-    benefit: "Airport Lounge Access",
+    name: "ভিসা সিগনেচার (স্কাইলঞ্জ)",
+    benefit: "এয়ারপোর্ট লাউঞ্জ অ্যাক্সেস",
     color: "bg-blue-900",
   },
   {
     id: 3,
-    bank: "Standard Chartered",
+    bank: "স্ট্যান্ডার্ড চার্টার্ড",
     bankCode: "SCB",
-    name: "Visa Platinum",
-    benefit: "0% EMI on Electronics",
+    name: "ভিসা প্ল্যাটিনাম",
+    benefit: "ইলেকট্রনিক্সে ০% ইএমআই (EMI)",
     color: "bg-teal-700",
   },
 ];
 
 const tips = [
-  "Always pay your credit card bill in full to avoid interest charges.",
-  "Use your cards for regular purchases to accumulate rewards faster.",
-  "Check your CIB report annually to ensure accuracy.",
+  "সুদ এড়াতে সর্বদা আপনার ক্রেডিট কার্ডের বিল সম্পূর্ণ পরিশোধ করুন।",
+  "দ্রুত রিওয়ার্ড পয়েন্ট জমা করতে আপনার কার্ড নিয়মিত কেনাকাটায় ব্যবহার করুন।",
+  "তথ্যের সঠিকতা নিশ্চিত করতে প্রতি বছর আপনার সিআইবি (CIB) রিপোর্ট চেক করুন।",
 ];
 
 const MonthlyPicks = () => {
-  const currentMonth = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const currentMonth = new Date().toLocaleDateString("bn-BD", { month: "long", year: "numeric" });
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,7 +48,7 @@ const MonthlyPicks = () => {
             <Logo className="w-8 h-8 text-primary-foreground" />
             <span className="font-bold">BankBujhi.com</span>
           </Link>
-          <span className="text-sm opacity-80">{currentMonth} Newsletter</span>
+          <span className="text-sm opacity-80">{currentMonth}-এর নিউজলেটার</span>
         </div>
       </div>
 
@@ -57,10 +57,10 @@ const MonthlyPicks = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-black mb-4">
-            Monthly <span className="text-primary">Top Picks</span>
+            মাসিক <span className="text-primary">সেরা পছন্দ</span>
           </h1>
-          <p className="text-muted-foreground">
-            Our curated selection of the best credit card offers this month
+          <p className="text-muted-foreground font-bengali">
+            এই মাসের সেরা ক্রেডিট কার্ড অফারগুলোর জন্য আমাদের বিশেষ নির্বাচন
           </p>
         </div>
 
@@ -68,7 +68,7 @@ const MonthlyPicks = () => {
         <section className="mb-12">
           <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
             <MaterialIcon name="star" className="text-accent" />
-            Featured Cards
+            সেরা কার্ডসমূহ (Featured)
           </h2>
           <div className="space-y-4">
             {picks.map((card) => (
@@ -101,7 +101,7 @@ const MonthlyPicks = () => {
         <section className="mb-12 bg-primary/5 rounded-xl p-6 border border-primary/10">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <MaterialIcon name="lightbulb" className="text-accent" />
-            Monthly Tips
+            মাসিক পরামর্শ
           </h2>
           <ul className="space-y-3">
             {tips.map((tip, index) => (
@@ -115,12 +115,12 @@ const MonthlyPicks = () => {
 
         {/* CTA */}
         <section className="text-center py-8 border-t border-primary/10">
-          <h3 className="text-lg font-bold mb-2">Want personalized recommendations?</h3>
-          <p className="text-muted-foreground text-sm mb-4">
-            Complete your profile to get cards matched to your spending habits.
+          <h3 className="text-lg font-bold mb-2">ব্যক্তিগত সুপারিশ পেতে চান?</h3>
+          <p className="text-muted-foreground text-sm mb-4 font-bengali">
+            আপনার খরচের অভ্যাসের সাথে সামঞ্জস্যপূর্ণ কার্ড পেতে প্রোফাইলটি সম্পূর্ণ করুন।
           </p>
           <Link to="/eligibility">
-            <Button>Check Your Eligibility</Button>
+            <Button>যোগ্যতা পরীক্ষা করুন</Button>
           </Link>
         </section>
 
@@ -130,8 +130,8 @@ const MonthlyPicks = () => {
             <Logo className="w-6 h-6" />
             <span className="font-bold text-sm">BankBujhi.com</span>
           </Link>
-          <p className="text-xs text-muted-foreground mb-4">
-            Your trusted financial companion in Bangladesh
+          <p className="text-xs text-muted-foreground mb-4 font-bengali">
+            বাংলাদেশে আপনার বিশ্বস্ত আর্থিক সঙ্গী
           </p>
           <div className="flex justify-center gap-4 mb-4">
             <a href="mailto:contact@bankbujhi.com" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Email">
@@ -148,7 +148,7 @@ const MonthlyPicks = () => {
             আনসাবস্ক্রাইব করুন
           </Link>
           <p className="text-xs text-muted-foreground mt-4">
-            © BankBujhi.com. All rights reserved.
+            © BankBujhi.com. সর্বস্বত্ব সংরক্ষিত।
           </p>
         </footer>
       </div>

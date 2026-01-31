@@ -4,14 +4,16 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import MobileNav from "./MobileNav";
+import NotificationBell from "./NotificationBell";
 import LanguageToggle from "./LanguageToggle";
 
 const navLinks = [
   { href: "/compare", label: "কার্ড", icon: "credit_card" },
   { href: "/loans", label: "লোন", icon: "account_balance" },
   { href: "/savings", label: "সেভিংস", icon: "savings" },
-  { href: "/banks", label: "ব্যাংক", icon: "business" },
-  { href: "/guides", label: "গাইড", icon: "menu_book" },
+  { href: "/mfs", label: "MFS", icon: "smartphone" },
+  { href: "/glossary", label: "শব্দকোষ", icon: "menu_book" },
+  { href: "/guides", label: "গাইড", icon: "article" },
 ];
 
 const Header = () => {
@@ -54,6 +56,9 @@ const Header = () => {
                 তুলনা করুন
               </Button>
             </Link>
+
+            {/* Notification Bell */}
+            <NotificationBell />
 
             {/* Language Toggle - Hidden on very small screens */}
             {/* Language Toggle */}

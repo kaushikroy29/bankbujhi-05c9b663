@@ -20,7 +20,7 @@ export interface CardRecommendation {
     score: number;
     matchPercentage: number;
     reasons: string[];
-    netValue?: number;
+    netValue: number;
 }
 
 // Extract numeric value from string (e.g., "৳50,000" -> 50000)

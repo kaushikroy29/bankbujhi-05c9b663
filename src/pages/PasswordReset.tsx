@@ -34,9 +34,9 @@ const PasswordReset = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MaterialIcon name="lock_reset" className="text-3xl text-primary" />
                 </div>
-                <h1 className="text-2xl font-bold mb-2">Recover Your Account</h1>
-                <p className="text-muted-foreground text-sm">
-                  Enter your registered email or mobile number to receive a password reset link.
+                <h1 className="text-2xl font-bold mb-2">আপনার অ্যাকাউন্ট উদ্ধার করুন</h1>
+                <p className="text-muted-foreground text-sm font-bengali">
+                  পাসওয়ার্ড রিসেট লিঙ্ক পেতে আপনার নিবন্ধিত ইমেইল বা মোবাইল নম্বরটি লিখুন।
                 </p>
               </div>
 
@@ -44,7 +44,7 @@ const PasswordReset = () => {
                 <div>
                   <Input
                     type="text"
-                    placeholder="e.g., 017XXXXXXXX or name@email.com"
+                    placeholder="যেমন: ০১৭১XXXXXXX অথবা name@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="h-12"
@@ -53,7 +53,7 @@ const PasswordReset = () => {
                 </div>
 
                 <Button type="submit" className="w-full h-12 text-base font-bold">
-                  Send Reset Link
+                  রিসেট লিঙ্ক পাঠান
                 </Button>
               </form>
 
@@ -63,7 +63,7 @@ const PasswordReset = () => {
                   className="text-sm text-primary hover:underline font-bengali flex items-center justify-center gap-1"
                 >
                   <MaterialIcon name="arrow_back" className="text-sm" />
-                  লগইন-এ ফিরে যান (Back to Login)
+                  লগইন-এ ফিরে যান
                 </Link>
               </div>
             </>
@@ -72,13 +72,13 @@ const PasswordReset = () => {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MaterialIcon name="mark_email_read" className="text-3xl text-primary" />
               </div>
-              <h2 className="text-xl font-bold mb-2">Check Your Email</h2>
-              <p className="text-muted-foreground text-sm mb-6">
-                We've sent a password reset link to <strong>{email}</strong>
+              <h2 className="text-xl font-bold mb-2 font-bengali">আপনার ইমেইল চেক করুন</h2>
+              <p className="text-muted-foreground text-sm mb-6 font-bengali">
+                আমরা <strong>{email}</strong> ঠিকানায় একটি পাসওয়ার্ড রিসেট লিঙ্ক পাঠিয়েছি।
               </p>
               <Link to="/login">
                 <Button variant="outline" className="border-primary text-primary">
-                  Back to Login
+                  লগইন-এ ফিরে যান
                 </Button>
               </Link>
             </div>
@@ -88,12 +88,12 @@ const PasswordReset = () => {
         {/* Trust Badge */}
         <div className="mt-8 flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <MaterialIcon name="verified_user" className="text-primary" />
-          <span>Bank-Grade Security</span>
+          <span>ব্যাংক-গ্রেড সিকিউরিটি</span>
         </div>
 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground mt-8">
-          © 2024 BankBujhi.com. All rights reserved.
+          © ২০২৪ BankBujhi.com. সর্বস্বত্ব সংরক্ষিত।
         </p>
       </div>
     </div>

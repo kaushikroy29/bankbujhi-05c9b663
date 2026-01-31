@@ -29,7 +29,10 @@ import Terms from "./pages/Terms";
 import CardQuiz from "./pages/CardQuiz";
 import MFS from "./pages/MFS";
 import Glossary from "./pages/Glossary";
+import Recommendations from "./pages/Recommendations";
+import Watchlist from "./pages/Watchlist";
 import CreditCardCostCalculator from "./components/calculators/CreditCardCostCalculator";
+import EMICalculator from "./components/calculators/EMICalculator";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -64,7 +67,10 @@ const App = () => (
             <Route path="/quiz" element={<CardQuiz />} />
             <Route path="/mfs" element={<MFS />} />
             <Route path="/glossary" element={<Glossary />} />
+            <Route path="/calculator/emi" element={<div className="container py-10 max-w-4xl"><div className="mb-6"><h1 className="text-3xl font-black mb-2 text-center">EMI ক্যালকুলেটর</h1></div><EMICalculator /></div>} />
             <Route path="/tools/calculator" element={<div className="container py-10 max-w-4xl"><CreditCardCostCalculator /></div>} />
+            <Route path="/recommendations" element={<Recommendations />} />
+            <Route path="/watchlist" element={<Watchlist />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

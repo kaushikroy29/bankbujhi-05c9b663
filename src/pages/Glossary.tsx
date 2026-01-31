@@ -1,143 +1,136 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import BottomNav from "@/components/layout/BottomNav";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import SEOHead from "@/components/seo/SEOHead";
-import { useState } from "react";
-import MaterialIcon from "@/components/ui/MaterialIcon";
-import { Input } from "@/components/ui/input";
 
-const glossary = [
+const terms = [
     {
-        bengali: "এফডিআর",
-        english: "FDR (Fixed Deposit Receipt)",
-        definition: "নির্দিষ্ট সময়ের জন্য টাকা জমা রাখার স্কিম, যেখানে মেয়াদ শেষে মুনাফা পাওয়া যায়।"
+        term: "Annual Fee (বার্ষিক ফি)",
+        definition: "ক্রেডিট কার্ড ব্যবহারের জন্য ব্যাংককে বছরে একবার যে চার্জ দিতে হয়। অনেক কার্ডে ১৮-২০টি লেনদেন করলে এটি মওকুফ (Waived) করা হয়।"
     },
     {
-        bengali: "ডিপিএস",
-        english: "DPS (Deposit Pension Scheme)",
-        definition: "মাসিক কিস্তিতে সঞ্চয় করার পরিকল্পনা, যা নির্দিষ্ট সময় পর মুনাফাসহ ফেরত পাওয়া যায়।"
+        term: "EMI (কিস্তি)",
+        definition: "Equated Monthly Installment। কোনো বড় কেনাকাটার মূল্য একবারে পরিশোধ না করে মাসভিত্তিক ছোট ভাগে (৩-৩৬ মাস) পরিশোধ করার সুবিধা। সাধারণত ০% ইন্টারেস্টে এটি পাওয়া যায়।"
     },
     {
-        bengali: "ক্যাশব্যাক",
-        english: "Cashback",
-        definition: "কার্ড বা ডিজিটাল পেমেন্টে কেনাকাটার পর খরচের একটি নির্দিষ্ট অংশ ফেরত পাওয়া।"
+        term: "Dual Currency (ডুয়াল কারেন্সি)",
+        definition: "যে কার্ড দিয়ে দেশীয় মুদ্রার (টাকা) পাশাপাশি বৈদেশিক মুদ্রা (যেমন ডলার) খরচ করা যায়। এর জন্য পাসপোর্টে ডলার এন্ডোর্সমেন্ট থাকা বাধ্যতামূলক।"
     },
     {
-        bengali: "ইএমআই",
-        english: "EMI (Equated Monthly Installment)",
-        definition: "কোনো পণ্য কিনে বা লোন নিয়ে প্রতি মাসে সমান কিস্তিতে পরিশোধ করার প্রক্রিয়া।"
+        term: "Endorsement (এন্ডোর্সমেন্ট)",
+        definition: "বিদেশে ব্যবহারের জন্য পাসপোর্টে ব্যাংক কর্তৃক নির্দিষ্ট পরিমাণ ডলার ব্যবহারের অনুমতি সিল। বর্তমানে বছরে সর্বোচ্চ ১২,০০০ ডলার খরচ করা যায় (SAARC এবং Non-SAARC দেশ মিলিয়ে)।"
     },
     {
-        bengali: "ক্রেডিট স্কোর",
-        english: "Credit Score",
-        definition: "ঋণ বা ক্রেডিট কার্ড পাওয়ার যোগ্যতা নির্ধারণকারী একটি সংখ্যা, যা গ্রাহকের অতীত লেনদেনের ওপর ভিত্তি করে তৈরি হয়।"
+        term: "CIB Score (সিআইবি রিপোর্ট)",
+        definition: "Credit Information Bureau রিপোর্ট। আপনার পূর্ববর্তী ঋণের ইতিহাস। এটি খারাপ হলে বা বকেয়া থাকলে নতুন লোন বা কার্ড পাওয়া যায় না।"
     },
     {
-        bengali: "এনুয়াল ফি",
-        english: "Annual Fee",
-        definition: "ক্রেডিট কার্ড ব্যবহারের জন্য ব্যাংককে বাৎসরিক যে ফি দিতে হয়।"
+        term: "Excise Duty (আবগারি শুল্ক)",
+        definition: "ব্যাংক একাউন্টে নির্দিষ্ট পরিমাণ (যেমন ১ লাখ বা ৫ লাখ) টাকার বেশি স্থিতি থাকলে সরকার কর্তৃক বছরে একবার কর্তনকৃত কর।"
     },
     {
-        bengali: "ইন্টারেস্ট রেট",
-        english: "Interest Rate",
-        definition: "ঋণ বা জমার ওপর শতকরা হারে কত টাকা সুদ দিতে বা পাওয়া যাবে তার হার।"
+        term: "TIN / ETIN (টিন সার্টিফিকেট)",
+        definition: "Tax Identification Number। করদাতা শনাক্তকরণ নম্বর। ৫ লাখ টাকার বেশি সঞ্চয়পত্র কেনা বা ক্রেডিট কার্ড নেওয়ার জন্য এটি বাধ্যতামূলক।"
     },
     {
-        bengali: "মর্টগেজ",
-        english: "Mortgage",
-        definition: "জমি বা বাড়ি বন্ধক রেখে ব্যাংক থেকে ঋণ নেওয়ার প্রক্রিয়া।"
+        term: "FDR (ফিক্সড ডিপোজিট)",
+        definition: "Fixed Deposit Receipt। নির্দিষ্ট সময়ের জন্য (যেমন ১ বছর) ব্যাংকে টাকা জমা রাখা, যার বিনিময়ে ব্যাংক নির্দিষ্ট হারে মুনাফা দেয়।"
     },
     {
-        bengali: "ওভারড্রাফট",
-        english: "Overdraft",
-        definition: "অ্যাকাউন্টে জমানো টাকার চেয়ে বেশি টাকা তোলার সুবিধা (সাধারণত চলতি হিসাবে প্রযোজ্য)।"
+        term: "DPS (ডিপিএস)",
+        definition: "Deposit Pension Scheme। প্রতি মাসে নির্দিষ্ট পরিমাণ টাকা জমা করে মেয়াদ বা সঞ্চয় স্কিম। ৫ বা ১০ বছর মেয়াদী হয়।"
     },
     {
-        bengali: "কেওয়াইসি",
-        english: "KYC (Know Your Customer)",
-        definition: "গ্রাহকের পরিচয় যাচাই করার প্রক্রিয়া (যেমন এনআইডি, ছবি, ঠিকানা যাচাই)।"
+        term: "CBS (কোর ব্যাংকিং)",
+        definition: "Core Banking Solution। এক শাখার একাউন্ট দিয়ে অন্য যেকোনো শাখা থেকে লেনদেন করার সুবিধা।"
     },
     {
-        bengali: "routing number",
-        english: "Routing Number",
-        definition: "নয় সংখ্যার একটি কোড যা নির্দিষ্ট ব্যাংক এবং শাখাকে চিহ্নিত করতে ব্যবহৃত হয়।"
+        term: "NFC / Contactless (কন্ট্যাক্টলেস)",
+        definition: "কার্ড মেশিনে না ঢুকিয়ে শুধু স্পর্শ করে পেমেন্ট করার প্রযুক্তি। এটি দ্রুত এবং নিরাপদ।"
     },
     {
-        bengali: "SWIFT কোড",
-        english: "SWIFT Code",
-        definition: "আন্তর্জাতিক লেনদেনের জন্য ব্যবহৃত ব্যাংকের পরিচিতি কোড।"
+        term: "Lounge Access (লাউঞ্জ সুবিধা)",
+        definition: "বিমানবন্দরে যাত্রীদের বিশ্রামের জন্য বিশেষ কক্ষ। প্রিমিয়াম কার্ডধারীরা বিনামূল্যে বলাকা বা আন্তর্জাতিক লাউঞ্জে খাবার ও বিশ্রামের সুবিধা পান।"
+    },
+    {
+        term: "Supplementary Card (সাপ্লিমেন্টারি কার্ড)",
+        definition: "মূল কার্ডধারীর লিমিট ব্যবহার করে পরিবারের অন্য সদস্যদের জন্য ইস্যু করা অতিরিক্ত কার্ড। সাধারণত প্রথম ১-২টি ফ্রি থাকে।"
+    },
+    {
+        term: "Cheque Book (চেক বই)",
+        definition: "ব্যাংক অ্যাকাউন্টের টাকা উত্তোলনের জন্য ব্যবহৃত ছাপানো কাগজের বই। কিছু ক্রেডিট কার্ডের সাথেও চেক বই সুবিধা থাকে, যা দিয়ে 'একাউন্ট পেয়ি' চেক ইস্যু করা যায়।"
+    },
+    {
+        term: "Routing Number (রাউটিং নাম্বার)",
+        definition: "৯ সংখ্যার একটি কোড যা নির্দিষ্ট ব্যাংক ও শাখাকে নির্দেশ করে। এক ব্যাংক থেকে অন্য ব্যাংকে টাকা পাঠাতে (EFT/BEFTN) এটি লাগে।"
+    },
+    {
+        term: "BEFTN (বিএফটিএন)",
+        definition: "Bangladesh Electronic Funds Transfer Network। এক ব্যাংকের একাউন্ট থেকে অন্য ব্যাংকে ইলেকট্রনিক উপায়ে টাকা পাঠানোর মাধ্যম।"
+    },
+    {
+        term: "RTGS (আরটিজিএস)",
+        definition: "Real Time Gross Settlement। বড় অংকের টাকা (১ লাখ বা তার বেশি) তাৎক্ষণিকভাবে অন্য ব্যাংকে পাঠানোর ব্যবস্থা।"
+    },
+    {
+        term: "POS Terminal (পস মেশিন)",
+        definition: "দোকানে কার্ড সোয়াইপ বা ট্যাপ করার মেশিন (Point of Sale)।"
+    },
+    {
+        term: "Charge Card (চার্জ কার্ড)",
+        definition: "যে কার্ডে কোনো নির্দিষ্ট ক্রেডিট লিমিট থাকে না, তবে মাস শেষে পুরো বিল পরিশোধ করতে হয়। এতে কিস্তি সুবিধা থাকে না (যেমন: সাধারণ অ্যামেক্স কার্ড)।"
+    },
+    {
+        term: "MFS (মোবাইল ব্যাংকিং)",
+        definition: "Mobile Financial Services। যেমন বিকাশ, নগদ, রকেট। মোবাইল ফোনের মাধ্যমে অর্থ লেনদেন সেবা।"
+    },
+    {
+        term: "Agent Banking (এজেন্ট ব্যাংকিং)",
+        definition: "শাখা নেই এমন এলাকায় এজন্টের মাধ্যমে ব্যাংকিং সেবা পৌঁছে দেয়া।"
+    },
+    {
+        term: "Green PIN (গ্রিন পিন)",
+        definition: "কাগজের পিন-এর বদলে এসএমএস বা এটিএম দিয়ে নিজেই পিন সেট করার পরিবেশবান্ধব ব্যবস্থা।"
     }
 ];
 
 const Glossary = () => {
-    const [searchTerm, setSearchTerm] = useState("");
-
-    const filteredGlossary = glossary.filter(item =>
-        item.bengali.includes(searchTerm) ||
-        item.english.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     return (
         <>
             <SEOHead
-                title="আর্থিক শব্দকোষ (Glossary) - BankBujhi"
-                description="ব্যাংকিং ও ফাইন্যান্সের কঠিন শব্দগুলোর সহজ বাংলা অর্থ ও ব্যাখ্যা জানুন।"
+                title="ব্যাংকিং শব্দকোষ | BankBujhi Glossary"
+                description="ব্যাংকিং ও ফাইন্যান্সের কঠিন শব্দগুলোর সহজ বাংলা অর্থ জানুন।"
                 path="/glossary"
             />
-            <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-muted/10">
+            <div className="flex min-h-screen flex-col">
                 <Header />
+                <main className="flex-1 container-padding py-8 max-w-4xl mx-auto w-full">
+                    <PageBreadcrumb items={[{ label: "শব্দকোষ" }]} className="mb-6" />
 
-                <main className="flex-1 container-padding py-8 md:py-12 pb-20 md:pb-12">
-                    <div className="max-w-3xl mx-auto">
-                        <div className="text-center mb-10">
-                            <span className="bg-primary/10 text-primary font-bold text-xs uppercase tracking-widest px-3 py-1 rounded-full">
-                                শব্দকোষ
-                            </span>
-                            <h1 className="text-3xl md:text-4xl font-black text-foreground mt-4 mb-4">
-                                আর্থিক পরিভাষা
-                            </h1>
-                            <p className="text-muted-foreground text-lg">
-                                ব্যাংকিং জগতের কঠিন শব্দগুলো সহজ বাংলায় বুঝুন
-                            </p>
+                    <div className="mb-10 text-center">
+                        <h1 className="text-3xl font-black mb-3">ব্যাংকিং শব্দকোষ</h1>
+                        <p className="text-muted-foreground">
+                            ব্যাংকিং জগতের কঠিন শব্দগুলোর সহজ বাংলা ব্যাখ্যা।
+                        </p>
+                    </div>
 
-                            <div className="mt-8 relative max-w-md mx-auto">
-                                <MaterialIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                                <Input
-                                    type="text"
-                                    placeholder="শব্দ খুঁজুন (যেমন: EMI, FDR)..."
-                                    className="pl-10 bg-card"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid gap-4">
-                            {filteredGlossary.length > 0 ? (
-                                filteredGlossary.map((item, index) => (
-                                    <div key={index} className="bg-card rounded-xl border border-primary/10 p-5 hover:border-primary/30 transition-colors">
-                                        <div className="flex flex-col md:flex-row md:items-baseline gap-2 mb-2">
-                                            <h3 className="text-xl font-bold text-primary">{item.bengali}</h3>
-                                            <span className="text-sm font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded">
-                                                {item.english}
-                                            </span>
-                                        </div>
-                                        <p className="text-foreground/90 leading-relaxed">
-                                            {item.definition}
-                                        </p>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-10 text-muted-foreground">
-                                    কোনো শব্দ পাওয়া যায়নি
-                                </div>
-                            )}
-                        </div>
+                    <div className="grid gap-4">
+                        <Accordion type="single" collapsible className="w-full">
+                            {terms.map((item, index) => (
+                                <AccordionItem key={index} value={`item-${index}`} className="border border-primary/10 rounded-xl mb-3 px-4 bg-card">
+                                    <AccordionTrigger className="text-left font-bold text-lg py-4 hover:no-underline hover:text-primary transition-colors">
+                                        {item.term}
+                                    </AccordionTrigger>
+                                    <AccordionContent className="text-base text-muted-foreground leading-relaxed pb-4">
+                                        {item.definition}
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
                     </div>
                 </main>
-
                 <Footer />
-                <BottomNav />
             </div>
         </>
     );

@@ -6,39 +6,39 @@ import { Link } from "react-router-dom";
 
 const teamMembers = [
   {
-    name: "Rahim Ahmed",
-    role: "Founder & CEO",
-    bio: "Former banker with 15+ years in retail banking. Passionate about financial literacy in Bangladesh.",
+    name: "রহিম আহমেদ",
+    role: "প্রতিষ্ঠাতা ও সিইও",
+    bio: "সাবেক ব্যাংকার, রিটেইল ব্যাংকিংয়ে ১৫+ বছরের অভিজ্ঞতা। বাংলাদেশে ফাইনান্সিয়াল লিটারেসি নিয়ে কাজের স্বপ্ন দেখেন।",
     icon: "person",
   },
   {
-    name: "Fatima Khan",
-    role: "Head of Research",
-    bio: "Financial analyst specializing in credit products. MBA from IBA, Dhaka University.",
+    name: "ফাতিমা খান",
+    role: "গবেষণা প্রধান",
+    bio: "আর্থিক বিশ্লেষক, ক্রেডিট প্রোডাক্ট বিশেষজ্ঞ। এমবিএ (আইবিএ, ঢাকা বিশ্ববিদ্যালয়)।",
     icon: "analytics",
   },
   {
-    name: "Kamal Hossain",
-    role: "Lead Developer",
-    bio: "Full-stack developer building fintech solutions. Previously at Pathao and bKash.",
+    name: "কামাল হোসেন",
+    role: "লিড ডেভেলপার",
+    bio: "ফুল-স্ট্যাক ডেভেলপার, ফিনটেক সলিউশনে দক্ষ। ইতিপূর্বে পাঠাও (Pathao) এবং বিকাশ (bKash)-এ কাজ করেছেন।",
     icon: "code",
   },
   {
-    name: "Nusrat Jahan",
-    role: "Content Lead",
-    bio: "Financial journalist creating accessible content for everyday Bangladeshis.",
+    name: "নুসরাত জাহান",
+    role: "কন্টেন্ট লিড",
+    bio: "আর্থিক সাংবাদিক, সাধারণ দর্শকদের জন্য সহজবোধ্য কন্টেন্ট তৈরিতে অভিজ্ঞ।",
     icon: "edit_note",
   },
   {
-    name: "Arif Rahman",
-    role: "Partnership Manager",
-    bio: "Building relationships with banks and financial institutions across Bangladesh.",
+    name: "আরিফ রহমান",
+    role: "পার্টনারশিপ ম্যানেজার",
+    bio: "বাংলাদেশের ব্যাংক ও আর্থিক প্রতিষ্ঠানগুলোর সাথে পার্টনারশিপ তৈরিতে নিয়োজিত।",
     icon: "handshake",
   },
   {
-    name: "Sadia Islam",
-    role: "Customer Success",
-    bio: "Ensuring every user finds the perfect financial product for their needs.",
+    name: "সাদিয়া ইসলাম",
+    role: "কাস্টমার সাকসেস",
+    bio: "প্রতিটি ব্যবহারকারী যেন তাদের প্রয়োজন অনুযায়ী সেরা পণ্যটি খুঁজে পায় তা নিশ্চিত করেন।",
     icon: "support_agent",
   },
 ];
@@ -49,19 +49,19 @@ const Team = () => {
       <Header />
       <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 mb-6">
-          <Link to="/" className="text-muted-foreground text-sm font-medium hover:underline">Home</Link>
+        <div className="flex items-center gap-2 mb-6 font-bengali">
+          <Link to="/" className="text-muted-foreground text-sm font-medium hover:underline">হোম</Link>
           <MaterialIcon name="chevron_right" className="text-sm text-muted-foreground" />
-          <span className="text-primary text-sm font-medium">Our Team</span>
+          <span className="text-primary text-sm font-medium">আমাদের টিম</span>
         </div>
 
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-4">
-            Meet Our <span className="text-primary">Team</span>
+            আমাদের <span className="text-primary">টিমের</span> সাথে পরিচিত হোন
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            A passionate team of financial experts, developers, and writers dedicated to helping Bangladeshis make smarter financial decisions.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-bengali">
+            আর্থিক বিশেষজ্ঞ, ডেভেলপার এবং লেখকদের একটি নিবেদিত টিম, যারা আপনার সঠিক আর্থিক সিদ্ধান্ত নিতে সাহায্য করে।
           </p>
         </div>
 
@@ -83,16 +83,16 @@ const Team = () => {
         </div>
 
         {/* Join Us CTA */}
-        <div className="bg-primary/5 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold mb-3">Join Our Team</h2>
-          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            We're always looking for talented individuals who share our passion for financial inclusion.
+        <div className="bg-primary/5 rounded-2xl p-8 text-center font-bengali">
+          <h2 className="text-2xl font-bold mb-3">আমাদের টিমে যোগ দিন</h2>
+          <p className="text-muted-foreground mb-6 max-w-xl mx-auto font-bengali">
+            আমরা সর্বদা এমন মেধাবী মানুষের খোঁজ করি যারা আমাদের আর্থিক সহজলভ্যতার মিশনে অংশ নিতে আগ্রহী।
           </p>
           <Link
             to="/careers"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-bold hover:bg-primary/90 transition-colors"
           >
-            View Open Positions
+            খালি পদগুলো দেখুন
             <MaterialIcon name="arrow_forward" />
           </Link>
         </div>

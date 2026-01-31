@@ -11,7 +11,9 @@ import { fetchCreditCard, type CreditCard } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeeBreakdown } from "@/components/cards/FeeBreakdown";
 import HiddenFeesAlert from "@/components/cards/HiddenFeesAlert";
+import WatchlistButton from "@/components/ui/WatchlistButton";
 import SEOHead from "@/components/seo/SEOHead";
+import SocialShare from "@/components/ui/SocialShare";
 
 const CardDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -196,10 +198,10 @@ const CardDetails = () => {
                     <span className="text-sm font-bold text-muted-foreground">{bankName}</span>
                   </div>
 
-                  <h1 className="text-2xl md:text-3xl font-black mb-2">{card.name}</h1>
+                  <h1 className="text-2xl md:text-3xl font-black mb-1">{card.name}</h1>
                   <p className="text-muted-foreground mb-4">{card.category}</p>
 
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3 mb-6">
                     {card.apply_url ? (
                       <Button size="lg" className="font-bold" asChild>
                         <a href={card.apply_url} target="_blank" rel="noopener noreferrer">
@@ -215,7 +217,22 @@ const CardDetails = () => {
                         </Link>
                       </Button>
                     )}
-                    <Button size="lg" variant="outline" className="font-bold" asChild>
+                    <WatchlistButton
+                      productType="credit_card"
+                      productId={card.id}
+                      variant="default"
+                    />
+                    <Button size="lg" variant="outline" className="font-bold border-primary text-primary hover:bg-primary/5" asChild>
+                      <Link to="/calculator/emi">
+                        <MaterialIcon name="calculate" className="text-lg mr-1" />
+                        EMI হিসাব করুন
+                      </Link>
+                    </Button>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t">
+                    <SocialShare title={`${bankName}-এর ${card.name} ক্রেডিট কার্ডের বিস্তারিত BankBujhi-তে দেখুন`} />
+                    <Button variant="ghost" className="font-bold text-muted-foreground" asChild>
                       <Link to="/compare">
                         <MaterialIcon name="compare_arrows" className="text-lg mr-1" />
                         অন্য কার্ড তুলনা করুন

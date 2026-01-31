@@ -40,7 +40,7 @@ const Contact = () => {
         {/* Hero */}
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight text-foreground mb-3 sm:mb-4">
-            Help Center & <span className="text-primary">Customer Support</span>
+            হেল্প সেন্টার ও <span className="text-primary">কাস্টমার সাপোর্ট</span>
           </h1>
           <p className="text-base sm:text-xl text-muted-foreground font-bengali">
             আমরা কিভাবে আপনাকে সাহায্য করতে পারি?
@@ -106,8 +106,8 @@ const Contact = () => {
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4">
                 <MaterialIcon name="chat" className="text-primary text-lg sm:text-xl" />
               </div>
-              <h3 className="font-bold mb-1 sm:mb-2 text-sm sm:text-base">Live Chat</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground">Instant support</p>
+              <h3 className="font-bold mb-1 sm:mb-2 text-sm sm:text-base">লাইভ চ্যাট</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">তাৎক্ষণিক সাপোর্ট</p>
             </div>
             <div className="bg-card p-4 sm:p-6 rounded-xl border border-primary/10 text-center hover:shadow-lg transition-shadow">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4">

@@ -1,30 +1,50 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import BottomNav from "@/components/layout/BottomNav";
+import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import SEOHead from "@/components/seo/SEOHead";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import SocialShare from "@/components/ui/SocialShare";
 
 const mfsProviders = [
     {
-        name: "bKash",
-        logo: "/logos/bkash.png",
-        services: ["Send Money", "Cash Out", "Mobile Recharge", "Bill Payment"],
-        cashout_charge: "১.৮৫%",
-        max_daily_limit: "৳২৫,০০০"
+        name: "bkash",
+        displayName: "bKash",
+        logoColor: "bg-[#E2136E]",
+        services: ["Send Money", "Cash Out", "Mobile Recharge", "Bill Payment", "Merchant Pay", "Add Money"],
+        cashout_charge: "১.৮৫% (অ্যাপ)",
+        send_money: "ফ্রি (৫টি প্রিয় নাম্বারে)",
+        limit: "৳২৫,০০০ (দৈনিক)",
+        features: ["সেভিংস স্কিম", "লোন সুবিধা", "পে-লেটার"]
     },
     {
-        name: "Nagad",
-        logo: "/logos/nagad.png",
-        services: ["Send Money", "Cash Out", "Merchant Payment"],
-        cashout_charge: "১৫ টাকা (প্রতি হাজারে)",
-        max_daily_limit: "৳২৫,০০০"
+        name: "nagad",
+        displayName: "Nagad",
+        logoColor: "bg-[#F7941D]",
+        services: ["Send Money", "Cash Out", "Bill Payment", "Islamic Wallet"],
+        cashout_charge: "১.১৪% (অ্যাপ - ভ্যাট সহ)",
+        send_money: "ফ্রি",
+        limit: "৳২৫,০০০ (দৈনিক)",
+        features: ["ইসলামিক একাউন্ট", "মুনাফা সুবিধা"]
     },
     {
-        name: "Rocket",
-        logo: "/logos/rocket.png",
-        services: ["Send Money", "Cash Out", "Utility Bills"],
-        cashout_charge: "১.৮%",
-        max_daily_limit: "৳২৫,০০০"
+        name: "rocket",
+        displayName: "Rocket",
+        logoColor: "bg-[#8C298F]",
+        services: ["Cash Out", "Bill Pay", "Salary", "Remittance"],
+        cashout_charge: "১.৮% (এটিএম)",
+        send_money: "চার্জ প্রযোজ্য",
+        limit: "৳২৫,০০০ (দৈনিক)",
+        features: ["DBBL এটিএম সুবিধা", "ব্যাপক নেটওয়ার্ক"]
+    },
+    {
+        name: "upay",
+        displayName: "Upay",
+        logoColor: "bg-[#00A1DF]",
+        services: ["Cash Out", "Bill Pay", "Traffic Fine"],
+        cashout_charge: "১.৪%",
+        send_money: "ফ্রি",
+        limit: "৳২৫,০০০ (দৈনিক)",
+        features: ["লোয়েস্ট ক্যাশলআউট", "মাল্টি-ওয়ালেট"]
     }
 ];
 
@@ -32,78 +52,96 @@ const MFS = () => {
     return (
         <>
             <SEOHead
-                title="মোবাইল ব্যাংকিং সেবা (MFS) - বিকাশ, নগদ, রকেট | BankBujhi"
-                description="বাংলাদেশের জনপ্রিয় মোবাইল ব্যাংকিং সেবাগুলোর চার্জ, লিমিট এবং সুবিধা তুলনা করুন।"
+                title="মোবাইল ব্যাংকিং তুলনা | MFS Comparison Bangladesh"
+                description="বিকাশ, নগদ, রকেট ও উপায়-এর চার্জ ও সুবিধা তুলনা করুন এক নজরে।"
                 path="/mfs"
             />
-            <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-muted/10">
+            <div className="flex min-h-screen flex-col">
                 <Header />
+                <main className="flex-1 container-padding py-8 max-w-7xl mx-auto w-full">
+                    <PageBreadcrumb items={[{ label: "মোবাইল ব্যাংকিং (MFS)" }]} className="mb-6" />
 
-                <main className="flex-1 container-padding py-8 md:py-12 pb-20 md:pb-12">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="text-center mb-10">
-                            <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4">
-                                মোবাইল ব্যাংকিং সেবা (MFS)
-                            </h1>
-                            <p className="text-muted-foreground text-lg">
-                                বাংলাদেশের জনপ্রিয় মোবাইল ফিন্যান্সিয়াল সার্ভিসগুলোর বিস্তারিত তথ্য
-                            </p>
+                    {/* Hero */}
+                    <div className="text-center mb-12">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+                            <MaterialIcon name="smartphone" />
+                            ডিজিটাল বাংলাদেশ
                         </div>
-
-                        <div className="grid gap-6 md:grid-cols-3">
-                            {mfsProviders.map((provider) => (
-                                <div key={provider.name} className="bg-card rounded-xl border border-primary/10 shadow-sm p-6 hover:shadow-md transition-shadow">
-                                    <div className="flex items-center justify-center h-20 mb-6 bg-muted/20 rounded-lg p-4">
-                                        {/* Fallback to text if image fails or for now just use text with icon if logo missing, 
-                        but code requested image path. Keep image but maybe add error handling or fallback visually if needed later.
-                        For now just simple img tag. */}
-                                        <div className="text-center">
-                                            <h3 className="text-xl font-bold">{provider.name}</h3>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">ক্যাশআউট চার্জ</p>
-                                            <p className="font-bold text-lg">{provider.cashout_charge}</p>
-                                        </div>
-
-                                        <div>
-                                            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">দৈনিক লিমিট</p>
-                                            <p className="font-bold text-lg">{provider.max_daily_limit}</p>
-                                        </div>
-
-                                        <div>
-                                            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-2">সেবাসমূহ</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {provider.services.map((service) => (
-                                                    <span key={service} className="text-xs bg-primary/5 text-primary-foreground text-primary px-2 py-1 rounded font-medium border border-primary/10">
-                                                        {service}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="mt-12 bg-blue-50 border border-blue-100 rounded-xl p-6">
-                            <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                                <MaterialIcon name="info" className="text-blue-600" />
-                                গুরুত্বপূর্ণ তথ্য
-                            </h3>
-                            <p className="text-sm text-slate-700 leading-relaxed">
-                                মোবাইল ব্যাংকিং সেবার চার্জ এবং লিমিট যেকোনো সময় পরিবর্তন হতে পারে।
-                                সর্বশেষ তথ্যের জন্য সংশ্লিষ্ট প্রোভাইডারের অফিসিয়াল ওয়েবসাইট বা অ্যাপ চেক করুন।
-                                নিরাপত্তার স্বার্থে আপনার পিন নাম্বার কারো সাথে শেয়ার করবেন না।
-                            </p>
+                        <h1 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">
+                            মোবাইল ব্যাংকিং তুলনা
+                        </h1>
+                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+                            বিকাশ, নগদ, রকেট নাকি উপায়? চার্জ, লিমিট ও সুবিধা দেখে সেরাটি বেছে নিন।
+                        </p>
+                        <div className="flex justify-center border-t border-b py-4">
+                            <SocialShare title="বিকাশ, নগদ, রকেট ও উপায়-এর চার্জ ও সুবিধা তুলনা করুন BankBujhi-তে" />
                         </div>
                     </div>
-                </main>
 
+                    {/* Comparison Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {mfsProviders.map((provider) => (
+                            <div key={provider.name} className="bg-card border border-primary/10 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
+                                {/* Header */}
+                                <div className={`h-24 ${provider.logoColor} relative flex items-center justify-center`}>
+                                    <h3 className="text-white text-3xl font-black tracking-tighter">{provider.displayName}</h3>
+                                </div>
+
+                                {/* Body */}
+                                <div className="p-6 space-y-6">
+                                    {/* Cash Out */}
+                                    <div>
+                                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">ক্যাশ আউট চার্জ</p>
+                                        <p className="text-xl font-bold">{provider.cashout_charge}</p>
+                                    </div>
+
+                                    {/* Send Money */}
+                                    <div>
+                                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">সেন্ড মানি</p>
+                                        <p className="text-base font-semibold">{provider.send_money}</p>
+                                    </div>
+
+                                    {/* Limit */}
+                                    <div>
+                                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">লেনদেন সীমা</p>
+                                        <p className="text-base font-semibold">{provider.limit}</p>
+                                    </div>
+
+                                    {/* Features */}
+                                    <div>
+                                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-3">টপ ফিচার</p>
+                                        <ul className="space-y-2">
+                                            {provider.features.map((feature, idx) => (
+                                                <li key={idx} className="flex items-center gap-2 text-sm">
+                                                    <MaterialIcon name="check_circle" className="text-green-500 text-sm" />
+                                                    {feature}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* FAQ Section */}
+                    <div className="mt-20 max-w-3xl mx-auto">
+                        <h2 className="text-2xl font-bold mb-8 text-center">সচরাচর জিজ্ঞাসিত প্রশ্ন</h2>
+                        <div className="space-y-4">
+                            <div className="bg-card border border-primary/10 rounded-xl p-6">
+                                <h3 className="font-bold mb-2">সবচেয়ে কম ক্যাশ আউট চার্জ কোনটির?</h3>
+                                <p className="text-muted-foreground text-sm">অ্যাপ ব্যবহার করলে নগদ (১.১৪%) এবং উপায় (১.৪%) এর চার্জ বিকাশের (১.৮৫%) তুলনায় কম।</p>
+                            </div>
+                            <div className="bg-card border border-primary/10 rounded-xl p-6">
+                                <h3 className="font-bold mb-2">কোন অ্যাপ দিয়ে ব্যাংকে টাকা পাঠানো যায়?</h3>
+                                <p className="text-muted-foreground text-sm">বিকাশ এবং রকেট দিয়ে সরাসরি ব্যাংক একাউন্টে টাকা পাঠানো বা আনা সবচেয়ে সহজ। এছাড়া এখন সব MFS থেকেই বিনিময় (Binimoy) ব্যবহার করে টাকা লেনদেন করা যায়।</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </main>
                 <Footer />
-                <BottomNav />
             </div>
         </>
     );

@@ -39,7 +39,7 @@ const recommendations = [
     id: 1,
     bank: "Standard Chartered",
     name: "Visa Platinum",
-    tag: "Best for Groceries",
+    tag: "গ্রোসারি কেনাকাটায় সেরা",
     benefit: "12% ছাড়",
     score: 750,
   },
@@ -47,18 +47,18 @@ const recommendations = [
     id: 2,
     bank: "BRAC Bank",
     name: "World Mastercard",
-    tag: "Best for Travel",
+    tag: "ভ্রমণে সেরা",
     benefit: "Buy 1 Get 1",
     score: null,
   },
 ];
 
 const menuItems = [
-  { icon: "dashboard", label: "Dashboard", active: true },
-  { icon: "credit_card", label: "My Cards", active: false },
-  { icon: "bookmark", label: "Saved", active: false },
-  { icon: "history", label: "Applications", active: false },
-  { icon: "settings", label: "Settings", active: false },
+  { icon: "dashboard", label: "ড্যাশবোর্ড", active: true },
+  { icon: "credit_card", label: "আমার কার্ড", active: false },
+  { icon: "bookmark", label: "সংরক্ষিত", active: false },
+  { icon: "history", label: "আবেদনসমূহ", active: false },
+  { icon: "settings", label: "সেটিংস", active: false },
 ];
 
 const Dashboard = () => {
@@ -77,21 +77,21 @@ const Dashboard = () => {
                 <MaterialIcon name="person" className="text-2xl text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold truncate">Welcome Back!</h3>
+                <h3 className="font-bold truncate">স্বাগতম!</h3>
                 <p className="text-sm text-muted-foreground truncate">user@example.com</p>
               </div>
-              <button 
+              <button
                 onClick={() => setShowSidebar(!showSidebar)}
                 className="p-2 rounded-lg bg-muted"
               >
                 <MaterialIcon name="menu" />
               </button>
             </div>
-            
+
             {/* Profile Completion */}
             <div className="mt-4">
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-muted-foreground">Profile Completion</span>
+                <span className="text-muted-foreground">প্রোফাইল সম্পন্ন</span>
                 <span className="font-bold text-primary">{profileCompletion}%</span>
               </div>
               <Progress value={profileCompletion} className="h-2" />
@@ -103,11 +103,10 @@ const Dashboard = () => {
                 {menuItems.map((item) => (
                   <button
                     key={item.label}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
-                      item.active
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${item.active
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     <MaterialIcon name={item.icon} className="text-lg" />
                     <span className="font-medium text-sm">{item.label}</span>
@@ -115,7 +114,7 @@ const Dashboard = () => {
                 ))}
                 <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-destructive hover:bg-destructive/10 transition-colors">
                   <MaterialIcon name="logout" className="text-lg" />
-                  <span className="font-medium text-sm">Log Out</span>
+                  <span className="font-medium text-sm">লগ আউট</span>
                 </button>
               </nav>
             )}
@@ -131,14 +130,14 @@ const Dashboard = () => {
                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
                   <MaterialIcon name="person" className="text-4xl text-primary" />
                 </div>
-                <h3 className="font-bold">Welcome Back!</h3>
+                <h3 className="font-bold">স্বাগতম!</h3>
                 <p className="text-sm text-muted-foreground">user@example.com</p>
               </div>
 
               {/* Profile Completion */}
               <div className="mb-6">
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Profile Completion</span>
+                  <span className="text-muted-foreground">প্রোফাইল সম্পন্ন</span>
                   <span className="font-bold text-primary">{profileCompletion}%</span>
                 </div>
                 <Progress value={profileCompletion} className="h-2" />
@@ -149,11 +148,10 @@ const Dashboard = () => {
                 {menuItems.map((item) => (
                   <button
                     key={item.label}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                      item.active
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${item.active
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     <MaterialIcon name={item.icon} className="text-lg" />
                     <span className="font-medium">{item.label}</span>
@@ -164,7 +162,7 @@ const Dashboard = () => {
               <div className="mt-6 pt-6 border-t border-primary/10">
                 <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-destructive hover:bg-destructive/10 transition-colors">
                   <MaterialIcon name="logout" className="text-lg" />
-                  <span className="font-medium">Log Out</span>
+                  <span className="font-medium">লগ আউট</span>
                 </button>
               </div>
             </div>
@@ -174,13 +172,13 @@ const Dashboard = () => {
           <div className="lg:col-span-3 space-y-6 sm:space-y-8">
             {/* Quick Actions - Mobile first */}
             <section className="lg:order-last">
-              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">Quick Actions</h2>
+              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">দ্রুত অ্যাকশন</h2>
               <div className="grid grid-cols-4 gap-2 sm:gap-4">
                 {[
-                  { icon: "add_card", label: "Add Card", href: "/compare" },
-                  { icon: "compare_arrows", label: "Compare", href: "/compare" },
-                  { icon: "calculate", label: "EMI Calc", href: "/loans" },
-                  { icon: "support_agent", label: "Support", href: "/contact" },
+                  { icon: "add_card", label: "কার্ড যোগ", href: "/compare" },
+                  { icon: "compare_arrows", label: "তুলনা করুন", href: "/compare" },
+                  { icon: "calculate", label: "ইএমআই ক্যালক", href: "/loans" },
+                  { icon: "support_agent", label: "সহায়তা", href: "/contact" },
                 ].map((action) => (
                   <Link
                     key={action.label}
@@ -197,16 +195,16 @@ const Dashboard = () => {
             {/* Saved Cards */}
             <section>
               <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <h2 className="text-lg sm:text-2xl font-bold">Saved Cards</h2>
+                <h2 className="text-lg sm:text-2xl font-bold">সংরক্ষিত কার্ড</h2>
                 <Button variant="outline" size="sm" className="text-primary border-primary text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3" asChild>
                   <Link to="/compare">
                     <MaterialIcon name="visibility" className="mr-1 text-sm" />
                     <span className="hidden xs:inline">সবগুলো দেখুন</span>
-                    <span className="xs:hidden">All</span>
+                    <span className="xs:hidden">সব</span>
                   </Link>
                 </Button>
               </div>
-              
+
               {/* Horizontal scroll on mobile */}
               <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible">
                 {savedCards.map((card) => (
@@ -238,7 +236,7 @@ const Dashboard = () => {
 
             {/* Recommendations */}
             <section>
-              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">Recommended for You</h2>
+              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">আপনার জন্য সুপারিশকৃত</h2>
               <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
                 {recommendations.map((rec) => (
                   <div
@@ -254,12 +252,12 @@ const Dashboard = () => {
                       <div className="text-right shrink-0">
                         <div className="text-lg sm:text-2xl font-bold text-primary">{rec.benefit}</div>
                         {rec.score && (
-                          <div className="text-[10px] sm:text-xs text-muted-foreground">{rec.score} GOOD</div>
+                          <div className="text-[10px] sm:text-xs text-muted-foreground">{rec.score} ভালো (Score)</div>
                         )}
                       </div>
                     </div>
                     <Button size="sm" className="w-full h-9" asChild>
-                      <Link to="/compare">View Details</Link>
+                      <Link to="/compare">বিস্তারিত দেখুন</Link>
                     </Button>
                   </div>
                 ))}

@@ -7,42 +7,42 @@ import { Button } from "@/components/ui/button";
 
 const openPositions = [
   {
-    title: "Senior Full-Stack Developer",
-    department: "Engineering",
-    location: "Dhaka, Bangladesh",
-    type: "Full-time",
-    description: "Build and maintain our comparison platform using React, Node.js, and PostgreSQL.",
+    title: "সিনিয়র ফুল-স্ট্যাক ডেভেলপার",
+    department: "ইঞ্জিনিয়ারিং",
+    location: "ঢাকা, বাংলাদেশ",
+    type: "ফুল-টাইম",
+    description: "React, Node.js এবং PostgreSQL ব্যবহার করে আমাদের তুলনা প্ল্যাটফর্মটি তৈরি ও পরিচালনা করুন।",
   },
   {
-    title: "Financial Content Writer",
-    department: "Content",
-    location: "Remote",
-    type: "Full-time",
-    description: "Create engaging, accurate content about credit cards, loans, and banking products.",
+    title: "ফাইন্যান্সিয়াল কন্টেন্ট রাইটার",
+    department: "কন্টেন্ট",
+    location: "রিমোট",
+    type: "ফুল-টাইম",
+    description: "ক্রেডিট কার্ড, লোন এবং ব্যাংকিং পণ্য সম্পর্কে তথ্যপূর্ণ কন্টেন্ট তৈরি করুন।",
   },
   {
-    title: "Bank Partnership Manager",
-    department: "Business Development",
-    location: "Dhaka, Bangladesh",
-    type: "Full-time",
-    description: "Build and maintain relationships with banks and financial institutions.",
+    title: "ব্যাংক পার্টনারশিপ ম্যানেজার",
+    department: "বিজনেস ডেভেলপমেন্ট",
+    location: "ঢাকা, বাংলাদেশ",
+    type: "ফুল-টাইম",
+    description: "ব্যাংক এবং আর্থিক প্রতিষ্ঠানগুলোর সাথে দীর্ঘস্থায়ী সম্পর্ক ও পার্টনারশিপ তৈরি করুন।",
   },
   {
-    title: "UI/UX Designer",
-    department: "Design",
-    location: "Dhaka / Remote",
-    type: "Full-time",
-    description: "Design intuitive interfaces that help users find the right financial products.",
+    title: "ইউআই/ইউএক্স ডিজাইনার",
+    department: "ডিজাইন",
+    location: "ঢাকা / রিমোট",
+    type: "ফুল-টাইম",
+    description: "ব্যবহারকারীদের সহজ অভিজ্ঞতার জন্য উন্নত ও আধুনিক ইন্টারফেস ডিজাইন করুন।",
   },
 ];
 
 const benefits = [
-  { icon: "payments", title: "Competitive Salary", description: "Market-leading compensation packages" },
-  { icon: "health_and_safety", title: "Health Insurance", description: "Comprehensive medical coverage for you and family" },
-  { icon: "home_work", title: "Flexible Work", description: "Hybrid work options available" },
-  { icon: "school", title: "Learning Budget", description: "Annual budget for courses and conferences" },
-  { icon: "celebration", title: "Team Events", description: "Regular team outings and celebrations" },
-  { icon: "trending_up", title: "Growth Path", description: "Clear career progression opportunities" },
+  { icon: "payments", title: "প্রতিযোগিতামূলক বেতন", description: "বাজারের সেরা স্যালারি প্যাকেজ" },
+  { icon: "health_and_safety", title: "স্বাস্থ্য বীমা", description: "আপনার ও আপনার পরিবারের জন্য পূর্ণাঙ্গ চিকিৎসা সহায়তা" },
+  { icon: "home_work", title: "ফ্লেক্সিবল কাজ", description: "হাইব্রিড এবং সুবিধাজনক কাজের সুযোগ" },
+  { icon: "school", title: "লার্নিং বাজেট", description: "কোর্স এবং কনফারেন্সের জন্য বার্ষিক বাজেট" },
+  { icon: "celebration", title: "টিম ইভেন্ট", description: "নিয়মিত টিম আউটিং এবং উৎসব উদযাপন" },
+  { icon: "trending_up", title: "ক্যারিয়ার গ্রোথ", description: "ক্যারিয়ার উন্নতির স্পষ্ট নির্দেশনা ও সুযোগ" },
 ];
 
 const Careers = () => {
@@ -51,25 +51,25 @@ const Careers = () => {
       <Header />
       <main className="flex-1 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full pb-20 md:pb-8">
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 mb-6">
-          <Link to="/" className="text-muted-foreground text-sm font-medium hover:underline">Home</Link>
+        <div className="flex items-center gap-2 mb-6 font-bengali">
+          <Link to="/" className="text-muted-foreground text-sm font-medium hover:underline">হোম</Link>
           <MaterialIcon name="chevron_right" className="text-sm text-muted-foreground" />
-          <span className="text-primary text-sm font-medium">Careers</span>
+          <span className="text-primary text-sm font-medium">ক্যারিয়ার</span>
         </div>
 
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-4">
-            Build the Future of <span className="text-primary">Finance</span>
+            গড়ুন এক উন্নত <span className="text-primary">আর্থিক ভবিষ্যৎ</span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Join our mission to democratize financial information in Bangladesh and help millions make better decisions.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-bengali">
+            বাংলাদেশে আর্থিক তথ্যের সহজলভ্যতা নিশ্চিত করতে এবং লক্ষ লক্ষ মানুষকে সঠিক সিদ্ধান্ত নিতে সাহায্য করতে আমাদের মিশনে যোগ দিন।
           </p>
         </div>
 
         {/* Benefits Section */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-center mb-8">Why Work With Us?</h2>
+          <h2 className="text-2xl font-bold text-center mb-8 font-bengali">কেন আমাদের সাথে কাজ করবেন?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map((benefit) => (
               <div
@@ -90,7 +90,7 @@ const Careers = () => {
 
         {/* Open Positions */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-center mb-8">Open Positions</h2>
+          <h2 className="text-2xl font-bold text-center mb-8 font-bengali">খালি পদসমূহ</h2>
           <div className="flex flex-col gap-4">
             {openPositions.map((job) => (
               <div
@@ -116,9 +116,9 @@ const Careers = () => {
                     </div>
                     <p className="text-muted-foreground mt-3">{job.description}</p>
                   </div>
-                  <Button className="shrink-0">
-                    Apply Now
-                    <MaterialIcon name="arrow_forward" className="ml-2" />
+                  <Button className="shrink-0 font-bengali">
+                    আবেদন করুন
+                    <MaterialIcon name="arrow_forward" className="ml-2 px-1" />
                   </Button>
                 </div>
               </div>
@@ -127,16 +127,16 @@ const Careers = () => {
         </div>
 
         {/* No Position CTA */}
-        <div className="bg-primary/5 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold mb-3">Don't See Your Role?</h2>
+        <div className="bg-primary/5 rounded-2xl p-8 text-center font-bengali">
+          <h2 className="text-2xl font-bold mb-3">আপনার পছন্দের পদটি খুঁজে পাচ্ছেন না?</h2>
           <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            We're always interested in hearing from talented people. Send us your resume and we'll keep you in mind.
+            আমরা সর্বদা নতুন ও মেধাবী মানুষদের সাথে পরিচিত হতে আগ্রহী। আপনার সিভি (Resume) আমাদের কাছে পাঠিয়ে রাখুন।
           </p>
           <Link
             to="/contact"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-bold hover:bg-primary/90 transition-colors"
           >
-            Contact Us
+            যোগাযোগ করুন
             <MaterialIcon name="mail" />
           </Link>
         </div>

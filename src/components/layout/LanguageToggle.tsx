@@ -1,12 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const LanguageToggle = () => {
-    const [language, setLanguage] = useState<'bn' | 'en'>('bn');
+    const [language, setLanguage] = useState<'bn' | 'en'>(() => {
+        const saved = localStorage.getItem('bankbujhi-lang');
+        return (saved as 'bn' | 'en') || 'bn';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('bankbujhi-lang', language);
+        // In a real app, this would also update i18n instance
+        document.documentElement.lang = language;
+    }, [language]);
 
     const toggleLanguage = () => {
         setLanguage(prev => prev === 'bn' ? 'en' : 'bn');
-        // In a real implementation, this would trigger a context update or i18n change
         console.log(`Language switched to ${language === 'bn' ? 'English' : 'Bangla'}`);
     };
 

@@ -125,7 +125,7 @@ const Footer = () => {
           <ul className="space-y-3 text-sm text-muted-foreground mb-6">
             <li className="flex items-start gap-2">
               <MaterialIcon name="call" className="text-primary text-lg" />
-              <span>+৮৮০ ১XXX-XXXXXX</span>
+              <span>+880 1XXX-XXXXXX</span>
             </li>
             <li className="flex items-start gap-2">
               <MaterialIcon name="email" className="text-primary text-lg" />

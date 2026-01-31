@@ -31,74 +31,74 @@ export interface QuizQuestion {
 const quizQuestions: QuizQuestion[] = [
   {
     id: "primary_use",
-    question: "What will you primarily use your credit card for?",
-    description: "Select your main spending category",
+    question: "আপনি মূলত কী ধরনের কাজে ক্রেডিট কার্ড ব্যবহার করবেন?",
+    description: "আপনার প্রধান খরচের খাতটি সিলেক্ট করুন",
     icon: "credit_card",
     options: [
-      { value: "travel", label: "Travel & Flights", icon: "flight", description: "Booking flights, hotels, vacation expenses" },
-      { value: "shopping", label: "Shopping & Retail", icon: "shopping_bag", description: "Online and in-store purchases" },
-      { value: "dining", label: "Dining & Entertainment", icon: "restaurant", description: "Restaurants, movies, events" },
-      { value: "bills", label: "Bills & Utilities", icon: "receipt_long", description: "Monthly bills, subscriptions, groceries" },
+      { value: "travel", label: "ভ্রমণ ও এয়ার টিকিট", icon: "flight", description: "ফ্লাইট, হোটেল বুকিং এবং ভ্রমণের খরচ" },
+      { value: "shopping", label: "শপিং ও রিটেইল", icon: "shopping_bag", description: "অনলাইন এবং দোকানে কেনাকাটা" },
+      { value: "dining", label: "ডাইনিং ও বিনোদন", icon: "restaurant", description: "রেস্তোরাঁ, সিনেমা এবং বিভিন্ন অনুষ্ঠান" },
+      { value: "bills", label: "বিল ও ইউটিলিটি", icon: "receipt_long", description: "মাসিক বিল, সাবস্ক্রিপশন এবং গ্রোসারি কেনাকাটা" },
     ],
   },
   {
     id: "monthly_spend",
-    question: "How much do you typically spend per month?",
-    description: "This helps us find cards with the best rewards for your spending",
+    question: "আপনি মাসে সাধারণত কত টাকা খরচ করেন?",
+    description: "এটি আপনার খরচের ধরন আনুযায়ী সেরা রিওয়ার্ড যুক্ত কার্ড খুঁজে পেতে সাহায্য করবে",
     icon: "account_balance_wallet",
     options: [
-      { value: "low", label: "Under ৳30,000", icon: "savings", description: "Essential spending only" },
-      { value: "medium", label: "৳30,000 - ৳75,000", icon: "payments", description: "Regular lifestyle expenses" },
-      { value: "high", label: "৳75,000 - ৳1,50,000", icon: "account_balance", description: "Premium lifestyle" },
-      { value: "premium", label: "Above ৳1,50,000", icon: "diamond", description: "High-volume spending" },
+      { value: "low", label: "৩০,০০০ টাকার নিচে", icon: "savings", description: "শুধুমাত্র প্রয়োজনীয় খরচপাতি" },
+      { value: "medium", label: "৩০,০০০ - ৭৫,০০০ টাকা", icon: "payments", description: "নিয়মিত জীবনমানের খরচ" },
+      { value: "high", label: "৭৫,০০০ - ১,৫০,০০০ টাকা", icon: "account_balance", description: "প্রিমিয়াম জীবনমান" },
+      { value: "premium", label: "১,৫০,০০০ টাকার উপরে", icon: "diamond", description: "অধিক পরিমাণে খরচ" },
     ],
   },
   {
     id: "income",
-    question: "What is your monthly income range?",
-    description: "This determines which cards you're eligible for",
+    question: "আপনার মাসিক আয়ের পরিসীমা কত?",
+    description: "এটি আপনি কোন কার্ডগুলোর যোগ্য তা নির্ধারণ করে",
     icon: "monetization_on",
     options: [
-      { value: "entry", label: "৳20,000 - ৳40,000", icon: "trending_up", description: "Entry-level cards available" },
-      { value: "mid", label: "৳40,000 - ৳75,000", icon: "show_chart", description: "Standard to premium cards" },
-      { value: "high", label: "৳75,000 - ৳1,50,000", icon: "insights", description: "Premium cards with more benefits" },
-      { value: "premium", label: "Above ৳1,50,000", icon: "workspace_premium", description: "All cards including elite tier" },
+      { value: "entry", label: "২০,০০০ - ৪০,০০০ টাকা", icon: "trending_up", description: "এন্ট্রি-লেভেল কার্ড পাওয়া যাবে" },
+      { value: "mid", label: "৪০,০০০ - ৭৫,০০০ টাকা", icon: "show_chart", description: "স্ট্যান্ডার্ড থেকে প্রিমিয়াম কার্ড" },
+      { value: "high", label: "৭৫,০০০ - ১,৫০,০০০ টাকা", icon: "insights", description: "অধিক সুবিধাযুক্ত প্রিমিয়াম কার্ড" },
+      { value: "premium", label: "১,৫০,০০০ টাকার উপরে", icon: "workspace_premium", description: "এলিট টিয়ারসহ সব কার্ড" },
     ],
   },
   {
     id: "employment",
-    question: "What is your employment type?",
-    description: "Different cards have different eligibility criteria",
+    question: "আপনি বর্তমানে কী করছেন?",
+    description: "একেক কার্ডের জন্য একেক রকম যোগ্যতার প্রয়োজন হয়",
     icon: "work",
     options: [
-      { value: "salaried", label: "Salaried Employee", icon: "badge", description: "Working for a company" },
-      { value: "self_employed", label: "Self-Employed", icon: "person", description: "Freelancer or professional" },
-      { value: "business", label: "Business Owner", icon: "store", description: "Own a business or company" },
-      { value: "other", label: "Other", icon: "more_horiz", description: "Student, retired, etc." },
+      { value: "salaried", label: "চাকরিজীবী", icon: "badge", description: "কোনো প্রতিষ্ঠানে কাজ করছেন" },
+      { value: "self_employed", label: "পেশাজীবী", icon: "person", description: "ফ্রিল্যান্সার বা পেশাজীবী" },
+      { value: "business", label: "ব্যবসায়ী", icon: "store", description: "নিজের ব্যবসা বা কোম্পানি আছে" },
+      { value: "other", label: "অন্যান্য", icon: "more_horiz", description: "শিক্ষার্থী, অবসরপ্রাপ্ত ইত্যাদি" },
     ],
   },
   {
     id: "reward_preference",
-    question: "What type of rewards do you prefer?",
-    description: "Choose what matters most to you",
+    question: "আপনি কোন ধরনের রিওয়ার্ড পছন্দ করেন?",
+    description: "আপনার কাছে যা সবচেয়ে গুরুত্বপূর্ণ তা বেছে নিন",
     icon: "redeem",
     options: [
-      { value: "cashback", label: "Cashback", icon: "savings", description: "Get money back on purchases" },
-      { value: "points", label: "Reward Points", icon: "stars", description: "Earn points for gift cards & vouchers" },
-      { value: "travel", label: "Travel Benefits", icon: "flight_takeoff", description: "Lounge access, miles, travel perks" },
-      { value: "discounts", label: "Discounts & Offers", icon: "local_offer", description: "Partner discounts and deals" },
+      { value: "cashback", label: "ক্যাশব্যাক", icon: "savings", description: "কেনাকাটার ওপর টাকা ফেরত পান" },
+      { value: "points", label: "রিওয়ার্ড পয়েন্ট", icon: "stars", description: "গিফট কার্ড বা ভাউচারের জন্য পয়েন্ট অর্জন করুন" },
+      { value: "travel", label: "ভ্রমণ সুবিধা", icon: "flight_takeoff", description: "লাউঞ্জ অ্যাক্সেস, মাইলস এবং অন্যান্য সুবিধা" },
+      { value: "discounts", label: "ডিসকাউন্ট ও অফার", icon: "local_offer", description: "পার্টনারদের থেকে বিশেষ ডিসকাউন্ট এবং ডিল" },
     ],
   },
   {
     id: "annual_fee",
-    question: "What's your preference for annual fees?",
-    description: "Higher fee cards typically offer more benefits",
+    question: "বার্ষিক ফি-র ব্যাপারে আপনার পছন্দ কোনটি?",
+    description: "বেশি ফি-র কার্ডগুলোতে সাধারণত বেশি সুবিধা থাকে",
     icon: "payments",
     options: [
-      { value: "free", label: "No Annual Fee", icon: "money_off", description: "Free cards only" },
-      { value: "low", label: "Up to ৳3,000", icon: "paid", description: "Budget-friendly premium cards" },
-      { value: "medium", label: "৳3,000 - ৳10,000", icon: "credit_score", description: "Good balance of fee vs benefits" },
-      { value: "high", label: "Any Amount", icon: "diamond", description: "Best benefits regardless of fee" },
+      { value: "free", label: "বার্ষিক ফি নেই", icon: "money_off", description: "শুধুমাত্র ফ্রি কার্ড" },
+      { value: "low", label: "৩,০০০ টাকা পর্যন্ত", icon: "paid", description: "সাশ্রয়ী প্রিমিয়াম কার্ড" },
+      { value: "medium", label: "৩,০০০ - ১০,০০০ টাকা", icon: "credit_score", description: "ফি এবং সুবিধার ভালো ভারসাম্য" },
+      { value: "high", label: "যেকোনো পরিমাণ", icon: "diamond", description: "ফির চিন্তা না করে সেরা সব সুবিধা" },
     ],
   },
 ];
@@ -115,13 +115,13 @@ const CardQuiz = () => {
   const handleAnswer = (value: string) => {
     const newAnswers = [...answers];
     const existingIndex = newAnswers.findIndex(a => a.questionId === currentQuestion.id);
-    
+
     if (existingIndex >= 0) {
       newAnswers[existingIndex].value = value;
     } else {
       newAnswers.push({ questionId: currentQuestion.id, value });
     }
-    
+
     setAnswers(newAnswers);
 
     // Auto-advance after short delay
@@ -153,7 +153,7 @@ const CardQuiz = () => {
   if (showResults) {
     return (
       <>
-        <SEOHead 
+        <SEOHead
           title="কার্ড কুইজ | BankBujhi"
           description="৩০ সেকেন্ডে সেরা কার্ড খুঁজুন। আপনার জন্য উপযুক্ত ক্রেডিট কার্ড সুপারিশ।"
           image="https://bankbujhi.lovable.app/og/og-quiz.jpg"
@@ -173,54 +173,54 @@ const CardQuiz = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOHead
         title="কার্ড কুইজ | BankBujhi"
         description="৩০ সেকেন্ডে সেরা কার্ড খুঁজুন। আপনার জন্য উপযুক্ত ক্রেডিট কার্ড সুপারিশ।"
         image="https://bankbujhi.lovable.app/og/og-quiz.jpg"
         path="/quiz"
       />
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      
-      <main className="flex-1 pb-20 md:pb-0">
-        {/* Progress Header */}
-        <section className="bg-gradient-to-br from-primary/5 to-accent/5 border-b">
-          <div className="container mx-auto px-4 py-6">
-            <div className="max-w-2xl mx-auto">
-              <div className="flex items-center justify-between mb-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={currentStep === 0 ? () => navigate(-1) : handleBack}
-                  className="gap-1"
-                >
-                  <MaterialIcon name="arrow_back" className="text-lg" />
-                  Back
-                </Button>
-                <span className="text-sm font-medium text-muted-foreground">
-                  Question {currentStep + 1} of {quizQuestions.length}
-                </span>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+
+        <main className="flex-1 pb-20 md:pb-0">
+          {/* Progress Header */}
+          <section className="bg-gradient-to-br from-primary/5 to-accent/5 border-b">
+            <div className="container mx-auto px-4 py-6">
+              <div className="max-w-2xl mx-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={currentStep === 0 ? () => navigate(-1) : handleBack}
+                    className="gap-1"
+                  >
+                    <MaterialIcon name="arrow_back" className="text-lg" />
+                    পিছনে
+                  </Button>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    প্রশ্ন {currentStep + 1} / {quizQuestions.length}
+                  </span>
+                </div>
+                <Progress value={progress} className="h-2" />
               </div>
-              <Progress value={progress} className="h-2" />
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Question Section */}
-        <section className="container mx-auto px-4 py-8 md:py-12">
-          <div className="max-w-2xl mx-auto">
-            <QuizQuestion
-              question={currentQuestion}
-              selectedValue={getCurrentAnswer()}
-              onSelect={handleAnswer}
-            />
-          </div>
-        </section>
-      </main>
+          {/* Question Section */}
+          <section className="container mx-auto px-4 py-8 md:py-12">
+            <div className="max-w-2xl mx-auto">
+              <QuizQuestion
+                question={currentQuestion}
+                selectedValue={getCurrentAnswer()}
+                onSelect={handleAnswer}
+              />
+            </div>
+          </section>
+        </main>
 
-      <Footer />
-      <BottomNav />
-    </div>
+        <Footer />
+        <BottomNav />
+      </div>
     </>
   );
 };
