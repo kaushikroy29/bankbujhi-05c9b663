@@ -8,7 +8,7 @@ import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CreditCardListing from "@/components/cards/CreditCardListing";
-import { fetchCreditCards, fetchBanks, type CreditCard, type Bank } from "@/lib/api/banks";
+import { fetchCreditCards, fetchBanks, type CreditCard, type Bank, type CreditCardFees } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
 import SEOHead from "@/components/seo/SEOHead";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -93,90 +93,127 @@ const isLowestFee = (currentFee: string, allCards: CreditCard[], mainCategory: s
 
 // Visual comparison table
 const FeeComparisonTable = ({ cards }: { cards: CreditCard[] }) => {
-  const feeCategories = [
-    {
-      category: 'annual',
-      label_bn: 'বার্ষিক ফি',
-      subcategories: [
-        { key: 'fee', label: 'মূল ফি' },
-        { key: 'renewal_fee', label: 'নবায়ন ফি' },
-        // { key: 'supplementary', label: 'সাপ্লিমেন্টারি কার্ড' } // Assuming this exists or we skip
-      ]
-    },
-    {
-      category: 'transaction',
-      label_bn: 'লেনদেন ফি',
-      subcategories: [
-        { key: 'cash_advance', label: 'নগদ উত্তোলন' },
-        { key: 'foreign_currency', label: 'বিদেশী মুদ্রা' },
-        { key: 'balance_transfer', label: 'ব্যালেন্স ট্রান্সফার' }
-      ]
-    },
-    {
-      category: 'penalty',
-      label_bn: 'জরিমানা ফি',
-      subcategories: [
-        { key: 'late_payment', label: 'দেরিতে পরিশোধ' },
-        { key: 'over_limit', label: 'লিমিট ওভার' }
-      ]
-    }
-  ];
+  // Safe accessor for fees
+  const getFee = (card: CreditCard, main: keyof CreditCardFees, sub: string) => {
+    if (!card.fees_detailed) return "N/A";
+    const section = card.fees_detailed[main];
+    if (!section) return "N/A";
+    const val = (section as any)[sub];
+    if (val === "0" || val === "0.00" || val === "Free") return "ফ্রি";
+    return val || "N/A";
+  };
+
+  const getAmount = (val: string) => {
+    if (!val || val === "N/A" || val === "ফ্রি") return 0;
+    return parseInt(val.replace(/,/g, '').replace(/[^\d]/g, ''), 10) || 0;
+  };
+
+  const isLowest = (currentVal: string, allCards: CreditCard[], main: keyof CreditCardFees, sub: string) => {
+    const currentAmount = getAmount(currentVal);
+    // If it's 0/Free, it's likely the lowest, unless all are free
+    if (currentAmount === 0 && (currentVal === "ফ্রি" || currentVal === "0")) return true;
+
+    const amounts = allCards.map(c => getAmount(getFee(c, main, sub)));
+    // Filter out N/A (0s that are not "Free")
+    const validAmounts = amounts.filter(a => a > 0);
+    if (validAmounts.length === 0) return true; // All are free or N/A
+
+    const min = Math.min(...validAmounts);
+    return currentAmount === min;
+  };
 
   return (
     <div className="overflow-x-auto pb-4">
-      <table className="w-full border-collapse min-w-[600px]">
+      <table className="w-full border-collapse min-w-[800px]">
         <thead>
           <tr>
-            <th className="p-3 text-left bg-muted/50 border-b sticky left-0 z-10 bg-background min-w-[150px]">ফি এর ধরন</th>
+            <th className="p-4 text-left bg-muted/50 border-b sticky left-0 z-10 bg-background min-w-[200px] font-bold text-muted-foreground">ফি এর ধরন</th>
             {cards.map(card => (
-              <th key={card.id} className="p-3 text-center bg-muted/30 border-b min-w-[200px]">
-                <div className="flex flex-col items-center gap-2">
-                  <img src={card.image_url || "/placeholder.svg"} className="h-12 w-auto object-contain" alt={card.name} />
-                  <span className="text-sm font-bold line-clamp-2 leading-tight">{card.name}</span>
+              <th key={card.id} className="p-4 text-center bg-muted/10 border-b min-w-[220px]">
+                <div className="flex flex-col items-center gap-3">
+                  <img src={card.image_url || "/placeholder.svg"} className="h-16 w-auto object-contain drop-shadow-sm" alt={card.name} />
+                  <span className="text-sm font-bold line-clamp-2 leading-tight text-balance">{card.name}</span>
                 </div>
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {feeCategories.map(category => (
-            <>
-              <tr key={category.category} className="bg-primary/5">
-                <td colSpan={cards.length + 1} className="p-2 px-3 font-bold text-primary text-sm sticky left-0 z-10 bg-primary/5">
-                  {category.label_bn}
-                </td>
-              </tr>
-              {category.subcategories.map(sub => (
-                <tr key={`${category.category}-${sub.key}`} className="border-b hover:bg-muted/5">
-                  <td className="p-3 text-sm font-medium text-muted-foreground sticky left-0 z-10 bg-background border-r">{sub.label}</td>
-                  {cards.map(card => {
-                    const fee = getFeeValue(card, category.category, sub.key);
-                    const isLowest = isLowestFee(fee, cards, category.category, sub.key);
-
-                    return (
-                      <td key={card.id} className={`p-3 text-center text-sm ${isLowest ? 'bg-green-50/50 font-bold text-green-700' : ''}`}>
-                        {fee}
-                        {isLowest && fee !== "N/A" && <span className="text-green-600 ml-1 inline-block">✓</span>}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </>
-          ))}
-          {/* Add basic benefits row */}
-          <tr className="bg-primary/5">
-            <td colSpan={cards.length + 1} className="p-2 px-3 font-bold text-primary text-sm sticky left-0 z-10 bg-primary/5">
-              সুবিধাসমূহ
+          {/* Net Cost Estimation Row */}
+          <tr className="bg-primary/5 border-b-2 border-primary/20">
+            <td className="p-3 font-bold text-primary sticky left-0 z-10 bg-primary/10 border-r">
+              নেট খরচ (আনুমানিক)
+              <span className="block text-[10px] font-normal text-muted-foreground">বার্ষিক ফি - বেনিফিট</span>
             </td>
+            {cards.map(card => {
+              const fee = getAmount(card.annual_fee || "0");
+              // Crude estimation: each benefit line worth 500 BDT visually
+              const benefitsValue = (card.benefits?.length || 0) * 500;
+              const netCost = fee - benefitsValue;
+              const isGoodValue = netCost <= 0;
+
+              return (
+                <td key={card.id} className="p-3 text-center bg-primary/5">
+                  <div className={`font-black text-lg ${isGoodValue ? 'text-green-600' : 'text-orange-600'}`}>
+                    {isGoodValue ? "লাভজনক" : `৳${netCost.toLocaleString()}`}
+                  </div>
+                  {isGoodValue && <span className="text-xs text-green-600 font-medium">বেস্ট ভ্যালু</span>}
+                </td>
+              )
+            })}
+          </tr>
+
+          {/* Annual Fees */}
+          <tr className="bg-muted/20"><td colSpan={cards.length + 1} className="p-2 px-4 font-bold text-xs uppercase tracking-wider text-muted-foreground sticky left-0 bg-muted/20">বার্ষিক ফি (Annual Fees)</td></tr>
+          <tr>
+            <td className="p-3 text-sm font-medium sticky left-0 bg-background border-r">মূল ফি (Primary)</td>
+            {cards.map(c => {
+              const val = getFee(c, 'annual', 'fee');
+              return <td key={c.id} className="p-3 text-center border-b">{val}</td>
+            })}
           </tr>
           <tr>
-            <td className="p-3 text-sm font-medium text-muted-foreground sticky left-0 z-10 bg-background border-r">টপ বেনিফিট</td>
+            <td className="p-3 text-sm font-medium sticky left-0 bg-background border-r">নবায়ন ফি (Renewal)</td>
+            {cards.map(c => {
+              const val = getFee(c, 'annual', 'renewal_fee');
+              return <td key={c.id} className="p-3 text-center border-b">{val}</td>
+            })}
+          </tr>
+
+          {/* Transaction Fees */}
+          <tr className="bg-muted/20"><td colSpan={cards.length + 1} className="p-2 px-4 font-bold text-xs uppercase tracking-wider text-muted-foreground sticky left-0 bg-muted/20">লেনদেন (Transactions)</td></tr>
+          <tr>
+            <td className="p-3 text-sm font-medium sticky left-0 bg-background border-r">টাকা উত্তোলন (Cash Adv.)</td>
+            {cards.map(c => <td key={c.id} className="p-3 text-center border-b">{getFee(c, 'transaction', 'cash_advance')}</td>)}
+          </tr>
+          <tr>
+            <td className="p-3 text-sm font-medium sticky left-0 bg-background border-r">বিদেশী মুদ্রা (Foreign Curr.)</td>
+            {cards.map(c => <td key={c.id} className="p-3 text-center border-b">{getFee(c, 'transaction', 'foreign_currency')}</td>)}
+          </tr>
+
+          {/* Penalties */}
+          <tr className="bg-muted/20"><td colSpan={cards.length + 1} className="p-2 px-4 font-bold text-xs uppercase tracking-wider text-muted-foreground sticky left-0 bg-muted/20">জরিমানা (Penalties)</td></tr>
+          <tr>
+            <td className="p-3 text-sm font-medium sticky left-0 bg-background border-r">দেরিতে পরিশোধ (Late Payment)</td>
+            {cards.map(c => <td key={c.id} className="p-3 text-center border-b text-red-600/80 font-medium">{getFee(c, 'penalty', 'late_payment')}</td>)}
+          </tr>
+          <tr>
+            <td className="p-3 text-sm font-medium sticky left-0 bg-background border-r">লিমিট অতিক্রম (Over Limit)</td>
+            {cards.map(c => <td key={c.id} className="p-3 text-center border-b text-red-600/80 font-medium">{getFee(c, 'penalty', 'over_limit')}</td>)}
+          </tr>
+
+          {/* Benefits */}
+          <tr className="bg-muted/20"><td colSpan={cards.length + 1} className="p-2 px-4 font-bold text-xs uppercase tracking-wider text-muted-foreground sticky left-0 bg-muted/20">সুবিধাসমূহ (Benefits)</td></tr>
+          <tr>
+            <td className="p-3 text-sm font-medium sticky left-0 bg-background border-r align-top py-6">টপ ফিচার</td>
             {cards.map(card => (
-              <td key={card.id} className="p-3 text-center text-xs align-top">
-                <ul className="text-left space-y-1 list-disc pl-4">
-                  {card.benefits?.slice(0, 3).map((b, i) => (
-                    <li key={i}>{b.text}</li>
+              <td key={card.id} className="p-3 text-center text-xs align-top py-6">
+                <ul className="text-left space-y-2 list-none">
+                  {card.benefits?.slice(0, 4).map((b, i) => (
+                    <li key={i} className="flex gap-2 items-start">
+                      <span className="text-primary mt-0.5">•</span>
+                      <span className="leading-snug text-muted-foreground/90">{b.text}</span>
+                    </li>
                   ))}
                 </ul>
               </td>
@@ -543,6 +580,26 @@ const Compare = () => {
                     name="quiz"
                     className="absolute -bottom-4 -right-4 text-primary-foreground/10 text-8xl sm:text-9xl"
                   />
+                </div>
+
+                {/* Calculator Widget Link */}
+                <div className="bg-card rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-colors group">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-orange-100 p-3 rounded-xl text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                      <MaterialIcon name="calculate" className="text-2xl" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-base mb-1">সুদ ক্যালকুলেটর</h4>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        কার্ডের বিল বাকী থাকলে কত টাকা গচ্চা যাবে হিসাব করুন।
+                      </p>
+                      <Link to="/tools/calculator">
+                        <Button size="sm" variant="outline" className="w-full text-xs font-bold border-orange-200 text-orange-700 hover:bg-orange-50">
+                          হিসাব করুন &rarr;
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </aside>
