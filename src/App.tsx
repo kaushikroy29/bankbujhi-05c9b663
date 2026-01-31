@@ -31,6 +31,7 @@ import MFS from "./pages/MFS";
 import Glossary from "./pages/Glossary";
 import Recommendations from "./pages/Recommendations";
 import Watchlist from "./pages/Watchlist";
+import PendingUpdates from "./pages/admin/PendingUpdates";
 import CreditCardCostCalculator from "./components/calculators/CreditCardCostCalculator";
 import EMICalculator from "./components/calculators/EMICalculator";
 const queryClient = new QueryClient();
@@ -71,6 +72,7 @@ const App = () => (
             <Route path="/tools/calculator" element={<div className="container py-10 max-w-4xl"><CreditCardCostCalculator /></div>} />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/watchlist" element={<Watchlist />} />
+            <Route path="/admin/updates" element={<PendingUpdates />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
