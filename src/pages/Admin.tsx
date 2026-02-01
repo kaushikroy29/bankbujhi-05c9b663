@@ -26,16 +26,28 @@ export default function Admin() {
     }, []);
 
     const loadStats = async () => {
-        const banks = await fetchBanks();
-        const updates = await fetchPendingUpdates();
-        const { count: cardsCount } = await supabase.from('credit_cards').select('*', { count: 'exact', head: true });
-        const { count: loansCount } = await supabase.from('loan_products').select('*', { count: 'exact', head: true });
+        try {
+            console.log("Loading admin stats...");
+            const banks = await fetchBanks();
+            console.log("Banks fetched:", banks?.length);
 
-        setStats({
-            banks: banks.length,
-            products: (cardsCount || 0) + (loansCount || 0),
-            updates: updates.length
-        });
+            const updates = await fetchPendingUpdates();
+            console.log("Updates fetched:", updates?.length);
+
+            const { count: cardsCount, error: cardsError } = await supabase.from('credit_cards').select('*', { count: 'exact', head: true });
+            if (cardsError) console.error("Cards count error:", cardsError);
+
+            const { count: loansCount, error: loansError } = await supabase.from('loan_products').select('*', { count: 'exact', head: true });
+            if (loansError) console.error("Loans count error:", loansError);
+
+            setStats({
+                banks: banks.length,
+                products: (cardsCount || 0) + (loansCount || 0),
+                updates: updates.length
+            });
+        } catch (error) {
+            console.error("Failed to load admin stats:", error);
+        }
     };
 
     return (

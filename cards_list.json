@@ -1,0 +1,250 @@
+[
+  {
+    "name": "Visa Platinum Credit Card",
+    "bank_id": "db8f451e-61fa-418d-8621-c239f99ec153",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "Aqua Prepaid Card",
+    "bank_id": "db8f451e-61fa-418d-8621-c239f99ec153",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "Visa Signature Credit Card",
+    "bank_id": "71f96546-ed28-438a-ae27-ab9779876685",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "Visa Signature Credit Card",
+    "bank_id": "f259f361-44c1-45fa-8cb4-c620356b679c",
+    "image_url": null,
+    "banks": {
+      "name": "Standard Chartered"
+    }
+  },
+  {
+    "name": "MTB Angana",
+    "bank_id": "3fae4355-ffcd-47a7-bf73-62c671569601",
+    "image_url": null,
+    "banks": {
+      "name": "Mutual Trust Bank"
+    }
+  },
+  {
+    "name": "Visa Platinum Credit Card",
+    "bank_id": "4dcf93fb-dad7-4a3c-8dba-f6edc777fe09",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "Aqua Prepaid Card",
+    "bank_id": "4dcf93fb-dad7-4a3c-8dba-f6edc777fe09",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Signature Credit Card",
+    "bank_id": "db8f451e-61fa-418d-8621-c239f99ec153",
+    "image_url": "/cards/ebl-visa-signature.png",
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Signature Credit Card",
+    "bank_id": "db8f451e-61fa-418d-8621-c239f99ec153",
+    "image_url": "/cards/ebl-visa-signature.png",
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "American Express Gold Credit Card",
+    "bank_id": "ee33670c-4503-4c7f-a09b-4c0a93d4e9d8",
+    "image_url": "/cards/city-amex-platinum.png",
+    "banks": {
+      "name": "City Bank"
+    }
+  },
+  {
+    "name": "Visa Signature Credit Card",
+    "bank_id": "359df6ce-bc51-4414-927e-75738309ec92",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "Visa Signature Credit Card",
+    "bank_id": "6b7bad95-8932-4f4e-b67d-4faba8fb6c6b",
+    "image_url": null,
+    "banks": {
+      "name": "Standard Chartered"
+    }
+  },
+  {
+    "name": "MTB Angana",
+    "bank_id": "704a81f8-ba8d-48bd-b9d9-3d39eef671f8",
+    "image_url": null,
+    "banks": {
+      "name": "Mutual Trust Bank"
+    }
+  },
+  {
+    "name": "Visa Platinum Credit Card",
+    "bank_id": "f6bdab5f-69d3-4817-9a52-3a7ef155e83e",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "Aqua Prepaid Card",
+    "bank_id": "f6bdab5f-69d3-4817-9a52-3a7ef155e83e",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Skybanc Dual Currency",
+    "bank_id": "f6bdab5f-69d3-4817-9a52-3a7ef155e83e",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "American Express Gold Credit Card",
+    "bank_id": "5e9ae1d2-a71f-4f0d-aeb0-fc84481dd0c0",
+    "image_url": "/cards/city-amex-platinum.png",
+    "banks": {
+      "name": "City Bank"
+    }
+  },
+  {
+    "name": "American Express Gold Credit Card",
+    "bank_id": "5254648f-cb37-495d-975a-d468e9cc0c1d",
+    "image_url": "/cards/city-amex-platinum.png",
+    "banks": {
+      "name": "City Bank"
+    }
+  },
+  {
+    "name": "Visa Signature Credit Card",
+    "bank_id": "6faf5b55-599a-49a6-b4a1-f65c8b0c19cb",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "Astha Credit Card",
+    "bank_id": "6faf5b55-599a-49a6-b4a1-f65c8b0c19cb",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "Visa Signature Credit Card",
+    "bank_id": "695a114a-5f69-4ca9-ba69-d9f3b852caa8",
+    "image_url": null,
+    "banks": {
+      "name": "Standard Chartered"
+    }
+  },
+  {
+    "name": "Visa Infinite Credit Card",
+    "bank_id": "695a114a-5f69-4ca9-ba69-d9f3b852caa8",
+    "image_url": null,
+    "banks": {
+      "name": "Standard Chartered"
+    }
+  },
+  {
+    "name": "MTB Angana",
+    "bank_id": "f381b478-c431-4408-8f50-3217f1bfdf91",
+    "image_url": null,
+    "banks": {
+      "name": "Mutual Trust Bank"
+    }
+  },
+  {
+    "name": "Nexus Classic Card",
+    "bank_id": "22135499-6b58-4633-bba3-e8f94cd9b9d7",
+    "image_url": null,
+    "banks": {
+      "name": "Dutch-Bangla Bank"
+    }
+  },
+  {
+    "name": "Khidmah Gold Card",
+    "bank_id": "98a0daec-0ad5-4988-a724-97ba72b018e5",
+    "image_url": null,
+    "banks": {
+      "name": "Islami Bank Bangladesh"
+    }
+  },
+  {
+    "name": "Visa Platinum Credit Card",
+    "bank_id": "21ed7b80-304d-4e64-ba0e-97c418cbafe1",
+    "image_url": null,
+    "banks": {
+      "name": "Prime Bank"
+    }
+  },
+  {
+    "name": "SimplyCash Amex",
+    "bank_id": "5254648f-cb37-495d-975a-d468e9cc0c1d",
+    "image_url": null,
+    "banks": {
+      "name": "City Bank"
+    }
+  },
+  {
+    "name": "EBL Visa Signature Credit Card",
+    "bank_id": "db8f451e-61fa-418d-8621-c239f99ec153",
+    "image_url": "/cards/ebl-visa-signature.png",
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "American Express Platinum Credit Card",
+    "bank_id": "5e9ae1d2-a71f-4f0d-aeb0-fc84481dd0c0",
+    "image_url": "/cards/city-amex-platinum.png",
+    "banks": {
+      "name": "City Bank"
+    }
+  },
+  {
+    "name": "American Express Platinum Credit Card",
+    "bank_id": "ee33670c-4503-4c7f-a09b-4c0a93d4e9d8",
+    "image_url": "/cards/city-amex-platinum.png",
+    "banks": {
+      "name": "City Bank"
+    }
+  },
+  {
+    "name": "American Express Platinum Credit Card",
+    "bank_id": "5254648f-cb37-495d-975a-d468e9cc0c1d",
+    "image_url": "/cards/city-amex-platinum.png",
+    "banks": {
+      "name": "City Bank"
+    }
+  }
+]

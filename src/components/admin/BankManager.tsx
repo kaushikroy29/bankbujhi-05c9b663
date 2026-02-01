@@ -8,6 +8,7 @@ import AddBankForm from "./forms/AddBankForm";
 export default function BankManager() {
     const [banks, setBanks] = useState<Bank[]>([]);
     const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     useEffect(() => {
         loadBanks();
@@ -16,11 +17,13 @@ export default function BankManager() {
 
     const loadBanks = async () => {
         setLoading(true);
+        setErrorMsg(null);
         try {
             const data = await fetchBanks();
             setBanks(data);
         } catch (error) {
             console.error("Error loading banks:", error);
+            setErrorMsg(error instanceof Error ? error.message : "Failed to load banks");
         } finally {
             setLoading(false);
         }
@@ -48,6 +51,12 @@ export default function BankManager() {
                         {loading ? (
                             <tr>
                                 <td colSpan={5} className="p-4 text-center">Loading...</td>
+                            </tr>
+                        ) : errorMsg ? (
+                            <tr>
+                                <td colSpan={5} className="p-4 text-center text-red-500">
+                                    Error: {errorMsg}
+                                </td>
                             </tr>
                         ) : banks.length === 0 ? (
                             <tr>

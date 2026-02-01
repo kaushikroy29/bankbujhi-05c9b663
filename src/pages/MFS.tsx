@@ -4,6 +4,7 @@ import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import SEOHead from "@/components/seo/SEOHead";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import SocialShare from "@/components/ui/SocialShare";
+import { Badge } from "@/components/ui/badge";
 
 const mfsProviders = [
     {
@@ -81,14 +82,20 @@ const MFS = () => {
                     {/* Comparison Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {mfsProviders.map((provider) => (
-                            <div key={provider.name} className="bg-card border border-primary/10 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
+                            <div key={provider.name} className="bg-card border border-primary/10 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
                                 {/* Header */}
-                                <div className={`h-24 ${provider.logoColor} relative flex items-center justify-center`}>
+                                <div className={`h-28 ${provider.logoColor} relative flex items-center justify-center`}>
+                                    {/* Daily Use Badge */}
+                                    <div className="absolute top-3 right-3">
+                                        <Badge className="bg-white/90 text-blue-700 hover:bg-white text-[10px] font-bold shadow-sm">
+                                            Daily Use
+                                        </Badge>
+                                    </div>
                                     <h3 className="text-white text-3xl font-black tracking-tighter">{provider.displayName}</h3>
                                 </div>
 
                                 {/* Body */}
-                                <div className="p-6 space-y-6">
+                                <div className="p-6 space-y-6 flex-1 flex flex-col">
                                     {/* Cash Out */}
                                     <div>
                                         <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">ক্যাশ আউট চার্জ</p>
@@ -102,13 +109,16 @@ const MFS = () => {
                                     </div>
 
                                     {/* Limit */}
-                                    <div>
-                                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">লেনদেন সীমা</p>
-                                        <p className="text-base font-semibold">{provider.limit}</p>
+                                    <div className="bg-orange-50 p-3 rounded-lg border border-orange-100">
+                                        <div className="flex items-center gap-1.5 mb-1">
+                                            <MaterialIcon name="warning" className="text-orange-500 text-sm" />
+                                            <p className="text-xs text-orange-700 font-bold uppercase tracking-wider">লেনদেন সীমা</p>
+                                        </div>
+                                        <p className="text-base font-bold text-gray-800">{provider.limit}</p>
                                     </div>
 
                                     {/* Features */}
-                                    <div>
+                                    <div className="mt-auto">
                                         <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-3">টপ ফিচার</p>
                                         <ul className="space-y-2">
                                             {provider.features.map((feature, idx) => (

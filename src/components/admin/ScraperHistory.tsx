@@ -1,8 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchScraperRuns } from "@/lib/api/scraper";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchScraperRuns, triggerScraperRun } from "@/lib/api/scraper";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { toast } from "sonner";
+import { Loader2, CheckCircle, XCircle, Clock, Play } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 export default function ScraperHistory() {
@@ -11,14 +13,39 @@ export default function ScraperHistory() {
         queryFn: fetchScraperRuns,
     });
 
+    const queryClient = useQueryClient();
+
+    const triggerMutation = useMutation({
+        mutationFn: () => triggerScraperRun(),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["scraper_runs"] });
+            toast.success("Scraper run initiated!");
+        },
+        onError: (err) => {
+            toast.error("Failed to start run: " + err.message);
+        }
+    });
+
     if (isLoading) {
         return <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>;
     }
 
     return (
         <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle>Scraper Run History</CardTitle>
+                <Button
+                    size="sm"
+                    onClick={() => triggerMutation.mutate()}
+                    disabled={triggerMutation.isPending}
+                >
+                    {triggerMutation.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                        <Play className="mr-2 h-4 w-4" />
+                    )}
+                    Run Scraper Now
+                </Button>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">

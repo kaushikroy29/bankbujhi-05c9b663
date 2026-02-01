@@ -13,8 +13,10 @@ from scrapers.banks.dbbl import DbblScraper
 from scrapers.banks.ebl import EblScraper
 
 # Load env variables from .env file in parent directory
+# Load .env first, then .env.local to override (matching Vite's behavior)
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(parent_dir, '.env'))
+load_dotenv(os.path.join(parent_dir, '.env.local'), override=True)  # Local overrides production
 
 SCRAPERS = [
     BracBankScraper(),
@@ -37,23 +39,47 @@ def main():
         "Prefer": "return=representation"
     }
     
-    # Create run record
-    run_type = os.environ.get("RUN_TYPE", "manual")
-    run_data = {
-        "run_type": run_type,
-        "github_run_id": os.environ.get("GITHUB_RUN_ID", "local")
-    }
+    # Create or resume run record
+    existing_run_id = os.environ.get("EXISTING_RUN_ID")
     
-    run_endpoint = f"{url}/rest/v1/scraper_runs"
-    resp = requests.post(run_endpoint, json=run_data, headers=headers)
-    
-    if resp.status_code >= 400:
-        print(f"Error creating run record: {resp.text}")
-        return
+    # NEW: Check for pending runs created by UI if no specific ID provided
+    if not existing_run_id:
+        try:
+            # Look for runs marked 'running' created in the last 1 hour
+            # We filter by creating valid REST query
+            pending_url = f"{url}/rest/v1/scraper_runs?status=eq.running&order=started_at.desc&limit=1"
+            p_resp = requests.get(pending_url, headers=headers)
+            p_data = p_resp.json()
+            
+            if p_data and isinstance(p_data, list) and len(p_data) > 0:
+                # Check if it's recent (optional, but good practice)
+                # For now, we'll just pick it up
+                existing_run_id = p_data[0]["id"]
+                print(f"Picked up pending run from DB: {existing_run_id}")
+        except Exception as e:
+            print(f"Warning: Failed to check for pending runs: {e}")
+
+    if existing_run_id:
+        print(f"Resuming/Attaching to run: {existing_run_id}")
+        run_id = existing_run_id
+    else:
+        run_type = os.environ.get("RUN_TYPE", "manual")
+        run_data = {
+            "run_type": run_type,
+            "github_run_id": os.environ.get("GITHUB_RUN_ID", "local")
+        }
         
-    run_body = resp.json()
-    run_id = run_body[0]["id"] if run_body else None
-    print(f"Started scraper run: {run_id}")
+        run_endpoint = f"{url}/rest/v1/scraper_runs"
+        resp = requests.post(run_endpoint, json=run_data, headers=headers)
+        
+        if resp.status_code >= 400:
+            print(f"Error creating run record: {resp.text}")
+            return
+            
+        run_body = resp.json()
+        run_id = run_body[0]["id"] if run_body else None
+        print(f"Started new scraper run: {run_id}")
+    
     
     errors = []
     items_found = 0

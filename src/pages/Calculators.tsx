@@ -22,30 +22,31 @@ const Calculators = () => {
     const tools: Tool[] = [
         {
             id: "credit-card-payoff",
-            title: "ক্রেডিট কার্ড বিল ক্যালকুলেটর",
-            description: "আপনার বকেয়া বিল পরিশোধ করতে কত সময় লাগবে এবং কত টাকা সুদ দিতে হবে তা হিসাব করুন।",
+            title: "ক্রেডিট কার্ডের ফাঁদ",
+            description: "মিনিমাম পেমেন্ট করলে কি হয়? দেখুন কিভাবে ব্যাংক আপনাকে আজীবন ঋণের ফাঁদে রাখে।",
             icon: "credit_score",
             link: "/tools/calculator",
+            color: "text-red-600",
+            bgColor: "bg-red-100/50",
+            badge: "Most Used"
+        },
+        {
+            id: "emi-calculator",
+            title: "লোন ট্রু কস্ট",
+            description: "আসল ঋণের চেয়ে কত বেশি সুদ দিচ্ছেন? প্রসেসিং ফি সহ আসল খরচ বের করুন।",
+            icon: "calculate",
+            link: "/calculator/emi",
             color: "text-blue-600",
             bgColor: "bg-blue-100/50"
         },
         {
-            id: "emi-calculator",
-            title: "EMI ক্যালকুলেটর",
-            description: "লোনের মাসিক কিস্তি (EMI) এবং মোট সুদের পরিমাণ সহজেই হিসাব করুন।",
-            icon: "calculate",
-            link: "/calculator/emi",
-            color: "text-green-600",
-            bgColor: "bg-green-100/50"
-        },
-        {
             id: "fdr-calculator",
-            title: "FDR মুনাফা ক্যালকুলেটর",
-            description: "মেয়াদ শেষে আপনার ফিক্সড ডিপোজিট (FDR) থেকে কত লাভ পাবেন তা দেখুন।",
+            title: "FDR রিয়েল রিটার্ন",
+            description: "ইনফ্লেশন আর ট্যাক্স বাদ দিয়ে ব্যাংকে টাকা রাখলে আসলে লাভ হয় নাকি লস?",
             icon: "savings",
             link: "/calculator/fdr",
-            color: "text-purple-600",
-            bgColor: "bg-purple-100/50"
+            color: "text-green-600",
+            bgColor: "bg-green-100/50"
         }
     ];
 

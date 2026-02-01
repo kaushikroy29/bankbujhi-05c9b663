@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatBDT } from "@/lib/utils/currency";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import SEOHead from "@/components/seo/SEOHead";
@@ -10,43 +10,57 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const FDRCalculator = () => {
     const [depositAmount, setDepositAmount] = useState<number>(100000);
     const [interestRate, setInterestRate] = useState<number>(9.5);
     const [tenureMonths, setTenureMonths] = useState<number>(12);
+    const [taxRate, setTaxRate] = useState<number>(15);
+    const [inflationRate, setInflationRate] = useState<number>(9.0);
+    const [showRealReturn, setShowRealReturn] = useState<boolean>(true);
 
     // Results
-    const [totalInterest, setTotalInterest] = useState<number>(0);
+    const [grossInterest, setGrossInterest] = useState<number>(0);
+    const [netInterest, setNetInterest] = useState<number>(0);
+    const [realReturn, setRealReturn] = useState<number>(0);
     const [maturityAmount, setMaturityAmount] = useState<number>(0);
 
     const calculateFDR = () => {
-        // Simple Interest Formula: I = P * r * t
-        // P = Principal (depositAmount)
-        // r = Annual Rate / 100
-        // t = Time in years (tenureMonths / 12)
-
+        // 1. Gross Interest (Simple)
         const P = depositAmount;
         const r = interestRate / 100;
         const t = tenureMonths / 12;
+        const gross = P * r * t;
 
-        const interest = P * r * t;
-        // In Bangladesh, there is usually 10-15% tax on interest, but we'll show gross for simplicity
-        // or add a tax toggle later. For now, let's keep it gross.
+        // 2. Net Interest (After Tax)
+        const tax = gross * (taxRate / 100);
+        const net = gross - tax;
 
-        setTotalInterest(Math.round(interest));
-        setMaturityAmount(Math.round(P + interest));
+        // 3. Real Return (After Inflation)
+        // Inflation eats into the Purchasing Power of the Principal + Net Interest
+        // Future Value of Money logic: What is (P + Net) worth in today's money?
+        // Or simpler: Real Return = Net Interest - (Principal * Inflation Rate * t)
+        const inflationLoss = P * (inflationRate / 100) * t;
+        const real = net - inflationLoss;
+
+        setGrossInterest(Math.round(gross));
+        setNetInterest(Math.round(net));
+        setRealReturn(Math.round(real));
+        setMaturityAmount(Math.round(P + net));
     };
 
     useEffect(() => {
         calculateFDR();
-    }, [depositAmount, interestRate, tenureMonths]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [depositAmount, interestRate, tenureMonths, taxRate, inflationRate]);
 
     return (
         <>
             <SEOHead
-                title="FDR মুনাফা ক্যালকুলেটর"
-                description="ফিক্সড ডিপোজিট (FDR) থেকে কত লাভ পাবেন? এখনই হিসাব করুন।"
+                title="FDR রিয়েল রিটার্ন ক্যালকুলেটর | BankBujhi"
+                description="ইনফ্লেশন এবং ট্যাক্স বাদ দেওয়ার পর আপনার FDR এর আসল লাভ কত? আমাদের ট্রু কস্ট ক্যালকুলেটরে দেখুন।"
                 path="/calculator/fdr"
             />
             <div className="min-h-screen flex flex-col">
@@ -56,15 +70,23 @@ const FDRCalculator = () => {
 
                     <div className="max-w-4xl mx-auto">
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-black mb-2 text-primary">FDR মুনাফা ক্যালকুলেটর</h1>
-                            <p className="text-muted-foreground">আপনার জমানো টাকার মেয়াদ শেষে কত লাভ পাবেন তা দেখুন</p>
+                            <h1 className="text-3xl font-black mb-2 text-primary">FDR রিয়েল রিটার্ন ক্যালকুলেটর</h1>
+                            <p className="text-muted-foreground">ব্যাংক যে লাভ দেখায় আর আপনি যা পান - তার আসল পার্থক্য দেখুন</p>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-8">
                             {/* Inputs */}
                             <Card className="shadow-md border-primary/10">
                                 <CardHeader>
-                                    <CardTitle>তথ্য দিন</CardTitle>
+                                    <div className="flex justify-between items-center">
+                                        <CardTitle>তথ্য দিন</CardTitle>
+                                        <div className="flex items-center space-x-2">
+                                            <Switch id="real-mode" checked={showRealReturn} onCheckedChange={setShowRealReturn} />
+                                            <Label htmlFor="real-mode" className="text-xs font-bold text-primary cursor-pointer">
+                                                Advanced Mode
+                                            </Label>
+                                        </div>
+                                    </div>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     {/* Deposit Amount */}
@@ -95,7 +117,7 @@ const FDRCalculator = () => {
                                     {/* Interest Rate */}
                                     <div className="space-y-3">
                                         <div className="flex justify-between items-center">
-                                            <label className="text-sm font-bold text-muted-foreground">সুদের হার (%)</label>
+                                            <label className="text-sm font-bold text-muted-foreground">সুদের হার (% p.a.)</label>
                                             <div className="relative w-24">
                                                 <Input
                                                     type="number"
@@ -130,7 +152,7 @@ const FDRCalculator = () => {
                                             </div>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
-                                            {[3, 6, 12, 24, 60].map(month => (
+                                            {[12, 24, 36, 60].map(month => (
                                                 <Button
                                                     key={month}
                                                     variant={tenureMonths === month ? "default" : "outline"}
@@ -138,31 +160,116 @@ const FDRCalculator = () => {
                                                     onClick={() => setTenureMonths(month)}
                                                     className="flex-1"
                                                 >
-                                                    {month < 12 ? `${month} মাস` : `${month / 12} বছর`}
+                                                    {month / 12} বছর
                                                 </Button>
                                             ))}
                                         </div>
                                     </div>
+
+                                    {/* Advanced Inputs: Tax & Inflation */}
+                                    {showRealReturn && (
+                                        <div className="pt-4 border-t border-dashed space-y-5 bg-slate-50 p-4 rounded-lg">
+                                            <div className="space-y-3">
+                                                <div className="flex justify-between items-center">
+                                                    <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
+                                                        <MaterialIcon name="gavel" className="text-xs" />
+                                                        সরকারি ট্যাক্স (AIT)
+                                                    </label>
+                                                    <select
+                                                        className="text-xs border rounded px-2 py-1 bg-white"
+                                                        value={taxRate}
+                                                        onChange={(e) => setTaxRate(Number(e.target.value))}
+                                                    >
+                                                        <option value={10}>10% (TIN আছে)</option>
+                                                        <option value={15}>15% (TIN নেই)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="flex justify-between items-center">
+                                                    <label className="text-xs font-bold text-red-600 flex items-center gap-1">
+                                                        <MaterialIcon name="trending_up" className="text-xs" />
+                                                        মুদ্রাস্ফীতি (Inflation)
+                                                    </label>
+                                                    <div className="relative w-20">
+                                                        <Input
+                                                            type="number"
+                                                            value={inflationRate}
+                                                            onChange={(e) => setInflationRate(Number(e.target.value))}
+                                                            className="h-8 pr-5 text-right font-bold text-xs"
+                                                        />
+                                                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">%</span>
+                                                    </div>
+                                                </div>
+                                                <Slider
+                                                    value={[inflationRate]}
+                                                    min={0}
+                                                    max={15}
+                                                    step={0.5}
+                                                    onValueChange={(vals) => setInflationRate(vals[0])}
+                                                    className="py-1"
+                                                />
+                                                <p className="text-[10px] text-muted-foreground text-right">গড় মূল্যস্ফীতি ~9%</p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
 
                             {/* Results */}
-                            <Card className="bg-primary/5 border-primary/20 flex flex-col justify-center shadow-lg">
-                                <CardContent className="pt-6 text-center space-y-8">
-                                    <div>
-                                        <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest mb-2">মোট মুনাফা (Gross)</p>
-                                        <h3 className="text-4xl font-black text-green-600 drop-shadow-sm">{formatBDT(totalInterest)}</h3>
-                                        <p className="text-xs text-muted-foreground mt-2">* ট্যাক্স এবং চার্জ ব্যতীত</p>
+                            <Card className="bg-white shadow-lg border-primary/20 flex flex-col h-full overflow-hidden">
+                                <div className="bg-slate-900 text-white p-4">
+                                    <p className="text-xs uppercase tracking-wider opacity-80 mb-1 font-medium">মেয়াদ শেষে মোট পাবেন (Tax বাদে)</p>
+                                    <h3 className="text-2xl font-bold">{formatBDT(maturityAmount)}</h3>
+                                </div>
+                                <CardContent className="pt-6 space-y-6 flex-1">
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center text-sm border-b pb-2">
+                                            <span className="text-muted-foreground">মোট সুদ (Gross Interest)</span>
+                                            <span className="font-bold text-slate-700">{formatBDT(grossInterest)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm border-b pb-2">
+                                            <span className="text-muted-foreground">ট্যাক্স কেটে রাখা হবে ({taxRate}%)</span>
+                                            <span className="font-bold text-red-500">-{formatBDT(grossInterest - netInterest)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm pb-2 bg-green-50 p-2 rounded">
+                                            <span className="font-bold text-green-700">নীট লাভ (Net Profit)</span>
+                                            <span className="font-bold text-green-700">{formatBDT(netInterest)}</span>
+                                        </div>
                                     </div>
 
-                                    <div className="border-t border-primary/10 pt-6">
-                                        <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest mb-2">মেয়াদ শেষে মোট পাবেন</p>
-                                        <h3 className="text-3xl font-bold text-primary">{formatBDT(maturityAmount)}</h3>
-                                    </div>
+                                    {showRealReturn && (
+                                        <div className={`mt-6 p-4 rounded-xl border-2 ${realReturn >= 0 ? "bg-green-50 border-green-100" : "bg-red-50 border-red-100"}`}>
+                                            <h4 className="text-center font-bold text-slate-900 mb-4 flex items-center justify-center gap-2">
+                                                <MaterialIcon name="visibility" />
+                                                আসল সত্য (Real Return)
+                                            </h4>
 
-                                    <div className="pt-4">
+                                            <div className="flex justify-between items-center text-sm mb-2">
+                                                <span className="text-slate-600">মুদ্রাস্ফীতির কারণে ক্ষতি ({inflationRate}%)</span>
+                                                <span className="font-bold text-red-600">-{formatBDT(depositAmount * (inflationRate / 100) * (tenureMonths / 12))}</span>
+                                            </div>
+
+                                            <div className="h-px bg-slate-200 my-3"></div>
+
+                                            <div className="text-center">
+                                                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">প্রকৃত লাভ/ক্ষতি</p>
+                                                <p className={`text-3xl font-black ${realReturn >= 0 ? "text-green-600" : "text-red-600"}`}>
+                                                    {realReturn >= 0 ? "+" : ""}{formatBDT(realReturn)}
+                                                </p>
+                                                <p className="text-xs mt-2 leading-relaxed">
+                                                    {realReturn < 0
+                                                        ? `সাবধান! আপনি আসলে ${formatBDT(Math.abs(realReturn))} মূল্য হারাচ্ছেন। ব্যাংকের সুদের হার (${interestRate}%) মুদ্রাস্ফীতির (${inflationRate}%) চেয়ে কম।`
+                                                        : `অভিনন্দন! আপনি মুদ্রাস্ফীতিকে হারিয়ে ${formatBDT(realReturn)} লাভ করছেন।`}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="pt-4 mt-auto">
                                         <Button className="w-full font-bold h-11" asChild>
-                                            <a href="/savings">সেরা সেভিংস রেট দেখুন</a>
+                                            <a href="/savings">সেরা রেট কোথায় পাবেন দেখুন</a>
                                         </Button>
                                     </div>
                                 </CardContent>

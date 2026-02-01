@@ -26,11 +26,36 @@ export async function fetchScrapedData(status = 'pending') {
 }
 
 export async function approveScrapedData(id: string, targetTable: 'credit_cards' | 'loan_products', data: any, bankId: string) {
-    // 1. Insert into real table
+    // Define allowed fields for each table (matching database schema)
+    const allowedFields: Record<string, string[]> = {
+        credit_cards: [
+            'name', 'category', 'image_url', 'annual_fee', 'annual_fee_note',
+            'annual_fee_waived', 'interest_rate', 'min_income', 'min_age', 'max_age',
+            'credit_score', 'employment_types', 'required_documents', 'benefits',
+            'fees', 'fees_detailed', 'badge', 'apply_url'
+        ],
+        loan_products: [
+            'name', 'loan_type', 'interest_rate_min', 'interest_rate_max',
+            'processing_fee', 'max_amount', 'max_tenure_months', 'min_income',
+            'features', 'badge', 'apply_url'
+        ]
+    };
+
+    // Filter data to only include allowed fields
+    const filteredData: Record<string, any> = {};
+    const allowed = allowedFields[targetTable] || [];
+
+    for (const key of allowed) {
+        if (data[key] !== undefined) {
+            filteredData[key] = data[key];
+        }
+    }
+
+    // 1. Insert into real table with filtered data
     const { error: insertError } = await supabase
         .from(targetTable)
         .insert({
-            ...data,
+            ...filteredData,
             bank_id: bankId,
             is_active: true
         });
@@ -59,9 +84,21 @@ export async function rejectScrapedData(id: string) {
 }
 
 export async function triggerScraperRun(runType = 'manual') {
-    // Ideally this triggers a GitHub Action dispatch
-    // For now we just create a record that the python script might pick up if polling
-    // Or we rely on the manual workflow_dispatch URL
-    console.log("Triggering scraper run:", runType);
-    return null;
+    // Create a record so it shows up in the UI as running
+    const { data, error } = await supabase
+        .from('scraper_runs')
+        .insert({
+            run_type: runType,
+            status: 'running',
+            started_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+    if (error) throw error;
+
+    // In a real production app, this would also call a GitHub Actions webhook
+    // await fetch('https://api.github.com/repos/.../dispatches', ...)
+
+    return data;
 }

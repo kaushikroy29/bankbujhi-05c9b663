@@ -10,7 +10,10 @@ import Compare from "./pages/Compare";
 import PersonalLoans from "./pages/PersonalLoans";
 import FDRSavings from "./pages/FDRSavings";
 import Banks from "./pages/Banks";
+import NBFIs from "./pages/NBFIs";
+import MFIs from "./pages/MFIs";
 import Guides from "./pages/Guides";
+
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Dashboard from "./pages/Dashboard";
@@ -55,6 +58,8 @@ const App = () => (
             <Route path="/loans" element={<PersonalLoans />} />
             <Route path="/savings" element={<FDRSavings />} />
             <Route path="/banks" element={<Banks />} />
+            <Route path="/nbfi" element={<NBFIs />} />
+            <Route path="/mfi" element={<MFIs />} />
             <Route path="/guides" element={<Guides />} />
             <Route path="/guides/:id" element={<GuideDetail />} />
             <Route path="/contact" element={<Contact />} />
