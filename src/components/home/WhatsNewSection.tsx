@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import MaterialIcon from "@/components/ui/MaterialIcon";
@@ -23,28 +23,7 @@ const WhatsNewSection = () => {
     const [changes, setChanges] = useState<(ProductChangeLog & { product_name?: string })[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadChanges();
-
-        // Real-time subscription
-        const channel = supabase
-            .channel('public:product_change_log')
-            .on(
-                'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'product_change_log', filter: 'verified=eq.true' },
-                (payload) => {
-                    handleNewChange(payload.new as ProductChangeLog);
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const handleNewChange = async (newLog: ProductChangeLog) => {
+    const handleNewChange = useCallback(async (newLog: ProductChangeLog) => {
         // Fetch product name for the new log
         const { data } = await supabase
             .from(newLog.product_type === 'credit_card' ? 'credit_cards' : 'loan_products')
@@ -53,9 +32,9 @@ const WhatsNewSection = () => {
             .single();
 
         setChanges(prev => [{ ...newLog, product_name: data?.name || 'Unknown Product' }, ...prev].slice(0, 6));
-    };
+    }, []);
 
-    const loadChanges = async () => {
+    const loadChanges = useCallback(async () => {
         try {
             // 1. Fetch latest verified changes
             const { data: logs, error } = await supabase
@@ -99,7 +78,27 @@ const WhatsNewSection = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        loadChanges();
+
+        // Real-time subscription
+        const channel = supabase
+            .channel('public:product_change_log')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'product_change_log', filter: 'verified=eq.true' },
+                (payload) => {
+                    handleNewChange(payload.new as ProductChangeLog);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [loadChanges, handleNewChange]);
 
     if (loading) return null; // Or a skeleton
     if (changes.length === 0) return null;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchBanks, type Bank } from "@/lib/api/banks";
 import MaterialIcon from "@/components/ui/MaterialIcon";
@@ -10,12 +10,7 @@ export default function BankManager() {
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    useEffect(() => {
-        loadBanks();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const loadBanks = async () => {
+    const loadBanks = useCallback(async () => {
         setLoading(true);
         setErrorMsg(null);
         try {
@@ -27,7 +22,11 @@ export default function BankManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        loadBanks();
+    }, [loadBanks]);
 
     return (
         <div className="space-y-4">

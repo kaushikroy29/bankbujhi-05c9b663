@@ -193,7 +193,7 @@ export async function fetchCreditCards(filters?: CardFilters) {
     ...card,
     benefits: parseBenefits(card.benefits),
     fees: parseFees(card.fees),
-    fees_detailed: (card as any).fees_detailed as unknown as CreditCardFees,
+    fees_detailed: (card as unknown as { fees_detailed: unknown }).fees_detailed as unknown as CreditCardFees,
   })) as CreditCard[];
 
   // Client-side filter for search (supports both card name and bank name)
@@ -224,7 +224,7 @@ export async function fetchCreditCard(id: string) {
     ...data,
     benefits: parseBenefits(data.benefits),
     fees: parseFees(data.fees),
-    fees_detailed: (data as any).fees_detailed as unknown as CreditCardFees,
+    fees_detailed: (data as unknown as { fees_detailed: unknown }).fees_detailed as unknown as CreditCardFees,
   } as CreditCard;
 }
 

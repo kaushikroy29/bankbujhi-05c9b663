@@ -10,12 +10,24 @@ import ArticleCard from "@/components/cards/ArticleCard";
 import SEOHead from "@/components/seo/SEOHead";
 import { adminService } from "@/services/adminService"; // NEW import
 
+// Transformed article interface for UI
+interface MappedArticle {
+  id: string;
+  title: string;
+  titleEn?: string;
+  category?: string;
+  readTime?: string;
+  image?: string;
+  isFeatured?: boolean;
+  excerpt?: string;
+}
+
 const categories = ["সব", "শুরু করুন", "ক্রেডিট স্কোর", "টিপস", "ইসলামিক ব্যাংকিং", "General"];
 
 const Guides = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("সব");
-  const [articles, setArticles] = useState<any[]>([]);
+  const [articles, setArticles] = useState<MappedArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Load guides

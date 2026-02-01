@@ -9,17 +9,30 @@ import { Loader2, Check, X, ExternalLink, CheckSquare, Trash2 } from "lucide-rea
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+interface ScrapedItem {
+    id: string;
+    data_type: string;
+    bank_id: string;
+    scraped_json: Record<string, unknown>;
+    source_url: string;
+    scraped_at: string;
+    banks?: { name: string; logo_url: string | null };
+}
+
 export default function ScrapedDataManager() {
     const queryClient = useQueryClient();
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     const { data: items, isLoading } = useQuery({
         queryKey: ["scraped_data", "pending"],
-        queryFn: () => fetchScrapedData('pending'),
+        queryFn: async () => {
+            const data = await fetchScrapedData('pending');
+            return data as ScrapedItem[];
+        },
     });
 
     const approveMutation = useMutation({
-        mutationFn: async (item: any) => {
+        mutationFn: async (item: ScrapedItem) => {
             const table = item.data_type === 'credit_card' ? 'credit_cards' :
                 item.data_type === 'loan' ? 'loan_products' : 'credit_cards';
 
@@ -45,7 +58,7 @@ export default function ScrapedDataManager() {
     });
 
     const bulkApproveMutation = useMutation({
-        mutationFn: async (itemsToApprove: any[]) => {
+        mutationFn: async (itemsToApprove: ScrapedItem[]) => {
             let successCount = 0;
             let failCount = 0;
 
@@ -198,7 +211,7 @@ export default function ScrapedDataManager() {
                                             <Badge>{item.data_type}</Badge>
                                         </div>
                                         <CardTitle className="mt-2 text-base">
-                                            {item.scraped_json.name || "Unknown Product"}
+                                            {(item.scraped_json.name as string) || "Unknown Product"}
                                         </CardTitle>
                                         <CardDescription className="flex items-center gap-1 mt-1">
                                             <a href={item.source_url} target="_blank" rel="noreferrer" className="flex items-center hover:underline">

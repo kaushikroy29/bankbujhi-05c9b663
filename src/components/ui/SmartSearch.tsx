@@ -7,7 +7,7 @@ interface SearchSuggestion {
     query: string;
     intent: string;
     results: string;
-    filter?: Record<string, any>;
+    filter?: Record<string, unknown>;
     path?: string;
 }
 
@@ -106,9 +106,9 @@ const SmartSearch = ({
         const params = new URLSearchParams();
 
         if (suggestion.filter) {
-            if (suggestion.filter.annualFee) params.set('annualFee', suggestion.filter.annualFee);
-            if (suggestion.filter.category) params.set('category', suggestion.filter.category);
-            if (suggestion.filter.search) params.set('search', suggestion.filter.search);
+            if (suggestion.filter.annualFee) params.set('annualFee', suggestion.filter.annualFee as string);
+            if (suggestion.filter.category) params.set('category', suggestion.filter.category as string);
+            if (suggestion.filter.search) params.set('search', suggestion.filter.search as string);
         }
 
         navigate(`/compare?${params.toString()}`);

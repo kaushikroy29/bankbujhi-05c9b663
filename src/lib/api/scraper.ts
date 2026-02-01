@@ -25,7 +25,7 @@ export async function fetchScrapedData(status = 'pending') {
     return data;
 }
 
-export async function approveScrapedData(id: string, targetTable: 'credit_cards' | 'loan_products', data: any, bankId: string) {
+export async function approveScrapedData(id: string, targetTable: 'credit_cards' | 'loan_products', data: Record<string, unknown>, bankId: string) {
     // Define allowed fields for each table (matching database schema)
     const allowedFields: Record<string, string[]> = {
         credit_cards: [
@@ -42,7 +42,7 @@ export async function approveScrapedData(id: string, targetTable: 'credit_cards'
     };
 
     // Filter data to only include allowed fields
-    const filteredData: Record<string, any> = {};
+    const filteredData: Record<string, unknown> = {};
     const allowed = allowedFields[targetTable] || [];
 
     for (const key of allowed) {

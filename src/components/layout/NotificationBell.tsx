@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import MaterialIcon from '@/components/ui/MaterialIcon';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,28 @@ const NotificationBell = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const loadNotifications = useCallback(async () => {
+        const { data } = await getUserNotifications(10);
+        if (data) {
+            setNotifications(data);
+        }
+    }, []);
+
+    const loadUnreadCount = useCallback(async () => {
+        const count = await getUnreadNotificationCount();
+        setUnreadCount(count);
+    }, []);
+
+    const checkAuthAndLoadNotifications = useCallback(async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        setIsAuthenticated(!!user);
+
+        if (user) {
+            await loadNotifications();
+            await loadUnreadCount();
+        }
+    }, [loadNotifications, loadUnreadCount]);
 
     useEffect(() => {
         checkAuthAndLoadNotifications();
@@ -44,29 +66,7 @@ const NotificationBell = () => {
             // but for safety in this component's lifecycle:
             // supabase.removeChannel(channel); 
         };
-    }, []);
-
-    const checkAuthAndLoadNotifications = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        setIsAuthenticated(!!user);
-
-        if (user) {
-            await loadNotifications();
-            await loadUnreadCount();
-        }
-    };
-
-    const loadNotifications = async () => {
-        const { data } = await getUserNotifications(10);
-        if (data) {
-            setNotifications(data);
-        }
-    };
-
-    const loadUnreadCount = async () => {
-        const count = await getUnreadNotificationCount();
-        setUnreadCount(count);
-    };
+    }, [checkAuthAndLoadNotifications]);
 
     const handleMarkAsRead = async (notificationId: string) => {
         await markNotificationAsRead(notificationId);

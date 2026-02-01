@@ -67,9 +67,9 @@ export default function AddCreditCardForm({ onSuccess }: { onSuccess: () => void
             setOpen(false);
             reset();
             onSuccess();
-        } catch (error: any) {
+        } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to add card");
+            toast.error(error instanceof Error ? error.message : "Failed to add card");
         } finally {
             setLoading(false);
         }

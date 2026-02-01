@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { adminService } from "@/services/adminService";
+import { adminService, type DbGlossaryTerm } from "@/services/adminService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,7 +22,7 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { glossaryTerms } from "@/data/glossary"; // Import static for seeding
 
 const AdminGlossary = () => {
-    const [terms, setTerms] = useState<any[]>([]);
+    const [terms, setTerms] = useState<DbGlossaryTerm[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -120,7 +120,7 @@ const AdminGlossary = () => {
         setIsDialogOpen(true);
     };
 
-    const openEdit = (term: any) => {
+    const openEdit = (term: DbGlossaryTerm) => {
         setEditingId(term.id);
         setFormData({
             term: term.term,

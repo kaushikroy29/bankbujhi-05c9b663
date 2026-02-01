@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import FeaturedCard from "@/components/cards/FeaturedCard";
 import { fetchCreditCards, type CreditCard } from "@/lib/api/banks";
@@ -10,12 +10,7 @@ const FeaturedCardsSection = () => {
   const [cards, setCards] = useState<CreditCard[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadFeaturedCards();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadFeaturedCards = async () => {
+  const loadFeaturedCards = useCallback(async () => {
     try {
       const allCards = await fetchCreditCards();
       // Get cards with badges (featured/special cards) and sort by category priority
@@ -28,7 +23,11 @@ const FeaturedCardsSection = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadFeaturedCards();
+  }, [loadFeaturedCards]);
 
   // Map card category to variant
   const getVariant = (category: string | null, index: number): "dark" | "green" => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import MaterialIcon from '@/components/ui/MaterialIcon';
 import { realtimeService } from '@/services/realtimeService';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,43 +22,7 @@ const ActivityFeed = () => {
     const [activities, setActivities] = useState<ActivityItem[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadInitialActivities();
-
-        // Subscribe to notifications
-        const notifChannel = realtimeService.subscribeToNotifications((payload: Notification) => {
-            const newItem: ActivityItem = {
-                id: payload.id,
-                type: 'notification',
-                title: payload.title_bn,
-                message: payload.message_bn,
-                timestamp: payload.created_at || new Date().toISOString(),
-                severity: payload.severity,
-                product_id: payload.product_id || undefined,
-            };
-            setActivities(prev => [newItem, ...prev].slice(0, 10));
-        });
-
-        // Subscribe to change logs
-        const logChannel = realtimeService.subscribeToChangeLogs((payload: ChangeLog) => {
-            const newItem: ActivityItem = {
-                id: payload.id,
-                type: 'changelog',
-                title: `আপডেট: ${payload.product_type === 'credit_card' ? 'ক্রেডিট কার্ড' : 'লোন'}`,
-                message: `${payload.field_changed} পরিবর্তন হয়েছে। নতুন মান: ${payload.new_value}`,
-                timestamp: payload.created_at || new Date().toISOString(),
-                product_id: payload.product_id,
-            };
-            setActivities(prev => [newItem, ...prev].slice(0, 10));
-        });
-
-        return () => {
-            // RealtimeService handles persistence, but we can clean up if needed
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const loadInitialActivities = async () => {
+    const loadInitialActivities = useCallback(async () => {
         setLoading(true);
         try {
             // Load recent notifications
@@ -101,7 +65,42 @@ const ActivityFeed = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        loadInitialActivities();
+
+        // Subscribe to notifications
+        const notifChannel = realtimeService.subscribeToNotifications((payload: Notification) => {
+            const newItem: ActivityItem = {
+                id: payload.id,
+                type: 'notification',
+                title: payload.title_bn,
+                message: payload.message_bn,
+                timestamp: payload.created_at || new Date().toISOString(),
+                severity: payload.severity,
+                product_id: payload.product_id || undefined,
+            };
+            setActivities(prev => [newItem, ...prev].slice(0, 10));
+        });
+
+        // Subscribe to change logs
+        const logChannel = realtimeService.subscribeToChangeLogs((payload: ChangeLog) => {
+            const newItem: ActivityItem = {
+                id: payload.id,
+                type: 'changelog',
+                title: `আপডেট: ${payload.product_type === 'credit_card' ? 'ক্রেডিট কার্ড' : 'লোন'}`,
+                message: `${payload.field_changed} পরিবর্তন হয়েছে। নতুন মান: ${payload.new_value}`,
+                timestamp: payload.created_at || new Date().toISOString(),
+                product_id: payload.product_id,
+            };
+            setActivities(prev => [newItem, ...prev].slice(0, 10));
+        });
+
+        return () => {
+            // RealtimeService handles persistence, but we can clean up if needed
+        };
+    }, [loadInitialActivities]);
 
     if (loading && activities.length === 0) {
         return (

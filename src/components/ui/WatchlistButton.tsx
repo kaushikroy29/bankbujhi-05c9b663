@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import MaterialIcon from '@/components/ui/MaterialIcon';
 import { Button } from '@/components/ui/button';
@@ -24,11 +24,7 @@ const WatchlistButton = ({
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const { toast } = useToast();
 
-    useEffect(() => {
-        checkAuthAndWatchStatus();
-    }, [productId]);
-
-    const checkAuthAndWatchStatus = async () => {
+    const checkAuthAndWatchStatus = useCallback(async () => {
         const { data: { user } } = await supabase.auth.getUser();
         setIsAuthenticated(!!user);
 
@@ -36,7 +32,11 @@ const WatchlistButton = ({
             const watched = await isInWatchlist(productType, productId);
             setIsWatched(watched);
         }
-    };
+    }, [productType, productId]);
+
+    useEffect(() => {
+        checkAuthAndWatchStatus();
+    }, [checkAuthAndWatchStatus]);
 
     const handleToggleWatchlist = async () => {
         if (!isAuthenticated) {

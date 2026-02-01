@@ -1,8 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "../../supabase.types";
 
-type GlossaryTerm = Database['public']['Tables']['glossary_terms']['Row'];
-type Guide = Database['public']['Tables']['guides']['Row'];
+export type DbGlossaryTerm = Database['public']['Tables']['glossary_terms']['Row'];
+export type DbGuide = Database['public']['Tables']['guides']['Row'];
 type GlossaryInsert = Database['public']['Tables']['glossary_terms']['Insert'];
 type GuideInsert = Database['public']['Tables']['guides']['Insert'];
 
@@ -15,7 +15,7 @@ export const adminService = {
             .order('term', { ascending: true });
 
         if (error) throw error;
-        return data as GlossaryTerm[];
+        return data as DbGlossaryTerm[];
     },
 
     async addGlossaryTerm(term: GlossaryInsert) {
@@ -26,7 +26,7 @@ export const adminService = {
             .single();
 
         if (error) throw error;
-        return data as GlossaryTerm;
+        return data as DbGlossaryTerm;
     },
 
     async updateGlossaryTerm(id: string, updates: Partial<GlossaryInsert>) {
@@ -38,7 +38,7 @@ export const adminService = {
             .single();
 
         if (error) throw error;
-        return data as GlossaryTerm;
+        return data as DbGlossaryTerm;
     },
 
     async deleteGlossaryTerm(id: string) {
@@ -58,7 +58,7 @@ export const adminService = {
             .order('created_at', { ascending: false });
 
         if (error) throw error;
-        return data as Guide[];
+        return data as DbGuide[];
     },
 
     async getGuideBySlug(slug: string) {
@@ -69,7 +69,7 @@ export const adminService = {
             .single();
 
         if (error) throw error;
-        return data as Guide;
+        return data as DbGuide;
     },
 
     async addGuide(guide: GuideInsert) {
@@ -80,7 +80,7 @@ export const adminService = {
             .single();
 
         if (error) throw error;
-        return data as Guide;
+        return data as DbGuide;
     },
 
     async updateGuide(id: string, updates: Partial<GuideInsert>) {
@@ -92,7 +92,7 @@ export const adminService = {
             .single();
 
         if (error) throw error;
-        return data as Guide;
+        return data as DbGuide;
     },
 
     async deleteGuide(id: string) {
@@ -163,8 +163,8 @@ export const adminService = {
         const termIds = favorites.filter(f => f.item_type === 'term').map(f => f.item_id);
 
         // Fetch details
-        let guides: Guide[] = [];
-        let terms: GlossaryTerm[] = [];
+        let guides: DbGuide[] = [];
+        let terms: DbGlossaryTerm[] = [];
 
         if (guideIds.length > 0) {
             // Note: Guide ID in favorites might be SLUG depending on how we saved it. 

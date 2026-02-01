@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import MaterialIcon from "@/components/ui/MaterialIcon";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddCreditCardForm from "./forms/AddCreditCardForm";
 import AddLoanForm from "./forms/AddLoanForm";
@@ -19,12 +19,7 @@ export default function ProductManager() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("all");
 
-    useEffect(() => {
-        loadProducts();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const loadProducts = async () => {
+    const loadProducts = useCallback(async () => {
         setLoading(true);
         try {
             const { data: cards } = await supabase.from('credit_cards').select('id, name, is_active, banks(name)');
@@ -52,7 +47,11 @@ export default function ProductManager() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        loadProducts();
+    }, [loadProducts]);
 
     const filteredProducts = activeTab === "all"
         ? products

@@ -58,38 +58,7 @@ const parseIncomeAmount = (income: string | null): number => {
   return match ? parseInt(match[0], 10) : 0;
 };
 
-// Helper to get fee value from nested object key (e.g., "annual.fee")
-const getFeeValue = (card: CreditCard, mainCategory: string, subKey: string): string => {
-  if (!card.fees_detailed) return "N/A";
 
-  try {
-    const categoryData = (card.fees_detailed as any)[mainCategory];
-    if (!categoryData) return "N/A";
-
-    // Handle nested keys if subKey contains dot (though current structure is flat per category)
-    // Actually our feeCategories structure implies simpler mapping
-    // But let's check the key mapping.
-    // If subKey is 'fee', we access categoryData['fee']
-    const val = categoryData[subKey];
-
-    // Formatting: if val is "0" or "0.00", show "ফ্রি"
-    if (val === "0" || val === "0.00") return "ফ্রি";
-    return val || "N/A";
-  } catch (e) {
-    return "N/A";
-  }
-};
-
-const isLowestFee = (currentFee: string, allCards: CreditCard[], mainCategory: string, subKey: string): boolean => {
-  const amount = parseFeeAmount(currentFee);
-  if (amount === 0 && currentFee !== "ফ্রি" && currentFee !== "0" && !currentFee.includes("Free")) return false; // N/A or text
-
-  // Get all fees for this category
-  const fees = allCards.map(c => parseFeeAmount(getFeeValue(c, mainCategory, subKey)));
-  const minFee = Math.min(...fees.filter(f => !isNaN(f)));
-
-  return amount === minFee;
-};
 
 // Visual comparison table
 const FeeComparisonTable = ({ cards }: { cards: CreditCard[] }) => {
@@ -98,7 +67,8 @@ const FeeComparisonTable = ({ cards }: { cards: CreditCard[] }) => {
     if (!card.fees_detailed) return "N/A";
     const section = card.fees_detailed[main];
     if (!section) return "N/A";
-    const val = (section as any)[sub];
+    // Type assertion to access dynamic property safely
+    const val = (section as unknown as Record<string, string | undefined>)[sub];
     if (val === "0" || val === "0.00" || val === "Free") return "ফ্রি";
     return val || "N/A";
   };

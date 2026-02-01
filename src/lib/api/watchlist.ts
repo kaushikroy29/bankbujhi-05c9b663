@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { PostgrestError } from '@supabase/supabase-js';
 
 export interface WatchlistItem {
     id: string;
@@ -30,7 +31,7 @@ export async function addToWatchlist(
     productType: 'credit_card' | 'loan' | 'savings',
     productId: string,
     notifyOn: string[] = ['fee_change', 'rate_change', 'new_benefit']
-): Promise<{ data: WatchlistItem | null; error: any }> {
+): Promise<{ data: WatchlistItem | null; error: PostgrestError | Error | null }> {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -55,7 +56,7 @@ export async function addToWatchlist(
 export async function removeFromWatchlist(
     productType: 'credit_card' | 'loan' | 'savings',
     productId: string
-): Promise<{ error: any }> {
+): Promise<{ error: PostgrestError | Error | null }> {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -93,7 +94,7 @@ export async function isInWatchlist(
 }
 
 // Get user's watchlist
-export async function getUserWatchlist(): Promise<{ data: WatchlistItem[] | null; error: any }> {
+export async function getUserWatchlist(): Promise<{ data: WatchlistItem[] | null; error: PostgrestError | Error | null }> {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -113,7 +114,7 @@ export async function getUserWatchlist(): Promise<{ data: WatchlistItem[] | null
 export async function getUserNotifications(
     limit: number = 20,
     unreadOnly: boolean = false
-): Promise<{ data: Notification[] | null; error: any }> {
+): Promise<{ data: Notification[] | null; error: PostgrestError | Error | null }> {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -137,7 +138,7 @@ export async function getUserNotifications(
 }
 
 // Mark notification as read
-export async function markNotificationAsRead(notificationId: string): Promise<{ error: any }> {
+export async function markNotificationAsRead(notificationId: string): Promise<{ error: PostgrestError | null }> {
     const { error } = await supabase
         .from('user_notifications')
         .update({ read: true })
@@ -147,7 +148,7 @@ export async function markNotificationAsRead(notificationId: string): Promise<{ 
 }
 
 // Mark all notifications as read
-export async function markAllNotificationsAsRead(): Promise<{ error: any }> {
+export async function markAllNotificationsAsRead(): Promise<{ error: PostgrestError | Error | null }> {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -183,7 +184,7 @@ export async function updateWatchlistSettings(
     productId: string,
     productType: 'credit_card' | 'loan' | 'savings',
     notifyOn: string[]
-): Promise<{ error: any }> {
+): Promise<{ error: PostgrestError | Error | null }> {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

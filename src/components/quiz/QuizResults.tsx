@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,15 +18,11 @@ const QuizResults = ({ answers, onRestart }: QuizResultsProps) => {
   const [loading, setLoading] = useState(true);
   const [recommendations, setRecommendations] = useState<CardRecommendation[]>([]);
 
-  const getAnswer = (questionId: string) => {
+  const getAnswer = useCallback((questionId: string) => {
     return answers.find(a => a.questionId === questionId)?.value;
-  };
+  }, [answers]);
 
-  useEffect(() => {
-    loadAndScoreCards();
-  }, []);
-
-  const loadAndScoreCards = async () => {
+  const loadAndScoreCards = useCallback(async () => {
     setLoading(true);
     try {
       const cards = await fetchCreditCards();
@@ -73,7 +69,11 @@ const QuizResults = ({ answers, onRestart }: QuizResultsProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAnswer]);
+
+  useEffect(() => {
+    loadAndScoreCards();
+  }, [loadAndScoreCards]);
 
   if (loading) {
     return (

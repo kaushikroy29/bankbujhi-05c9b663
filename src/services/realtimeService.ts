@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
 
-export type NotificationCallback = (payload: any) => void;
+export type NotificationCallback = (payload: unknown) => void;
 
 class RealtimeService {
     private static instance: RealtimeService;

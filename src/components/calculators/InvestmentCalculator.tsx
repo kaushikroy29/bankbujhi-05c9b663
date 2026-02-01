@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -23,11 +23,7 @@ const InvestmentCalculator = () => {
     // Results
     const [result, setResult] = useState({ invested: 0, returns: 0, total: 0 });
 
-    useEffect(() => {
-        calculate();
-    }, [monthlyInvestment, sipReturnRate, sipYears, lumpsumAmount, lumpsumReturnRate, lumpsumYears, activeTab]);
-
-    const calculate = () => {
+    const calculate = useCallback(() => {
         if (activeTab === "sip") {
             const i = sipReturnRate / 12 / 100;
             const n = sipYears * 12;
@@ -49,7 +45,11 @@ const InvestmentCalculator = () => {
                 total: Math.round(fv)
             });
         }
-    };
+    }, [monthlyInvestment, sipReturnRate, sipYears, lumpsumAmount, lumpsumReturnRate, lumpsumYears, activeTab]);
+
+    useEffect(() => {
+        calculate();
+    }, [calculate]);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-IN', {

@@ -37,11 +37,12 @@ const FeeComparisonTable: React.FC<FeeComparisonTableProps> = ({ cards }) => {
     ];
 
     const getFeeValue = (card: CreditCard, category: string, subKey: string) => {
-        if (!card.fees_detailed) return '-';
-        // @ts-ignore - Dynamic access to fee categories
-        const categoryData = card.fees_detailed[category];
+        const fees = card.fees_detailed as unknown as Record<string, Record<string, string>> | null;
+        if (!fees) return '-';
+
+        const categoryData = fees[category];
         if (!categoryData) return '-';
-        // @ts-ignore
+
         return categoryData[subKey] || '-';
     };
 

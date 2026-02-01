@@ -70,9 +70,9 @@ export default function AddLoanForm({ onSuccess }: { onSuccess: () => void }) {
             setOpen(false);
             reset();
             onSuccess();
-        } catch (error: any) {
+        } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to add loan");
+            toast.error(error instanceof Error ? error.message : "Failed to add loan");
         } finally {
             setLoading(false);
         }

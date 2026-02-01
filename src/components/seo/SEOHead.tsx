@@ -6,7 +6,7 @@ interface SEOHeadProps {
   image?: string;
   path?: string;
   type?: "website" | "article";
-  schema?: Record<string, any>;
+  schema?: Record<string, unknown>;
 }
 
 const BASE_URL = "https://bankbujhi.lovable.app";

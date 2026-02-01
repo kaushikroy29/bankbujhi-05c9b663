@@ -26,7 +26,7 @@ describe('fetchBanks', () => {
         const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
 
         // Setup the mock implementation
-        // @ts-ignore
+        // @ts-expect-error - Mocking supabase in test
         supabase.from.mockReturnValue({
             select: mockSelect
         });
@@ -47,7 +47,7 @@ describe('fetchBanks', () => {
         const mockEq = vi.fn().mockReturnValue({ order: mockOrder });
         const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
 
-        // @ts-ignore
+        // @ts-expect-error - Mocking supabase in test
         supabase.from.mockReturnValue({
             select: mockSelect
         });

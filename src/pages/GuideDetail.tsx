@@ -11,9 +11,22 @@ import SocialShare from "@/components/ui/SocialShare";
 import { adminService } from "@/services/adminService"; // NEW import
 import LikeButton from "@/components/ui/LikeButton";
 
+// Article state interface
+interface Article {
+    id: string;
+    title: string;
+    titleEn?: string;
+    category?: string;
+    readTime?: string;
+    date: string;
+    image?: string;
+    content?: string;
+    excerpt?: string;
+}
+
 const GuideDetail = () => {
     const { id } = useParams<{ id: string }>();
-    const [article, setArticle] = useState<any>(null);
+    const [article, setArticle] = useState<Article | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

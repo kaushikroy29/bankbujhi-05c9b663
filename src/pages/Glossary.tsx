@@ -7,14 +7,14 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/seo/SEOHead";
-import { adminService } from "@/services/adminService"; // NEW import
+import { adminService, type DbGlossaryTerm } from "@/services/adminService"; // NEW import
 import LikeButton from "@/components/ui/LikeButton";
 import { cn } from "@/lib/utils";
 
 const Glossary = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
-    const [terms, setTerms] = useState<any[]>([]);
+    const [terms, setTerms] = useState<DbGlossaryTerm[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Load data from Supabase

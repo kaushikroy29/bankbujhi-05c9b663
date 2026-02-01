@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { adminService } from "@/services/adminService";
+import { adminService, type DbGuide } from "@/services/adminService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +15,7 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { articles } from "@/data/guides"; // Import static for seeding
 
 const AdminGuides = () => {
-    const [guides, setGuides] = useState<any[]>([]);
+    const [guides, setGuides] = useState<DbGuide[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Edit/Add State
@@ -129,7 +129,7 @@ const AdminGuides = () => {
         setIsDialogOpen(true);
     };
 
-    const openEdit = (guide: any) => {
+    const openEdit = (guide: DbGuide) => {
         setEditingId(guide.id);
         setFormData({
             title: guide.title,

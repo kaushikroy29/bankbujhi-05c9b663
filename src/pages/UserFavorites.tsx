@@ -9,10 +9,33 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import LikeButton from "@/components/ui/LikeButton";
 
+import { User } from "@supabase/supabase-js";
+
+// Consolidated details interface with all possible properties
+interface FavoriteDetails {
+    // Guide properties
+    title?: string;
+    slug?: string;
+    excerpt?: string;
+    category?: string;
+    image_url?: string;
+    // GlossaryTerm properties
+    term?: string;
+    term_en?: string;
+    definition?: string;
+}
+
+interface FavoriteItem {
+    id: string;
+    item_id: string;
+    item_type: 'guide' | 'term';
+    details?: FavoriteDetails;
+}
+
 const UserFavorites = () => {
-    const [favorites, setFavorites] = useState<any[]>([]);
+    const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {

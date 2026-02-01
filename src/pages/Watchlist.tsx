@@ -54,7 +54,7 @@ const Watchlist = () => {
                     table: 'product_change_log',
                 },
                 (payload) => {
-                    const newChange = payload.new as any; // Cast if needed
+                    const newChange = payload.new as { product_id: string };
                     const watchedProduct = productsRef.current.find(p => p.id === newChange.product_id);
 
                     if (watchedProduct) {

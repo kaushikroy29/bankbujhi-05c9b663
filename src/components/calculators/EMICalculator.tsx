@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -19,7 +19,7 @@ const EMICalculator = () => {
     const [totalInterest, setTotalInterest] = useState<number>(0);
     const [totalCost, setTotalCost] = useState<number>(0); // Interest + Fees
 
-    const calculateEMI = () => {
+    const calculateEMI = useCallback(() => {
         const P = loanAmount;
         const r = interestRate / 12 / 100;
         const n = tenureMonths;
@@ -40,11 +40,11 @@ const EMICalculator = () => {
         setTotalPayment(totalPay);
         setTotalInterest(interest);
         setTotalCost(interest + fee);
-    };
+    }, [loanAmount, interestRate, tenureMonths, processingFeePercent]);
 
     useEffect(() => {
         calculateEMI();
-    }, [loanAmount, interestRate, tenureMonths, processingFeePercent]);
+    }, [calculateEMI]);
 
     // Derived States
     const processingFeeAmount = Math.round(loanAmount * (processingFeePercent / 100));
