@@ -14,6 +14,9 @@ import HiddenFeesAlert from "@/components/cards/HiddenFeesAlert";
 import WatchlistButton from "@/components/ui/WatchlistButton";
 import SEOHead from "@/components/seo/SEOHead";
 import SocialShare from "@/components/ui/SocialShare";
+import SafeApplyGate from "@/components/cards/SafeApplyGate";
+import SuitabilityChecker from "@/components/cards/SuitabilityChecker";
+import HiddenTruthsPanel from "@/components/cards/HiddenTruthsPanel";
 
 const CardDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +43,8 @@ const CardDetails = () => {
 
   // Determine who this card is good for based on category and benefits
   const getGoodForPoints = (card: CreditCard): string[] => {
+    // ... (Existing logic kept or could be moved to util if reused)
+    // For brevity, keeping logical structure but using the same list
     const points: string[] = [];
     const category = (card.category || "").toLowerCase();
     const benefitsText = card.benefits.map(b => `${b.text} ${b.description || ""}`).join(" ").toLowerCase();
@@ -62,12 +67,9 @@ const CardDetails = () => {
     if (benefitsText.includes("dining") || benefitsText.includes("restaurant")) {
       points.push("যারা রেস্তোরাঁয় খেতে পছন্দ করেন");
     }
-
-    // Default points if none matched
     if (points.length === 0) {
       points.push("যারা একটি নির্ভরযোগ্য ক্রেডিট কার্ড খুঁজছেন");
     }
-
     return points.slice(0, 3);
   };
 
@@ -88,12 +90,12 @@ const CardDetails = () => {
     if (card.min_income) {
       const incomeMatch = card.min_income.match(/[\d,]+/);
       const incomeNum = incomeMatch ? parseInt(incomeMatch[0].replace(/,/g, "")) : 0;
-      if (incomeNum >= 100000) {
-        points.push("যাদের আয় ন্যূনতম প্রয়োজনীয়তার চেয়ে কম");
+      if (incomeNum >= 75000) {
+        // High income requirement warning
+        points.push(`যাদের আয় ৳${incomeNum.toLocaleString()}-এর কম`);
       }
     }
 
-    // Default if none matched
     if (points.length === 0) {
       points.push("যারা শুধুমাত্র বিনামূল্যে কার্ড খুঁজছেন");
     }
@@ -165,7 +167,6 @@ const CardDetails = () => {
           {/* Hero Section */}
           <section className="bg-gradient-to-br from-primary/5 to-accent/5 border-b">
             <div className="container mx-auto px-4 py-6 md:py-10">
-              {/* Breadcrumb */}
               <PageBreadcrumb
                 items={[
                   { label: "ক্রেডিট কার্ড", href: "/compare" },
@@ -203,11 +204,9 @@ const CardDetails = () => {
 
                   <div className="flex flex-wrap gap-3 mb-6">
                     {card.apply_url ? (
-                      <Button size="lg" className="font-bold" asChild>
-                        <a href={card.apply_url} target="_blank" rel="noopener noreferrer">
-                          <MaterialIcon name="open_in_new" className="text-lg mr-1" />
-                          এখনই আবেদন করুন
-                        </a>
+                      <Button size="lg" className="font-bold" onClick={() => document.getElementById('suitability')?.scrollIntoView({ behavior: 'smooth' })}>
+                        <MaterialIcon name="visibility" className="text-lg mr-1" />
+                        বিস্তারিত দেখুন
                       </Button>
                     ) : (
                       <Button size="lg" className="font-bold" asChild>
@@ -245,26 +244,15 @@ const CardDetails = () => {
           </section>
 
           {/* Content Sections */}
-          <div className="container mx-auto px-4 py-6 md:py-10 space-y-8">
+          <div className="container mx-auto px-4 py-8 space-y-8 max-w-5xl">
 
-            {/* Section 1: Who is this card good for */}
-            <section className="bg-card border border-primary/10 rounded-xl p-5 md:p-6">
-              <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
-                <MaterialIcon name="person_check" className="text-primary text-2xl" />
-                এই কার্ডটি কার জন্য ভালো
-              </h2>
-              <ul className="space-y-3">
-                {getGoodForPoints(card).map((point, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <MaterialIcon name="check_circle" className="text-primary text-lg shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground">{point}</span>
-                  </li>
-                ))}
-              </ul>
+            {/* SUITABILITY CHECKER - FIRST THING as per UX Rules */}
+            <section className="scroll-mt-20" id="suitability">
+              <SuitabilityChecker card={card} />
             </section>
 
-            {/* Section 2: Quick Info */}
-            <section className="bg-card border border-primary/10 rounded-xl p-5 md:p-6">
+            {/* Quick Info */}
+            <section className="bg-card border border-primary/10 rounded-xl p-5 md:p-6 shadow-sm">
               <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
                 <MaterialIcon name="info" className="text-primary text-2xl" />
                 এক নজরে তথ্য
@@ -299,7 +287,12 @@ const CardDetails = () => {
               </div>
             </section>
 
-            {/* Section 3: Benefits */}
+            {/* HIDDEN TRUTHS PANEL */}
+            <section>
+              <HiddenTruthsPanel card={card} />
+            </section>
+
+            {/* Benefits */}
             <section className="bg-card border border-primary/10 rounded-xl p-5 md:p-6">
               <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
                 <MaterialIcon name="stars" className="text-primary text-2xl" />
@@ -329,23 +322,42 @@ const CardDetails = () => {
               )}
             </section>
 
-            {/* Section 4: Who should avoid this card */}
-            <section className="bg-destructive/5 border border-destructive/20 rounded-xl p-5 md:p-6">
-              <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
-                <MaterialIcon name="warning" className="text-destructive text-2xl" />
-                যাদের জন্য ভালো না
-              </h2>
-              <ul className="space-y-3">
-                {getNotGoodForPoints(card).map((point, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <MaterialIcon name="cancel" className="text-destructive text-lg shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground">{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {/* Good For / Not Good For */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Section: Who is this card good for */}
+              <section className="bg-green-50/50 border border-green-200 rounded-xl p-5 md:p-6">
+                <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2 text-green-800">
+                  <MaterialIcon name="person_check" className="text-green-600 text-2xl" />
+                  যাদের জন্য ভালো
+                </h2>
+                <ul className="space-y-3">
+                  {getGoodForPoints(card).map((point, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <MaterialIcon name="check_circle" className="text-green-600 text-lg shrink-0 mt-0.5" />
+                      <span className="text-green-900/80">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
 
-            {/* Section 5: Eligibility */}
+              {/* Section: Who should avoid this card */}
+              <section className="bg-destructive/5 border border-destructive/20 rounded-xl p-5 md:p-6">
+                <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2 text-destructive">
+                  <MaterialIcon name="cancel" className="text-destructive text-2xl" />
+                  যাদের জন্য ভালো না
+                </h2>
+                <ul className="space-y-3">
+                  {getNotGoodForPoints(card).map((point, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <MaterialIcon name="cancel" className="text-destructive text-lg shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
+
+            {/* Eligibility */}
             <section className="bg-card border border-primary/10 rounded-xl p-5 md:p-6">
               <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
                 <MaterialIcon name="verified_user" className="text-primary text-2xl" />
@@ -367,10 +379,6 @@ const CardDetails = () => {
                           : "উল্লেখ নেই"
                         }
                       </span>
-                    </div>
-                    <div className="flex justify-between p-3 bg-muted/30 rounded-lg">
-                      <span className="text-sm">ক্রেডিট স্কোর</span>
-                      <span className="font-bold text-sm text-primary">{card.credit_score || "উল্লেখ নেই"}</span>
                     </div>
                   </div>
                 </div>
@@ -407,58 +415,15 @@ const CardDetails = () => {
               </div>
             </section>
 
-
-            {/* Section: Comprehensive Fee Breakdown */}
+            {/* Fee Breakdown */}
             {card.fees_detailed && (
               <section className="mb-8">
                 <FeeBreakdown fees={card.fees_detailed} />
               </section>
             )}
 
-            {/* Section 6: Important Fees & Risks */}
-            <section className="bg-accent/5 border border-accent/20 rounded-xl p-5 md:p-6">
-              <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
-                <MaterialIcon name="warning_amber" className="text-accent text-2xl" />
-                আবেদন করার আগে জানুন
-              </h2>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  {Object.keys(card.fees).length > 0 ? (
-                    Object.entries(card.fees).slice(0, 4).map(([key, value]) => (
-                      <div key={key} className="flex justify-between p-3 bg-background rounded-lg">
-                        <span className="text-sm text-muted-foreground">{key}</span>
-                        <span className="font-bold text-sm">{value}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-sm">ফি'র তথ্য পাওয়া যায়নি</p>
-                  )}
-                </div>
-                <div className="bg-background rounded-lg p-4">
-                  <h3 className="font-bold text-sm mb-2 flex items-center gap-2">
-                    <MaterialIcon name="lightbulb" className="text-accent" />
-                    গুরুত্বপূর্ণ পরামর্শ
-                  </h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <MaterialIcon name="arrow_right" className="text-accent text-sm mt-0.5" />
-                      প্রতি মাসে পুরো বিল পরিশোধ করুন—সুদ এড়াতে
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <MaterialIcon name="arrow_right" className="text-accent text-sm mt-0.5" />
-                      শুধু মিনিমাম পে করলে সুদের জালে আটকে যাবেন
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <MaterialIcon name="arrow_right" className="text-accent text-sm mt-0.5" />
-                      লেট পেমেন্ট আপনার ক্রেডিট স্কোর কমায়
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Hidden Fees Alert */}
-              <HiddenFeesAlert card={card} />
-            </section>
+            {/* Hidden Fees Alert - High Level Warning */}
+            <HiddenFeesAlert card={card} />
 
             {/* Source & Disclaimer */}
             <section className="bg-muted/30 border border-primary/10 rounded-xl p-5 md:p-6">
@@ -491,19 +456,29 @@ const CardDetails = () => {
               </div>
             </section>
 
-            {/* CTA */}
+            {/* CTA - Safe Apply at Bottom */}
             <section className="bg-primary/5 border border-primary/10 rounded-xl p-6 text-center">
-              <h3 className="font-bold text-lg mb-2">আবেদন করতে প্রস্তুত?</h3>
+              <h3 className="font-bold text-lg mb-2">সব তথ্য দেখেছেন?</h3>
               <p className="text-muted-foreground text-sm mb-4">
-                প্রথমে আপনার যোগ্যতা যাচাই করে নিন
+                আপনি যদি ফি এবং শর্তাবলী সম্পর্কে নিশ্চিত হন, তবে আবেদন করতে পারেন
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link to="/eligibility">
-                  <Button className="font-bold">
-                    <MaterialIcon name="fact_check" className="text-lg mr-1" />
-                    যোগ্যতা যাচাই করুন
-                  </Button>
-                </Link>
+                {card.apply_url ? (
+                  <SafeApplyGate product={card}>
+                    <Button size="lg" className="font-bold bg-green-600 hover:bg-green-700">
+                      <MaterialIcon name="open_in_new" className="text-lg mr-1" />
+                      এখনই আবেদন করুন
+                    </Button>
+                  </SafeApplyGate>
+                ) : (
+                  <Link to="/eligibility">
+                    <Button className="font-bold">
+                      <MaterialIcon name="fact_check" className="text-lg mr-1" />
+                      যোগ্যতা যাচাই করুন
+                    </Button>
+                  </Link>
+                )}
+
                 <Link to="/quiz">
                   <Button variant="outline" className="font-bold">
                     <MaterialIcon name="quiz" className="text-lg mr-1" />
@@ -512,6 +487,7 @@ const CardDetails = () => {
                 </Link>
               </div>
             </section>
+
           </div>
         </main>
 

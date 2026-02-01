@@ -82,7 +82,7 @@ const PersonalLoans = () => {
 
   // Transform data for LoanOfferCard
   const transformLoan = (loan: LoanProduct, index: number) => ({
-    id: index + 1,
+    id: loan.id,
     bank: loan.banks?.name || "Unknown Bank",
     bankCode: loan.banks?.swift_code?.substring(0, 4) || loan.banks?.name?.substring(0, 4).toUpperCase() || "BANK",
     interestRate: loan.interest_rate_min || 0,
@@ -133,8 +133,8 @@ const PersonalLoans = () => {
                 key={type}
                 onClick={() => setLoanType(type)}
                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${loanType === type
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card border border-primary/10 hover:bg-primary/5"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card border border-primary/10 hover:bg-primary/5"
                   }`}
               >
                 {type === "personal" ? "পার্সোনাল লোন" : type === "home" ? "হোম লোন" : "কার লোন"}
@@ -351,9 +351,11 @@ const PersonalLoans = () => {
                           <span className="text-xs text-muted-foreground block">সর্বোচ্চ পরিমাণ</span>
                           <span className="font-bold">{loan.max_amount}</span>
                         </div>
-                        <Button size="sm" className="h-9">
-                          আবেদন করুন
-                        </Button>
+                        <Link to={`/loans/${loan.id}`}>
+                          <Button size="sm" className="h-9">
+                            বিস্তারিত
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   );

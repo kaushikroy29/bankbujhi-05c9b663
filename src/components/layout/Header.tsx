@@ -9,6 +9,7 @@ import LanguageToggle from "./LanguageToggle";
 
 const navLinks = [
   { href: "/compare", label: "কার্ড", icon: "credit_card" },
+  { href: "/banks", label: "ব্যাংক", icon: "account_balance" },
   { href: "/loans", label: "লোন", icon: "account_balance" },
   { href: "/savings", label: "সেভিংস", icon: "savings" },
   { href: "/mfs", label: "MFS", icon: "smartphone" },
@@ -55,6 +56,11 @@ const Header = () => {
               <Button className="min-w-[84px] h-10 px-4 text-sm font-bold shadow-sm">
                 তুলনা করুন
               </Button>
+            </Link>
+
+            {/* Favorites Link */}
+            <Link to="/favorites" className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-red-500 transition-colors" title="My Favorites">
+              <MaterialIcon name="favorite" className="text-2xl" />
             </Link>
 
             {/* Admin Link - Temporary for MVP */}

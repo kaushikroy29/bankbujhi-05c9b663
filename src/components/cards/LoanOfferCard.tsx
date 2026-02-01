@@ -1,9 +1,10 @@
+import { Link } from "react-router-dom";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface LoanOffer {
-  id: number;
+  id: string; // Changed from number to string for UUID
   bank: string;
   bankCode: string;
   interestRate: number;
@@ -28,8 +29,8 @@ const LoanOfferCard = ({ offer }: LoanOfferCardProps) => {
     <tr
       className={cn(
         "bg-card border rounded-xl group hover:shadow-md transition-shadow",
-        offer.isPremium 
-          ? "border-2 border-accent/30" 
+        offer.isPremium
+          ? "border-2 border-accent/30"
           : "border-primary/10"
       )}
     >
@@ -52,8 +53,8 @@ const LoanOfferCard = ({ offer }: LoanOfferCardProps) => {
             <p className="font-bold text-lg">{offer.bank}</p>
             <span className={cn(
               "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase",
-              offer.isPremium 
-                ? "bg-accent/20 text-accent" 
+              offer.isPremium
+                ? "bg-accent/20 text-accent"
                 : "bg-primary/20 text-primary"
             )}>
               {offer.badge}
@@ -75,9 +76,11 @@ const LoanOfferCard = ({ offer }: LoanOfferCardProps) => {
         <p className="text-lg font-bold">৳ {formatCurrency(offer.totalRepayment)}</p>
       </td>
       <td className="px-6 py-8 rounded-r-xl">
-        <Button className="w-full font-bold">
-          Check Eligibility
-        </Button>
+        <Link to={`/loans/${offer.id}`}>
+          <Button className="w-full font-bold">
+            বিস্তারিত দেখুন
+          </Button>
+        </Link>
       </td>
     </tr>
   );

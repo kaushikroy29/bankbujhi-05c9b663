@@ -1,136 +1,174 @@
+import { useState, useMemo, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import BottomNav from "@/components/layout/BottomNav";
 import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import MaterialIcon from "@/components/ui/MaterialIcon";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/seo/SEOHead";
-
-const terms = [
-    {
-        term: "Annual Fee (বার্ষিক ফি)",
-        definition: "ক্রেডিট কার্ড ব্যবহারের জন্য ব্যাংককে বছরে একবার যে চার্জ দিতে হয়। অনেক কার্ডে ১৮-২০টি লেনদেন করলে এটি মওকুফ (Waived) করা হয়।"
-    },
-    {
-        term: "EMI (কিস্তি)",
-        definition: "Equated Monthly Installment। কোনো বড় কেনাকাটার মূল্য একবারে পরিশোধ না করে মাসভিত্তিক ছোট ভাগে (৩-৩৬ মাস) পরিশোধ করার সুবিধা। সাধারণত ০% ইন্টারেস্টে এটি পাওয়া যায়।"
-    },
-    {
-        term: "Dual Currency (ডুয়াল কারেন্সি)",
-        definition: "যে কার্ড দিয়ে দেশীয় মুদ্রার (টাকা) পাশাপাশি বৈদেশিক মুদ্রা (যেমন ডলার) খরচ করা যায়। এর জন্য পাসপোর্টে ডলার এন্ডোর্সমেন্ট থাকা বাধ্যতামূলক।"
-    },
-    {
-        term: "Endorsement (এন্ডোর্সমেন্ট)",
-        definition: "বিদেশে ব্যবহারের জন্য পাসপোর্টে ব্যাংক কর্তৃক নির্দিষ্ট পরিমাণ ডলার ব্যবহারের অনুমতি সিল। বর্তমানে বছরে সর্বোচ্চ ১২,০০০ ডলার খরচ করা যায় (SAARC এবং Non-SAARC দেশ মিলিয়ে)।"
-    },
-    {
-        term: "CIB Score (সিআইবি রিপোর্ট)",
-        definition: "Credit Information Bureau রিপোর্ট। আপনার পূর্ববর্তী ঋণের ইতিহাস। এটি খারাপ হলে বা বকেয়া থাকলে নতুন লোন বা কার্ড পাওয়া যায় না।"
-    },
-    {
-        term: "Excise Duty (আবগারি শুল্ক)",
-        definition: "ব্যাংক একাউন্টে নির্দিষ্ট পরিমাণ (যেমন ১ লাখ বা ৫ লাখ) টাকার বেশি স্থিতি থাকলে সরকার কর্তৃক বছরে একবার কর্তনকৃত কর।"
-    },
-    {
-        term: "TIN / ETIN (টিন সার্টিফিকেট)",
-        definition: "Tax Identification Number। করদাতা শনাক্তকরণ নম্বর। ৫ লাখ টাকার বেশি সঞ্চয়পত্র কেনা বা ক্রেডিট কার্ড নেওয়ার জন্য এটি বাধ্যতামূলক।"
-    },
-    {
-        term: "FDR (ফিক্সড ডিপোজিট)",
-        definition: "Fixed Deposit Receipt। নির্দিষ্ট সময়ের জন্য (যেমন ১ বছর) ব্যাংকে টাকা জমা রাখা, যার বিনিময়ে ব্যাংক নির্দিষ্ট হারে মুনাফা দেয়।"
-    },
-    {
-        term: "DPS (ডিপিএস)",
-        definition: "Deposit Pension Scheme। প্রতি মাসে নির্দিষ্ট পরিমাণ টাকা জমা করে মেয়াদ বা সঞ্চয় স্কিম। ৫ বা ১০ বছর মেয়াদী হয়।"
-    },
-    {
-        term: "CBS (কোর ব্যাংকিং)",
-        definition: "Core Banking Solution। এক শাখার একাউন্ট দিয়ে অন্য যেকোনো শাখা থেকে লেনদেন করার সুবিধা।"
-    },
-    {
-        term: "NFC / Contactless (কন্ট্যাক্টলেস)",
-        definition: "কার্ড মেশিনে না ঢুকিয়ে শুধু স্পর্শ করে পেমেন্ট করার প্রযুক্তি। এটি দ্রুত এবং নিরাপদ।"
-    },
-    {
-        term: "Lounge Access (লাউঞ্জ সুবিধা)",
-        definition: "বিমানবন্দরে যাত্রীদের বিশ্রামের জন্য বিশেষ কক্ষ। প্রিমিয়াম কার্ডধারীরা বিনামূল্যে বলাকা বা আন্তর্জাতিক লাউঞ্জে খাবার ও বিশ্রামের সুবিধা পান।"
-    },
-    {
-        term: "Supplementary Card (সাপ্লিমেন্টারি কার্ড)",
-        definition: "মূল কার্ডধারীর লিমিট ব্যবহার করে পরিবারের অন্য সদস্যদের জন্য ইস্যু করা অতিরিক্ত কার্ড। সাধারণত প্রথম ১-২টি ফ্রি থাকে।"
-    },
-    {
-        term: "Cheque Book (চেক বই)",
-        definition: "ব্যাংক অ্যাকাউন্টের টাকা উত্তোলনের জন্য ব্যবহৃত ছাপানো কাগজের বই। কিছু ক্রেডিট কার্ডের সাথেও চেক বই সুবিধা থাকে, যা দিয়ে 'একাউন্ট পেয়ি' চেক ইস্যু করা যায়।"
-    },
-    {
-        term: "Routing Number (রাউটিং নাম্বার)",
-        definition: "৯ সংখ্যার একটি কোড যা নির্দিষ্ট ব্যাংক ও শাখাকে নির্দেশ করে। এক ব্যাংক থেকে অন্য ব্যাংকে টাকা পাঠাতে (EFT/BEFTN) এটি লাগে।"
-    },
-    {
-        term: "BEFTN (বিএফটিএন)",
-        definition: "Bangladesh Electronic Funds Transfer Network। এক ব্যাংকের একাউন্ট থেকে অন্য ব্যাংকে ইলেকট্রনিক উপায়ে টাকা পাঠানোর মাধ্যম।"
-    },
-    {
-        term: "RTGS (আরটিজিএস)",
-        definition: "Real Time Gross Settlement। বড় অংকের টাকা (১ লাখ বা তার বেশি) তাৎক্ষণিকভাবে অন্য ব্যাংকে পাঠানোর ব্যবস্থা।"
-    },
-    {
-        term: "POS Terminal (পস মেশিন)",
-        definition: "দোকানে কার্ড সোয়াইপ বা ট্যাপ করার মেশিন (Point of Sale)।"
-    },
-    {
-        term: "Charge Card (চার্জ কার্ড)",
-        definition: "যে কার্ডে কোনো নির্দিষ্ট ক্রেডিট লিমিট থাকে না, তবে মাস শেষে পুরো বিল পরিশোধ করতে হয়। এতে কিস্তি সুবিধা থাকে না (যেমন: সাধারণ অ্যামেক্স কার্ড)।"
-    },
-    {
-        term: "MFS (মোবাইল ব্যাংকিং)",
-        definition: "Mobile Financial Services। যেমন বিকাশ, নগদ, রকেট। মোবাইল ফোনের মাধ্যমে অর্থ লেনদেন সেবা।"
-    },
-    {
-        term: "Agent Banking (এজেন্ট ব্যাংকিং)",
-        definition: "শাখা নেই এমন এলাকায় এজন্টের মাধ্যমে ব্যাংকিং সেবা পৌঁছে দেয়া।"
-    },
-    {
-        term: "Green PIN (গ্রিন পিন)",
-        definition: "কাগজের পিন-এর বদলে এসএমএস বা এটিএম দিয়ে নিজেই পিন সেট করার পরিবেশবান্ধব ব্যবস্থা।"
-    }
-];
+import { adminService } from "@/services/adminService"; // NEW import
+import LikeButton from "@/components/ui/LikeButton";
+import { cn } from "@/lib/utils";
 
 const Glossary = () => {
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+    const [terms, setTerms] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // Load data from Supabase
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const data = await adminService.getGlossaryTerms();
+                setTerms(data);
+            } catch (error) {
+                console.error("Failed to load glossary:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
+    }, []);
+
+    // Alphabet for filtering
+    const alphabet = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    const filteredTerms = useMemo(() => {
+        let result = terms;
+
+        if (selectedLetter) {
+            if (selectedLetter === "#") {
+                result = result.filter(t => !/^[A-Z]/i.test(t.term_en || ""));
+            } else {
+                result = result.filter(t => (t.term_en || "").toUpperCase().startsWith(selectedLetter));
+            }
+        }
+
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(t =>
+                t.term.toLowerCase().includes(query) ||
+                (t.term_en || "").toLowerCase().includes(query) ||
+                t.definition.toLowerCase().includes(query)
+            );
+        }
+
+        return result; // Already sorted by DB query usually, but simple client sort if needed
+    }, [searchQuery, selectedLetter, terms]);
+
     return (
         <>
             <SEOHead
-                title="ব্যাংকিং শব্দকোষ | BankBujhi Glossary"
-                description="ব্যাংকিং ও ফাইন্যান্সের কঠিন শব্দগুলোর সহজ বাংলা অর্থ জানুন।"
+                title="অর্থনৈতিক শব্দকোষ (Glossary) | BankBujhi"
+                description="ব্যাংকিং ও ফাইন্যান্সের জটিল শব্দগুলোর সহজ বাংলা ব্যাখ্যা। এপিআর, ইএমআই, এবং আরও অনেক কিছু শিখুন।"
                 path="/glossary"
             />
-            <div className="flex min-h-screen flex-col">
+            <div className="min-h-screen bg-background flex flex-col">
                 <Header />
-                <main className="flex-1 container-padding py-8 max-w-4xl mx-auto w-full">
-                    <PageBreadcrumb items={[{ label: "শব্দকোষ" }]} className="mb-6" />
+                <main className="flex-1 pb-20 md:pb-0">
+                    {/* Hero */}
+                    <section className="bg-gradient-to-br from-primary/5 to-accent/5 border-b">
+                        <div className="container mx-auto px-4 py-8 md:py-12 text-center">
+                            <h1 className="text-3xl md:text-5xl font-black mb-4">অর্থনৈতিক <span className="text-primary">শব্দকোষ</span></h1>
+                            <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
+                                ব্যাংকিং ও ফাইন্যান্সের জটিল শব্দগুলোর সহজ বাংলা ব্যাখ্যা জানুন।
+                            </p>
 
-                    <div className="mb-10 text-center">
-                        <h1 className="text-3xl font-black mb-3">ব্যাংকিং শব্দকোষ</h1>
-                        <p className="text-muted-foreground">
-                            ব্যাংকিং জগতের কঠিন শব্দগুলোর সহজ বাংলা ব্যাখ্যা।
-                        </p>
-                    </div>
+                            <div className="max-w-xl mx-auto relative">
+                                <MaterialIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <Input
+                                    className="pl-10 h-12 text-lg bg-background"
+                                    placeholder="শব্দ খুঁজুন (যেমন: APR, EMI, Credit Score...)"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </section>
 
-                    <div className="grid gap-4">
-                        <Accordion type="single" collapsible className="w-full">
-                            {terms.map((item, index) => (
-                                <AccordionItem key={index} value={`item-${index}`} className="border border-primary/10 rounded-xl mb-3 px-4 bg-card">
-                                    <AccordionTrigger className="text-left font-bold text-lg py-4 hover:no-underline hover:text-primary transition-colors">
-                                        {item.term}
-                                    </AccordionTrigger>
-                                    <AccordionContent className="text-base text-muted-foreground leading-relaxed pb-4">
-                                        {item.definition}
-                                    </AccordionContent>
-                                </AccordionItem>
+                    <div className="container mx-auto px-4 py-8 max-w-5xl">
+                        {/* Alphabet Filter */}
+                        <div className="flex flex-wrap gap-2 justify-center mb-10 sticky top-20 z-10 bg-background/95 backdrop-blur py-4 border-b">
+                            <Button
+                                variant={selectedLetter === null ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => setSelectedLetter(null)}
+                                className="font-bold"
+                            >
+                                All
+                            </Button>
+                            {alphabet.map(letter => (
+                                <Button
+                                    key={letter}
+                                    variant={selectedLetter === letter ? "default" : "ghost"}
+                                    size="sm"
+                                    onClick={() => setSelectedLetter(letter)}
+                                    className="w-8 h-8 p-0 font-bold"
+                                >
+                                    {letter}
+                                </Button>
                             ))}
-                        </Accordion>
+                        </div>
+
+                        {/* Terms Grid */}
+                        {loading ? (
+                            <div className="text-center py-20">
+                                <MaterialIcon name="refresh" className="animate-spin text-4xl text-primary mb-2" />
+                                <p>লোড হচ্ছে...</p>
+                            </div>
+                        ) : filteredTerms.length > 0 ? (
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {filteredTerms.map(term => (
+                                    <div key={term.id} className="bg-card border border-primary/10 rounded-xl p-6 hover:shadow-md transition-shadow group relative">
+                                        {/* Like Button */}
+                                        <div className="absolute top-4 right-4 z-10 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <LikeButton itemId={term.id} itemType="term" variant="icon" />
+                                        </div>
+
+                                        <div className="flex justify-between items-start mb-2 pr-8">
+                                            <h3 className="text-xl font-bold text-primary group-hover:text-accent transition-colors">
+                                                {term.term}
+                                            </h3>
+                                            <span className="text-[10px] uppercase font-bold tracking-wider bg-muted text-muted-foreground px-2 py-1 rounded">
+                                                {term.category}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm font-medium text-muted-foreground mb-4 font-mono opacity-70">
+                                            {term.term_en}
+                                        </p>
+                                        <p className="text-foreground/90 leading-relaxed mb-4">
+                                            {term.definition}
+                                        </p>
+                                        {term.example && (
+                                            <div className="bg-primary/5 p-3 rounded-lg border border-primary/10 text-sm">
+                                                <span className="font-bold text-primary mr-1">উদাহরণ:</span>
+                                                <span className="text-muted-foreground italic">{term.example}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-20">
+                                <MaterialIcon name="search_off" className="text-6xl text-muted-foreground mb-4" />
+                                <h2 className="text-2xl font-bold mb-2">কোনো শব্দ পাওয়া যায়নি</h2>
+                                <p className="text-muted-foreground">দুঃখিত, আপনার অনুসন্ধানের সাথে কোনো শব্দ মেলেনি।</p>
+                                <Button
+                                    variant="link"
+                                    onClick={() => { setSearchQuery(""); setSelectedLetter(null); }}
+                                    className="mt-4"
+                                >
+                                    সব শব্দ দেখুন
+                                </Button>
+                            </div>
+                        )}
                     </div>
+
                 </main>
                 <Footer />
+                <BottomNav />
             </div>
         </>
     );

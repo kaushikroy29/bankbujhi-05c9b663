@@ -13,6 +13,9 @@ import ScraperHistory from "@/components/admin/ScraperHistory";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Building2, CreditCard, AlertCircle } from "lucide-react";
 
+import AdminGlossary from "./admin/AdminGlossary";
+import AdminGuides from "./admin/AdminGuides";
+
 export default function Admin() {
     const [stats, setStats] = useState({
         banks: 0,
@@ -56,7 +59,7 @@ export default function Admin() {
             <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                    <p className="text-muted-foreground">Manage banks, products, and verification requests.</p>
+                    <p className="text-muted-foreground">Manage banks, products, verification requests, and content.</p>
                 </div>
 
                 <Tabs defaultValue="overview" className="space-y-6">
@@ -64,6 +67,8 @@ export default function Admin() {
                         <TabsTrigger value="overview">Overview</TabsTrigger>
                         <TabsTrigger value="banks">Banks</TabsTrigger>
                         <TabsTrigger value="products">Products</TabsTrigger>
+                        <TabsTrigger value="glossary">Glossary</TabsTrigger>
+                        <TabsTrigger value="guides">Guides</TabsTrigger>
                         <TabsTrigger value="updates" className="relative">
                             Pending Updates
                             {stats.updates > 0 && (
@@ -124,6 +129,14 @@ export default function Admin() {
 
                     <TabsContent value="products">
                         <ProductManager />
+                    </TabsContent>
+
+                    <TabsContent value="glossary">
+                        <AdminGlossary />
+                    </TabsContent>
+
+                    <TabsContent value="guides">
+                        <AdminGuides />
                     </TabsContent>
 
                     <TabsContent value="updates">

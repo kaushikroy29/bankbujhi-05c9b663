@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -8,18 +8,51 @@ import PageBreadcrumb from "@/components/ui/PageBreadcrumb";
 import SearchBar from "@/components/ui/SearchBar";
 import ArticleCard from "@/components/cards/ArticleCard";
 import SEOHead from "@/components/seo/SEOHead";
-import { articles } from "@/data/guides";
+import { adminService } from "@/services/adminService"; // NEW import
 
-const categories = ["সব", "শুরু করুন", "ক্রেডিট স্কোর", "টিপস", "ইসলামিক ব্যাংকিং"];
+const categories = ["সব", "শুরু করুন", "ক্রেডিট স্কোর", "টিপস", "ইসলামিক ব্যাংকিং", "General"];
 
 const Guides = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("সব");
+  const [articles, setArticles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load guides
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await adminService.getGuides();
+        // Transform Supabase structure to UI structure if needed, or update ArticleCard
+        // Assuming ArticleCard expects { id, title, category, image, ... }
+        // The DB returns snake_case, let's map it or ensure ArticleCard handles it.
+        // For now, mapping to keep ArticleCard happy.
+        const mapped = data.map(g => ({
+          id: g.slug, // Use slug as ID for routing
+          title: g.title,
+          titleEn: g.title_en,
+          category: g.category,
+          readTime: g.read_time,
+          image: g.image_url,
+          isFeatured: g.is_featured,
+          excerpt: g.excerpt
+        }));
+        setArticles(mapped);
+      } catch (error) {
+        console.error("Failed to load guides", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   const filteredArticles = articles.filter((article) => {
     const matchesSearch =
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (article.titleEn?.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    // Normalize categories if needed
     const matchesCategory = activeCategory === "সব" || article.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
@@ -54,7 +87,7 @@ const Guides = () => {
                 <MaterialIcon name="verified" className="text-sm" /> বিশেষজ্ঞ যাচাইকৃত
               </span>
               <span className="flex items-center gap-1.5 text-muted-foreground">
-                <MaterialIcon name="article" className="text-sm" /> ৫০+ গাইড
+                <MaterialIcon name="article" className="text-sm" /> {articles.length}+ গাইড
               </span>
             </div>
           </div>
@@ -74,8 +107,8 @@ const Guides = () => {
                 key={category}
                 onClick={() => setActiveCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${activeCategory === category
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card border border-primary/10 text-muted-foreground hover:bg-muted"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card border border-primary/10 text-muted-foreground hover:bg-muted"
                   }`}
               >
                 {category}
@@ -83,31 +116,44 @@ const Guides = () => {
             ))}
           </div>
 
-          {/* Featured Guides */}
-          <div className="mb-8">
-            <h2 className="text-lg sm:text-xl font-bold mb-4">জনপ্রিয় গাইড</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {filteredArticles.slice(0, 3).map((article) => (
-                <ArticleCard key={article.id} article={article} />
-              ))}
+          {loading ? (
+            <div className="text-center py-20">
+              <MaterialIcon name="refresh" className="animate-spin text-4xl text-primary mb-2" />
+              <p>গাইড লোড হচ্ছে...</p>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Featured Guides */}
+              <div className="mb-8">
+                <h2 className="text-lg sm:text-xl font-bold mb-4">জনপ্রিয় গাইড</h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {filteredArticles.filter(a => a.isFeatured).slice(0, 3).map((article) => (
+                    <ArticleCard key={article.id} article={article} />
+                  ))}
+                  {/* Fallback if no featured */}
+                  {filteredArticles.filter(a => a.isFeatured).length === 0 && filteredArticles.slice(0, 3).map((article) => (
+                    <ArticleCard key={article.id} article={article} />
+                  ))}
+                </div>
+              </div>
 
-          {/* All Guides */}
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold mb-4">সব গাইড</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {filteredArticles.map((article) => (
-                <ArticleCard key={article.id} article={article} />
-              ))}
-            </div>
-          </div>
+              {/* All Guides */}
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold mb-4">সব গাইড</h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {filteredArticles.map((article) => (
+                    <ArticleCard key={article.id} article={article} />
+                  ))}
+                </div>
+              </div>
 
-          {filteredArticles.length === 0 && (
-            <div className="text-center py-12">
-              <MaterialIcon name="article" className="text-5xl text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">কোনো গাইড পাওয়া যায়নি</p>
-            </div>
+              {filteredArticles.length === 0 && (
+                <div className="text-center py-12">
+                  <MaterialIcon name="article" className="text-5xl text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">কোনো গাইড পাওয়া যায়নি</p>
+                </div>
+              )}
+            </>
           )}
 
           {/* Newsletter CTA */}

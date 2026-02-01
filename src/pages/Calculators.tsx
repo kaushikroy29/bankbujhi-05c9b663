@@ -47,6 +47,15 @@ const Calculators = () => {
             link: "/calculator/fdr",
             color: "text-green-600",
             bgColor: "bg-green-100/50"
+        },
+        {
+            id: "investment-calculator",
+            title: "ইনভেস্টমেন্ট প্ল্যানার",
+            description: "SIP বা এককালীন বিনিয়োগ ১০ বছর পর কত হবে? দেখুন কম্পাউন্ডিং এর জাদু।",
+            icon: "trending_up",
+            link: "/calculator/investment",
+            color: "text-purple-600",
+            bgColor: "bg-purple-100/50"
         }
     ];
 

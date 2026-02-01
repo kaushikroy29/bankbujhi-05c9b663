@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { ScrollToTop } from "./components/utils/ScrollToTop";
+
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Compare from "./pages/Compare";
@@ -13,6 +15,7 @@ import Banks from "./pages/Banks";
 import NBFIs from "./pages/NBFIs";
 import MFIs from "./pages/MFIs";
 import Guides from "./pages/Guides";
+import GuideDetail from "./pages/GuideDetail";
 
 import Contact from "./pages/Contact";
 import About from "./pages/About";
@@ -23,6 +26,7 @@ import MonthlyPicks from "./pages/MonthlyPicks";
 import Eligibility from "./pages/Eligibility";
 import SignUp from "./pages/SignUp";
 import CardDetails from "./pages/CardDetails";
+import LoanDetails from "./pages/LoanDetails";
 import Team from "./pages/Team";
 import Careers from "./pages/Careers";
 import FinancialTips from "./pages/FinancialTips";
@@ -38,10 +42,11 @@ import PendingUpdates from "./pages/admin/PendingUpdates";
 import CreditCardCostCalculator from "./components/calculators/CreditCardCostCalculator";
 import EMICalculator from "./components/calculators/EMICalculator";
 import FDRCalculator from "./components/calculators/FDRCalculator";
+import InvestmentCalculator from "./components/calculators/InvestmentCalculator";
 import Calculators from "./pages/Calculators";
-import GuideDetail from "./pages/GuideDetail";
 import QuickUpdate from "./pages/admin/QuickUpdate";
 import Admin from "./pages/Admin";
+import UserFavorites from "./pages/UserFavorites";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +57,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/compare" element={<Compare />} />
@@ -77,11 +83,13 @@ const App = () => (
             <Route path="/eligibility" element={<Eligibility />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/cards/:id" element={<CardDetails />} />
+            <Route path="/loans/:id" element={<LoanDetails />} />
             <Route path="/quiz" element={<CardQuiz />} />
             <Route path="/mfs" element={<MFS />} />
             <Route path="/glossary" element={<Glossary />} />
             <Route path="/calculator/emi" element={<div className="container py-10 max-w-4xl"><div className="mb-6"><h1 className="text-3xl font-black mb-2 text-center">EMI ক্যালকুলেটর</h1></div><EMICalculator /></div>} />
             <Route path="/calculator/fdr" element={<FDRCalculator />} />
+            <Route path="/calculator/investment" element={<div className="container py-10 max-w-4xl"><InvestmentCalculator /></div>} />
             <Route path="/tools/calculator" element={<div className="container py-10 max-w-4xl"><CreditCardCostCalculator /></div>} />
             <Route path="/tools" element={<Calculators />} />
             <Route path="/recommendations" element={<Recommendations />} />
@@ -89,6 +97,7 @@ const App = () => (
             <Route path="/admin/updates" element={<PendingUpdates />} />
             <Route path="/admin/quick-update" element={<QuickUpdate />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/favorites" element={<UserFavorites />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

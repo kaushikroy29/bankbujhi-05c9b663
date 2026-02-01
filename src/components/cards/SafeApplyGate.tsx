@@ -9,27 +9,38 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import MaterialIcon from "@/components/ui/MaterialIcon";
-import { CreditCard } from "@/lib/api/banks";
+import { CreditCard, LoanProduct } from "@/lib/api/banks";
 
 interface SafeApplyGateProps {
     children: React.ReactNode;
-    product: CreditCard; // Can be extended for LoanProduct later
+    product: CreditCard | LoanProduct;
 }
 
 const SafeApplyGate = ({ children, product }: SafeApplyGateProps) => {
     const [open, setOpen] = useState(false);
+    const [checks, setChecks] = useState({
+        fees: false,
+        interest: false,
+        conditions: false
+    });
 
-    // Extract key data for the summary
-    const annualFee = product.fees?.annual || product.annual_fee || "N/A";
-    const interestRate = product.fees?.interest_rate || product.interest_rate || "N/A";
+    // Extract key data
+    const isLoan = 'loan_type' in product;
+    const annualFee = isLoan ? product.processing_fee : (product as CreditCard).fees?.annual || (product as CreditCard).annual_fee || "N/A";
+    const interestRate = isLoan ? `${product.interest_rate_min}%` : (product as CreditCard).fees?.interest_rate || (product as CreditCard).interest_rate || "N/A";
 
     const handleProceed = () => {
         if (product.apply_url) {
             window.open(product.apply_url, '_blank', 'noopener,noreferrer');
             setOpen(false);
+            // Reset checks for next time
+            setChecks({ fees: false, interest: false, conditions: false });
         }
     };
+
+    const allChecked = Object.values(checks).every(Boolean);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -39,59 +50,89 @@ const SafeApplyGate = ({ children, product }: SafeApplyGateProps) => {
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-xl">
-                        <MaterialIcon name="login" className="text-blue-600" />
-                        আপনি ব্যাংকের ওয়েবসাইটে যাচ্ছেন
+                        <MaterialIcon name="security" className="text-primary" />
+                        নিরাপত্তা চেকলিস্ট
                     </DialogTitle>
                     <DialogDescription>
-                        আবেদন করার আগে নিশ্চিত করুন যে আপনি এই খরচগুলো সম্পর্কে জানেন
+                        আবেদন করার আগে নিশ্চিত করুন যে আপনি নিচের বিষয়গুলো যাচাই করেছেন
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="py-4 space-y-4">
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 space-y-3">
-                        <h4 className="font-semibold text-blue-900 mb-2">খরচের সারসংক্ষেপ:</h4>
-
-                        <div className="flex items-center gap-3">
-                            <MaterialIcon name="payments" className="text-blue-600" />
+                    <div className="bg-muted/30 p-4 rounded-lg border space-y-3">
+                        <h4 className="font-semibold text-sm mb-2">খরচের সারসংক্ষেপ:</h4>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
                             <div>
-                                <span className="text-sm text-blue-800 block">বার্ষিক ফি</span>
-                                <span className="font-bold text-blue-900">{annualFee}</span>
-                                {product.annual_fee_waived && (
-                                    <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded ml-2">শর্তসাপেক্ষে ফ্রি</span>
-                                )}
+                                <span className="text-muted-foreground block text-xs">{isLoan ? 'প্রসেসিং ফি' : 'বার্ষিক ফি'}</span>
+                                <span className="font-bold">{annualFee}</span>
                             </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <MaterialIcon name="percent" className="text-blue-600" />
                             <div>
-                                <span className="text-sm text-blue-800 block">সুদের হার</span>
-                                <span className="font-bold text-blue-900">{interestRate}</span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <MaterialIcon name="warning" className="text-amber-600" />
-                            <div>
-                                <span className="text-sm text-blue-800 block">লুকানো খরচ</span>
-                                <span className="font-medium text-amber-700 text-sm">বিস্তারিত ফি ব্রেকডাউন দেখেছেন তো?</span>
+                                <span className="text-muted-foreground block text-xs">সুদের হার</span>
+                                <span className="font-bold">{interestRate}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="text-xs text-muted-foreground bg-gray-50 p-3 rounded">
-                        ⚠️ <strong>Disclaimer:</strong> BankBujhi কোনো ব্যাংক নয়। আমরা শুধু তথ্য দিই।
-                        ব্যাংকের ওয়েবসাইটে গিয়ে সব শর্ত ভালো করে পড়ে তারপর আবেদন করুন।
+                    <div className="space-y-3">
+                        <div className="flex items-start gap-2 max-w-[90%]">
+                            <Checkbox
+                                id="check-fees"
+                                checked={checks.fees}
+                                onCheckedChange={(c) => setChecks(p => ({ ...p, fees: c as boolean }))}
+                            />
+                            <div className="grid gap-1.5 leading-none">
+                                <label
+                                    htmlFor="check-fees"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    আমি সকল ফি এবং চার্জ সম্পর্কে জেনেছি
+                                </label>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-2 max-w-[90%]">
+                            <Checkbox
+                                id="check-interest"
+                                checked={checks.interest}
+                                onCheckedChange={(c) => setChecks(p => ({ ...p, interest: c as boolean }))}
+                            />
+                            <div className="grid gap-1.5 leading-none">
+                                <label
+                                    htmlFor="check-interest"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    আমি সুদের হার ও পরিশোধের শর্ত বুঝতে পেরেছি
+                                </label>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-2 max-w-[90%]">
+                            <Checkbox
+                                id="check-conditions"
+                                checked={checks.conditions}
+                                onCheckedChange={(c) => setChecks(p => ({ ...p, conditions: c as boolean }))}
+                            />
+                            <div className="grid gap-1.5 leading-none">
+                                <label
+                                    htmlFor="check-conditions"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    আমি ব্যাংকের অফিসিয়াল সাইট ভিজিট করতে সম্মত
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <DialogFooter className="flex-col sm:flex-row gap-2">
-                    <Button variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-auto">
-                        বাতিল
+                    <Button variant="ghost" onClick={() => setOpen(false)}>
+                        ফিরে যান
                     </Button>
-                    <Button onClick={handleProceed} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 gap-2">
-                        আমি বুঝেছি, এগিয়ে যান
-                        <MaterialIcon name="open_in_new" className="text-sm" />
+                    <Button
+                        onClick={handleProceed}
+                        disabled={!allChecked}
+                        className="bg-green-600 hover:bg-green-700 gap-2"
+                    >
+                        নিশ্চিত ও আবেদন করুন
+                        <MaterialIcon name="arrow_forward" className="text-sm" />
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -274,6 +274,20 @@ export async function fetchLoanProducts(filters?: {
   return (data || []) as LoanProduct[];
 }
 
+// Fetch single loan product
+export async function fetchLoanProduct(id: string) {
+  const { data, error } = await supabase
+    .from('loan_products')
+    .select('*, banks(*)')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  return data as LoanProduct;
+}
+
 // Trigger scraping
 export async function triggerScrape(bankId?: string) {
   const { data, error } = await supabase.functions.invoke('scrape-bank-data', {

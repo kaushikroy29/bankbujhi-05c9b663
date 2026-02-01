@@ -1,5 +1,5 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getArticleById } from "@/data/guides";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
@@ -8,10 +8,58 @@ import MaterialIcon from "@/components/ui/MaterialIcon";
 import SEOHead from "@/components/seo/SEOHead";
 import { Button } from "@/components/ui/button";
 import SocialShare from "@/components/ui/SocialShare";
+import { adminService } from "@/services/adminService"; // NEW import
+import LikeButton from "@/components/ui/LikeButton";
 
 const GuideDetail = () => {
     const { id } = useParams<{ id: string }>();
-    const article = getArticleById(id || "");
+    const [article, setArticle] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const load = async () => {
+            if (!id) return;
+            try {
+                // Try fetching by slug (which id is in this context)
+                const data = await adminService.getGuideBySlug(id); // Ensure you use slug if id is slug
+                // If not found by slug, maybe check if it's an ID? 
+                // For now assuming UUIDs or Slugs are used. 
+                // The adminService.getGuideBySlug implementation uses 'slug' col.
+                // If id is actually an ID (UUID), this might fail if we don't have getGuideById.
+                // But Phase 6 plan said ID is slug for URL mostly.
+                if (data) {
+                    setArticle({
+                        id: data.id,
+                        title: data.title,
+                        titleEn: data.title_en,
+                        category: data.category,
+                        readTime: data.read_time,
+                        date: new Date(data.created_at).getFullYear().toString(),
+                        image: data.image_url,
+                        content: data.content,
+                        excerpt: data.excerpt
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to load guide:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <Header />
+                <main className="flex-1 flex items-center justify-center">
+                    <MaterialIcon name="refresh" className="animate-spin text-4xl text-primary" />
+                </main>
+                <Footer />
+            </div>
+        )
+    }
 
     if (!article) {
         return (
@@ -54,17 +102,6 @@ const GuideDetail = () => {
                                 <h1 className="text-3xl md:text-4xl font-black leading-tight mb-4">
                                     {article.title}
                                 </h1>
-                                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b">
-                                    <span className="flex items-center gap-1">
-                                        <MaterialIcon name="calendar_today" className="text-sm" />
-                                        {article.date || "2025"}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <MaterialIcon name="schedule" className="text-sm" />
-                                        {article.readTime} পড়ার সময়
-                                    </span>
-                                </div>
-
                                 {article.image && (
                                     <img
                                         src={article.image}
@@ -72,6 +109,20 @@ const GuideDetail = () => {
                                         className="w-full aspect-video object-cover rounded-xl mb-8 shadow-sm"
                                     />
                                 )}
+
+                                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b justify-between">
+                                    <div className="flex gap-4">
+                                        <span className="flex items-center gap-1">
+                                            <MaterialIcon name="calendar_today" className="text-sm" />
+                                            {article.date}
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <MaterialIcon name="schedule" className="text-sm" />
+                                            {article.readTime} পড়ার সময়
+                                        </span>
+                                    </div>
+                                    <LikeButton itemId={article.id} itemType="guide" />
+                                </div>
 
                                 <div className="prose prose-lg max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-a:text-primary">
                                     {article.content ? (
@@ -84,8 +135,9 @@ const GuideDetail = () => {
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-8 border-t">
+                            <div className="mt-8 pt-8 border-t flex items-center justify-between">
                                 <SocialShare title={article.title} />
+                                <LikeButton itemId={article.id} itemType="guide" variant="icon" />
                             </div>
                         </div>
 
