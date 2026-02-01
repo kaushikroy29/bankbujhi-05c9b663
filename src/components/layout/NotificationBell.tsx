@@ -33,12 +33,21 @@ const NotificationBell = () => {
     }, []);
 
     const checkAuthAndLoadNotifications = useCallback(async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        setIsAuthenticated(!!user);
+        try {
+            const getUser = supabase?.auth?.getUser;
+            const result = getUser ? await getUser() : { data: { user: null } };
+            const user = result?.data?.user ?? null;
+            setIsAuthenticated(!!user);
 
-        if (user) {
-            await loadNotifications();
-            await loadUnreadCount();
+            if (user) {
+                await loadNotifications();
+                await loadUnreadCount();
+            }
+        } catch (err) {
+            // Avoid crashing tests or the app if auth is unavailable
+            // eslint-disable-next-line no-console
+            console.error('NotificationBell: auth check failed', err);
+            setIsAuthenticated(false);
         }
     }, [loadNotifications, loadUnreadCount]);
 
