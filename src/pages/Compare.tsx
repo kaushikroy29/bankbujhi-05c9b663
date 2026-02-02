@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import SEOHead from "@/components/seo/SEOHead";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import DownloadComparison from "@/components/ui/DownloadComparison";
 
 const categories = [
   { value: "all", label: "সব ক্যাটাগরি" },
@@ -675,7 +676,18 @@ const Compare = () => {
                 </div>
               </ScrollArea>
 
-              <div className="p-4 border-t bg-muted/20 shrink-0 flex justify-end">
+              <div className="p-4 border-t bg-muted/20 shrink-0 flex justify-between items-center">
+                {selectedCards.length > 0 && (
+                  <DownloadComparison
+                    title="Credit Card Comparison"
+                    headers={["Feature", ...selectedCards.map(c => c.name)]}
+                    data={[
+                      ["Annual Fee", ...selectedCards.map(c => c.annual_fee || "N/A")],
+                      ["Interest Rate", ...selectedCards.map(c => c.interest_rate || "N/A")],
+                      ["Benefits", ...selectedCards.map(c => c.benefits.slice(0, 3).map(b => b.text).join(", "))]
+                    ]}
+                  />
+                )}
                 <Button onClick={() => setShowCompareModal(false)}>বন্ধ করুন</Button>
               </div>
             </DialogContent>

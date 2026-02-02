@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Compare from "./pages/Compare";
 import PersonalLoans from "./pages/PersonalLoans";
+import EducationLoans from "./pages/EducationLoans";
 import FDRSavings from "./pages/FDRSavings";
 import Banks from "./pages/Banks";
 import NBFIs from "./pages/NBFIs";
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/compare" element={<Compare />} />
             <Route path="/loans" element={<PersonalLoans />} />
+            <Route path="/education-loans" element={<EducationLoans />} />
             <Route path="/savings" element={<FDRSavings />} />
             <Route path="/banks" element={<Banks />} />
             <Route path="/nbfi" element={<NBFIs />} />
