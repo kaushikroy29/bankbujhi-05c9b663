@@ -124,6 +124,7 @@ const EducationLoans = () => {
                             <button
                                 key={type}
                                 onClick={() => setLoanType(type)}
+                                aria-pressed={loanType === type}
                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${loanType === type
                                     ? "bg-primary text-primary-foreground"
                                     : "bg-card border border-primary/10 hover:bg-primary/5"
@@ -172,6 +173,7 @@ const EducationLoans = () => {
                                         max={2000000}
                                         step={10000}
                                         className="w-full"
+                                        aria-label="লোনের পরিমাণ"
                                     />
                                     <div className="flex justify-between mt-3 sm:mt-4 text-[10px] sm:text-xs font-medium text-muted-foreground">
                                         <span>৳ ৫০,০০০</span>
@@ -193,6 +195,7 @@ const EducationLoans = () => {
                                         max={10}
                                         step={1}
                                         className="w-full"
+                                        aria-label="লোনের মেয়াদ"
                                     />
                                     <div className="flex justify-between mt-3 sm:mt-4 text-[10px] sm:text-xs font-medium text-muted-foreground">
                                         <span>১ বছর</span>

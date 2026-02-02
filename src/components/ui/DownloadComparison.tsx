@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import MaterialIcon from "@/components/ui/MaterialIcon";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+
 
 interface DownloadComparisonProps {
     title: string;
@@ -19,32 +19,77 @@ const DownloadComparison = ({
     disabled = false
 }: DownloadComparisonProps) => {
 
-    const handleDownload = () => {
-        const doc = new jsPDF();
+    const handleDownload = async () => {
+        // Create a temporary hidden container for the table
+        const printContainer = document.createElement("div");
+        printContainer.style.position = "absolute";
+        printContainer.style.left = "-9999px";
+        printContainer.style.top = "0";
+        printContainer.style.width = "800px"; // Fixed width for A4 like scaling
+        printContainer.style.background = "#fff";
+        printContainer.style.padding = "40px";
+        printContainer.style.color = "#000";
+        // Explicitly set font family to ensure system fonts are picked up
+        printContainer.style.fontFamily = "'Noto Sans Bengali', sans-serif";
 
-        // Add Bengali font support check or fallback
-        // Note: Standard jsPDF doesn't support Bengali Unicode out of the box without custom fonts.
-        // For now, we will use English text or transliterations where possible, 
-        // or rely on the user understanding that Bangla might render incorrectly without a font pack.
-        // Ideally we would load a base64 font here.
+        // Construct HTML content
+        const tableHtml = `
+            <div style="font-family: 'Noto Sans Bengali', sans-serif;">
+                <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #16a34a;">BankBujhi Comparison</h1>
+                <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 20px;">${title}</h2>
+                <div style="margin-bottom: 20px; font-size: 12px; color: #666;">Generated on: ${new Date().toLocaleDateString()}</div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                    <thead>
+                        <tr style="background-color: #f3f4f6;">
+                            ${headers.map(h => `<th style="border: 1px solid #e5e7eb; padding: 12px; text-align: left; font-weight: bold;">${h}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map((row, i) => `
+                            <tr style="background-color: ${i % 2 === 0 ? '#fff' : '#f9fafb'};">
+                                ${row.map(cell => `<td style="border: 1px solid #e5e7eb; padding: 10px;">${cell}</td>`).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <div style="margin-top: 30px; font-size: 10px; color: #999; text-align: center;">
+                    www.bankbujhi.lovable.app
+                </div>
+            </div>
+        `;
 
-        doc.setFontSize(18);
-        doc.text("BankBujhi Comparison", 14, 22);
+        printContainer.innerHTML = tableHtml;
+        document.body.appendChild(printContainer);
 
-        doc.setFontSize(11);
-        doc.text(title, 14, 30);
-        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 36);
+        try {
+            // Dynamically import html2canvas to optimize initial bundle
+            const html2canvas = (await import('html2canvas')).default;
 
-        autoTable(doc, {
-            startY: 44,
-            head: [headers],
-            body: data,
-            theme: 'grid',
-            headStyles: { fillColor: [22, 163, 74] }, // Primary color approx
-            styles: { fontSize: 10 },
-        });
+            const canvas = await html2canvas(printContainer, {
+                scale: 2, // Higher scale for better quality
+                useCORS: true,
+                logging: false
+            });
 
-        doc.save(fileName);
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210; // A4 width in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            pdf.save(fileName);
+
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+            alert("PDF জেনারেট করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
+        } finally {
+            document.body.removeChild(printContainer);
+        }
     };
 
     return (
