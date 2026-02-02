@@ -11,6 +11,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scrapers.banks.brac_bank import BracBankScraper
 from scrapers.banks.dbbl import DbblScraper
 from scrapers.banks.ebl import EblScraper
+from scrapers.banks.standard_chartered import StandardCharteredScraper
+from scrapers.banks.prime_bank import PrimeBankScraper
 
 # Load env variables from .env file in parent directory
 # Load .env first, then .env.local to override (matching Vite's behavior)
@@ -22,6 +24,8 @@ SCRAPERS = [
     BracBankScraper(),
     DbblScraper(),
     EblScraper(),
+    StandardCharteredScraper(),
+    PrimeBankScraper(),
 ]
 
 def main():

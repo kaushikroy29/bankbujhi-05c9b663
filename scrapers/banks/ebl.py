@@ -54,10 +54,21 @@ class EblScraper(BaseScraper):
                         elif href.startswith('http'):
                             detail_url = href
                     
+                    # Extract image URL
+                    img_el = element.select_one('img')
+                    image_url = ""
+                    if img_el and img_el.get('src'):
+                        src = img_el.get('src')
+                        if src.startswith('/'):
+                            image_url = self.BASE_URL + src
+                        elif src.startswith('http'):
+                            image_url = src
+
                     card_data = {
                         "name": name,
                         "features": features if features else ["Contact bank for details"],
                         "detail_url": detail_url,
+                        "image_url": image_url,
                         "annual_fee": "Contact bank",
                         "interest_rate": "Contact bank"
                     }
@@ -80,22 +91,23 @@ class EblScraper(BaseScraper):
         return cards
     
     def _get_fallback_cards(self) -> list[dict]:
-        """Return fallback card data when scraping fails."""
         return [
             {
-                "name": "EBL Visa Platinum Credit Card",
+                "name": "EBL Visa Platinum",
                 "annual_fee": "BDT 5,000",
                 "interest_rate": "20% p.a.",
                 "features": ["EBL Skybanking", "Airport Lounge Access"],
                 "detail_url": f"{self.BASE_URL}/consumer-banking/cards/credit-cards",
+                "image_url": "",
                 "is_fallback": True
             },
             {
-                "name": "EBL Visa Signature Credit Card",
+                "name": "EBL Visa Signature",
                 "annual_fee": "BDT 10,000",
                 "interest_rate": "20% p.a.",
                 "features": ["Meet & Greet Service", "Global Data Roaming"],
                 "detail_url": f"{self.BASE_URL}/consumer-banking/cards/credit-cards",
+                "image_url": "",
                 "is_fallback": True
             }
         ]

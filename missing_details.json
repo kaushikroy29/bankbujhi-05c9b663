@@ -1,79 +1,338 @@
 [
   {
-    "name": "Visa Platinum Credit Card",
-    "image_url": null,
-    "banks": {
-      "name": "Eastern Bank PLC"
-    }
-  },
-  {
-    "name": "Visa Signature Credit Card",
+    "name": "BRAC Bank Platinum Card",
     "image_url": null,
     "banks": {
       "name": "BRAC Bank"
     }
   },
   {
-    "name": "Visa Signature Credit Card",
-    "image_url": null,
-    "banks": {
-      "name": "Standard Chartered"
-    }
-  },
-  {
-    "name": "Visa Platinum Credit Card",
-    "image_url": null,
-    "banks": {
-      "name": "Eastern Bank PLC"
-    }
-  },
-  {
-    "name": "Visa Signature Credit Card",
+    "name": "BRAC Bank Signature Card",
     "image_url": null,
     "banks": {
       "name": "BRAC Bank"
     }
   },
   {
-    "name": "Visa Signature Credit Card",
-    "image_url": null,
-    "banks": {
-      "name": "Standard Chartered"
-    }
-  },
-  {
-    "name": "Visa Platinum Credit Card",
+    "name": "EBL Mastercard Titanic",
     "image_url": null,
     "banks": {
       "name": "Eastern Bank PLC"
     }
   },
   {
-    "name": "Visa Signature Credit Card",
+    "name": "EBL Visa Platinum",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Card",
     "image_url": null,
     "banks": {
       "name": "BRAC Bank"
     }
   },
   {
-    "name": "Visa Signature Credit Card",
+    "name": "BRAC Bank Signature Card",
     "image_url": null,
     "banks": {
-      "name": "Standard Chartered"
+      "name": "BRAC Bank"
     }
   },
   {
-    "name": "Visa Infinite Credit Card",
+    "name": "EBL Mastercard Titanic",
     "image_url": null,
     "banks": {
-      "name": "Standard Chartered"
+      "name": "Eastern Bank PLC"
     }
   },
   {
-    "name": "Visa Platinum Credit Card",
+    "name": "EBL Visa Platinum",
     "image_url": null,
     "banks": {
-      "name": "Prime Bank"
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Mastercard Titanic",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Mastercard Titanic",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Mastercard Titanic",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Mastercard Titanic",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Signature Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Mastercard Titanic",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Mastercard Titanic",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Visa Signature Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "BRAC Bank Signature Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
+    }
+  },
+  {
+    "name": "EBL Mastercard Titanic",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Signature Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "EBL Visa Platinum Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "Eastern Bank PLC"
+    }
+  },
+  {
+    "name": "BRAC Bank Platinum Credit Card",
+    "image_url": null,
+    "banks": {
+      "name": "BRAC Bank"
     }
   }
 ]

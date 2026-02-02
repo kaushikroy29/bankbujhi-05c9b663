@@ -2,17 +2,17 @@ from bs4 import BeautifulSoup
 from ..base_scraper import BaseScraper
 
 
-class DbblScraper(BaseScraper):
-    """Scraper for Dutch Bangla Bank credit cards and loan products."""
+class StandardCharteredScraper(BaseScraper):
+    """Scraper for Standard Chartered Bank credit cards and loan products."""
     
-    BASE_URL = "https://www.dutchbanglabank.com"
-    CARDS_URL = "https://www.dutchbanglabank.com/credit-card/credit-card.html"
+    BASE_URL = "https://www.sc.com/bd"
+    CARDS_URL = "https://www.sc.com/bd/credit-cards/"
     
     def get_bank_slug(self) -> str:
-        return "dutch-bangla-bank"
+        return "standard-chartered"
     
     def scrape_credit_cards(self) -> list[dict]:
-        """Scrape credit card data from DBBL website."""
+        """Scrape credit card data from SC website."""
         cards = []
         
         try:
@@ -20,17 +20,18 @@ class DbblScraper(BaseScraper):
             response = self.fetch_page(self.CARDS_URL)
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Try to find card containers
-            card_elements = soup.select('.card-item, .product-card, [class*="card"]')
+            # SC usually uses specific classes for their product cards
+            card_elements = soup.select('.sc-product-card, .card-module, .c-product-card')
             
             if not card_elements:
-                card_elements = soup.select('article, .col-md-4, .col-lg-4, .row > div')
+                 # Fallback selectors
+                card_elements = soup.select('.col-md-4, .col-lg-4, .row > div')
             
             self.logger.info(f"Found {len(card_elements)} potential card elements")
             
             for element in card_elements:
                 try:
-                    name_el = element.select_one('h2, h3, h4, .card-title, .title, strong')
+                    name_el = element.select_one('h2, h3, h4, .card-title, .title')
                     if not name_el:
                         continue
                         
@@ -39,7 +40,7 @@ class DbblScraper(BaseScraper):
                         continue
                     
                     features = []
-                    feature_els = element.select('li, .feature, p')
+                    feature_els = element.select('li, .sc-list-item, .feature')
                     for feat in feature_els[:5]:
                         feat_text = feat.get_text(strip=True)
                         if feat_text and len(feat_text) > 5:
@@ -53,7 +54,7 @@ class DbblScraper(BaseScraper):
                             detail_url = self.BASE_URL + href
                         elif href.startswith('http'):
                             detail_url = href
-                    
+                            
                     # Extract image URL
                     img_el = element.select_one('img')
                     image_url = ""
@@ -63,7 +64,7 @@ class DbblScraper(BaseScraper):
                             image_url = self.BASE_URL + src
                         elif src.startswith('http'):
                             image_url = src
-
+                    
                     card_data = {
                         "name": name,
                         "features": features if features else ["Contact bank for details"],
@@ -85,7 +86,7 @@ class DbblScraper(BaseScraper):
                 cards = self._get_fallback_cards()
                 
         except Exception as e:
-            self.logger.error(f"Error scraping DBBL cards: {e}")
+            self.logger.error(f"Error scraping SC cards: {e}")
             cards = self._get_fallback_cards()
         
         return cards
@@ -94,22 +95,31 @@ class DbblScraper(BaseScraper):
         """Return fallback card data when scraping fails."""
         return [
             {
-                "name": "DBBL Platinum Credit Card",
-                "annual_fee": "BDT 5,000",
-                "interest_rate": "18% p.a.",
-                "features": ["Free Supplementary Card", "Discount at Partner Merchants"],
-                "detail_url": f"{self.BASE_URL}/credit-card/credit-card.html",
+                "name": "Visa Signature Credit Card",
+                "annual_fee": "BDT 15,000",
+                "interest_rate": "20% p.a.",
+                "features": ["Airport Lounge Access", "Rewards Program", "Travel Insurance"],
+                "detail_url": f"{self.BASE_URL}/credit-cards/visa-signature-card",
                 "image_url": "",
                 "is_fallback": True
             },
             {
-                "name": "DBBL Gold Credit Card",
-                "annual_fee": "BDT 3,000",
-                "interest_rate": "18% p.a.",
-                "features": ["Low Interest Rate", "EMI Facility"],
-                "detail_url": f"{self.BASE_URL}/credit-card/credit-card.html",
+                "name": "Visa Platinum Credit Card",
+                "annual_fee": "BDT 5,000",
+                "interest_rate": "20% p.a.",
+                "features": ["BOGO Offers", "Dining Discounts"],
+                "detail_url": f"{self.BASE_URL}/credit-cards/visa-platinum-card",
                 "image_url": "",
                 "is_fallback": True
+            },
+            {
+                 "name": "Visa Infinite Credit Card",
+                 "annual_fee": "BDT 25,000",
+                 "interest_rate": "20% p.a.",
+                 "features": ["Unlimited Lounge Access", "Concierge Service", "Golf Privileges"],
+                 "detail_url": f"{self.BASE_URL}/credit-cards/visa-infinite-card",
+                 "image_url": "",
+                 "is_fallback": True
             }
         ]
     
