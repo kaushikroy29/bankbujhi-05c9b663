@@ -30,7 +30,7 @@ interface CreditCardListingProps {
 
 const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardListingProps) => {
   return (
-    <div className="bg-card border border-primary/10 rounded-2xl p-4 sm:p-5 hover:shadow-xl transition-all group relative">
+    <div className="bg-card border border-primary/10 rounded-2xl p-4 sm:p-5 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 group relative">
       <div className="flex flex-col gap-4">
         {/* Mobile: Header with badge and bank */}
         <div className="flex items-start justify-between md:hidden">
@@ -133,10 +133,10 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
             <div className="grid grid-cols-1 gap-2 sm:gap-3">
               {card.benefits.map((benefit, index) => (
                 <div key={index} className="flex items-center gap-2 sm:gap-3">
-                  <div className="size-7 sm:size-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
+                  <div className="size-7 sm:size-8 rounded-lg bg-primary/5 group-hover:bg-primary/10 transition-colors flex items-center justify-center text-primary shrink-0">
                     <MaterialIcon name={benefit.icon} className="text-base sm:text-lg" />
                   </div>
-                  <p className="text-sm font-medium truncate">{benefit.text}</p>
+                  <p className="text-sm font-medium truncate text-muted-foreground group-hover:text-foreground transition-colors">{benefit.text}</p>
                 </div>
               ))}
             </div>
@@ -184,8 +184,9 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
             </div>
 
             <Link to={`/cards/${card.id}`}>
-              <Button className="w-full font-bold">
+              <Button className="w-full font-bold shadow-sm group-hover:shadow-md transition-all">
                 View Details
+                <MaterialIcon name="arrow_forward" className="ml-2 text-lg" />
               </Button>
             </Link>
           </div>
@@ -220,8 +221,9 @@ const CreditCardListing = ({ card, isComparing, onToggleCompare }: CreditCardLis
             </span>
           </label>
           <Link to={`/cards/${card.id}`} className="flex-1">
-            <Button className="w-full font-bold h-10">
+            <Button className="w-full font-bold h-10 shadow-sm">
               View Details
+              <MaterialIcon name="arrow_forward" className="ml-2 text-lg" />
             </Button>
           </Link>
         </div>

@@ -77,8 +77,9 @@ const LoanOfferCard = ({ offer }: LoanOfferCardProps) => {
       </td>
       <td className="px-6 py-8 rounded-r-xl">
         <Link to={`/loans/${offer.id}`}>
-          <Button className="w-full font-bold">
+          <Button className="w-full font-bold shadow-sm group-hover:shadow-md transition-all">
             বিস্তারিত দেখুন
+            <MaterialIcon name="arrow_forward" className="ml-2 text-lg" />
           </Button>
         </Link>
       </td>

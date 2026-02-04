@@ -73,10 +73,12 @@ const FeaturedCard = ({
         <div className="flex gap-2">
           <Button 
             size="sm" 
-            className="flex-1 text-xs font-bold"
+            className="flex-1 text-xs font-bold shadow-sm group-hover:shadow-md transition-all"
             asChild
           >
-            <Link to={`/cards/${id}`}>Details</Link>
+            <Link to={`/cards/${id}`}>
+              Details <MaterialIcon name="arrow_forward" className="ml-1 text-xs" />
+            </Link>
           </Button>
           {applyUrl ? (
             <Button 
