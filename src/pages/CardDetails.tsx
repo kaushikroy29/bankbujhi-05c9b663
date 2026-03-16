@@ -17,11 +17,13 @@ import SocialShare from "@/components/ui/SocialShare";
 import SafeApplyGate from "@/components/cards/SafeApplyGate";
 import SuitabilityChecker from "@/components/cards/SuitabilityChecker";
 import HiddenTruthsPanel from "@/components/cards/HiddenTruthsPanel";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CardDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [card, setCard] = useState<CreditCard | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (id) {
@@ -92,7 +94,7 @@ const CardDetails = () => {
       const incomeNum = incomeMatch ? parseInt(incomeMatch[0].replace(/,/g, "")) : 0;
       if (incomeNum >= 75000) {
         // High income requirement warning
-        points.push(`যাদের আয় ৳${incomeNum.toLocaleString()}-এর কম`);
+        points.push(`যাদের আয় ${t('taka_symbol')}${incomeNum.toLocaleString()}-এর কম`);
       }
     }
 
@@ -139,7 +141,7 @@ const CardDetails = () => {
             <h1 className="text-2xl font-bold mb-2">কার্ড পাওয়া যায়নি</h1>
             <p className="text-muted-foreground mb-6">আপনি যে কার্ডটি খুঁজছেন সেটি বিদ্যমান নেই।</p>
             <Link to="/compare">
-              <Button>সব কার্ড দেখুন</Button>
+              <Button>{t('btn_view_all')}</Button>
             </Link>
           </div>
         </main>
@@ -156,7 +158,7 @@ const CardDetails = () => {
   return (
     <>
       <SEOHead
-        title={`${card.name} | BankBujhi`}
+        title={`${card.name} | ${t('site_title')}`}
         description={`${bankName}-এর ${card.name} ক্রেডিট কার্ডের সুবিধা, ফি ও যোগ্যতা দেখুন।`}
         path={`/cards/${id}`}
       />
@@ -169,50 +171,63 @@ const CardDetails = () => {
             <div className="container mx-auto px-4 py-6 md:py-10">
               <PageBreadcrumb
                 items={[
-                  { label: "ক্রেডিট কার্ড", href: "/compare" },
+                  { label: t('nav_cards'), href: "/compare" },
                   { label: card.name }
                 ]}
                 className="mb-6"
               />
 
-              <div className="flex flex-col md:flex-row gap-6 md:gap-10">
-                {/* Card Image */}
-                <div className="w-full md:w-72 shrink-0">
-                  <div className="relative aspect-[1.6/1] rounded-2xl overflow-hidden shadow-xl">
+              <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start">
+                {/* Card Image - Enhanced Presentation */}
+                <div className="w-full md:w-80 shrink-0 relative group perspective-1000">
+                  <div className="relative aspect-[1.586/1] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-105 hover:rotate-1">
                     <img
-                      src={card.image_url || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400"}
+                      src={card.image_url || "/placeholder-card.png"}
                       alt={card.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover bg-white"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/placeholder-card.png";
+                      }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                    {/* Glossy Overlay Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-black/5 via-white/10 to-transparent opacity-50 pointer-events-none" />
                   </div>
+                  
+                  {/* Reflection/Shadow underneath */}
+                  <div className="absolute -bottom-4 left-4 right-4 h-4 bg-black/20 blur-xl rounded-full" />
                 </div>
 
                 {/* Card Info */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="flex-1 text-center md:text-left">
+                  <div className="flex items-center justify-center md:justify-start gap-2 mb-3">
                     {card.badge && (
-                      <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase tracking-wider">
+                      <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-bold rounded-full uppercase tracking-wider shadow-sm">
                         {card.badge}
                       </span>
                     )}
-                    <span className="text-sm font-bold text-muted-foreground">{bankName}</span>
+                    <span className="text-sm font-bold text-muted-foreground bg-background/50 px-2 py-1 rounded-md border border-border/50">
+                      {bankName}
+                    </span>
                   </div>
 
-                  <h1 className="text-2xl md:text-3xl font-black mb-1">{card.name}</h1>
-                  <p className="text-muted-foreground mb-4">{card.category}</p>
+                  <h1 className="text-3xl md:text-4xl font-black mb-2 tracking-tight leading-tight">
+                    {card.name}
+                  </h1>
+                  <p className="text-lg text-muted-foreground mb-6 font-medium">
+                    {card.category}
+                  </p>
 
-                  <div className="flex flex-wrap gap-3 mb-6">
+                  <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-8">
                     {card.apply_url ? (
                       <Button size="lg" className="font-bold" onClick={() => document.getElementById('suitability')?.scrollIntoView({ behavior: 'smooth' })}>
                         <MaterialIcon name="visibility" className="text-lg mr-1" />
-                        বিস্তারিত দেখুন
+                        {t('btn_details')}
                       </Button>
                     ) : (
                       <Button size="lg" className="font-bold" asChild>
                         <Link to="/eligibility">
                           <MaterialIcon name="fact_check" className="text-lg mr-1" />
-                          যোগ্যতা যাচাই করুন
+                          {t('btn_eligibility')}
                         </Link>
                       </Button>
                     )}
@@ -224,7 +239,7 @@ const CardDetails = () => {
                     <Button size="lg" variant="outline" className="font-bold border-primary text-primary hover:bg-primary/5" asChild>
                       <Link to="/calculator/emi">
                         <MaterialIcon name="calculate" className="text-lg mr-1" />
-                        EMI হিসাব করুন
+                        {t('btn_emi')}
                       </Link>
                     </Button>
                   </div>
@@ -234,7 +249,7 @@ const CardDetails = () => {
                     <Button variant="ghost" className="font-bold text-muted-foreground" asChild>
                       <Link to="/compare">
                         <MaterialIcon name="compare_arrows" className="text-lg mr-1" />
-                        অন্য কার্ড তুলনা করুন
+                        {t('btn_compare')}
                       </Link>
                     </Button>
                   </div>
@@ -255,11 +270,11 @@ const CardDetails = () => {
             <section className="bg-card border border-primary/10 rounded-xl p-5 md:p-6 shadow-sm">
               <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
                 <MaterialIcon name="info" className="text-primary text-2xl" />
-                এক নজরে তথ্য
+                {t('card_features')}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-muted/50 rounded-lg p-4 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">বার্ষিক ফি</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t('card_annual_fee')}</p>
                   <p className={cn(
                     "text-xl font-black",
                     card.annual_fee?.toLowerCase().includes("free") || card.annual_fee === "৳0"
@@ -273,13 +288,13 @@ const CardDetails = () => {
                   )}
                 </div>
                 <div className="bg-muted/50 rounded-lg p-4 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">সুদের হার (APR)</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t('card_interest_rate')}</p>
                   <p className="text-xl font-black text-foreground">
                     {card.interest_rate || "N/A"}
                   </p>
                 </div>
                 <div className="bg-muted/50 rounded-lg p-4 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">ক্যাশব্যাক / রিওয়ার্ড</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t('card_rewards')}</p>
                   <p className="text-xl font-black text-primary">
                     {card.benefits.length > 0 ? "আছে" : "নেই"}
                   </p>
@@ -296,7 +311,7 @@ const CardDetails = () => {
             <section className="bg-card border border-primary/10 rounded-xl p-5 md:p-6">
               <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
                 <MaterialIcon name="stars" className="text-primary text-2xl" />
-                সুবিধাসমূহ
+                {t('card_features')}
               </h2>
               {card.benefits.length === 0 ? (
                 <p className="text-muted-foreground">সুবিধার তথ্য পাওয়া যায়নি</p>
@@ -328,7 +343,7 @@ const CardDetails = () => {
               <section className="bg-green-50/50 border border-green-200 rounded-xl p-5 md:p-6">
                 <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2 text-green-800">
                   <MaterialIcon name="person_check" className="text-green-600 text-2xl" />
-                  যাদের জন্য ভালো
+                  {t('card_good_for')}
                 </h2>
                 <ul className="space-y-3">
                   {getGoodForPoints(card).map((point, i) => (
@@ -344,7 +359,7 @@ const CardDetails = () => {
               <section className="bg-destructive/5 border border-destructive/20 rounded-xl p-5 md:p-6">
                 <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2 text-destructive">
                   <MaterialIcon name="cancel" className="text-destructive text-2xl" />
-                  যাদের জন্য ভালো না
+                  {t('card_bad_for')}
                 </h2>
                 <ul className="space-y-3">
                   {getNotGoodForPoints(card).map((point, i) => (
@@ -361,18 +376,18 @@ const CardDetails = () => {
             <section className="bg-card border border-primary/10 rounded-xl p-5 md:p-6">
               <h2 className="font-bold text-lg md:text-xl mb-4 flex items-center gap-2">
                 <MaterialIcon name="verified_user" className="text-primary text-2xl" />
-                যোগ্যতা
+                {t('card_eligibility')}
               </h2>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <h3 className="font-bold text-sm mb-3 text-muted-foreground">প্রয়োজনীয় শর্ত</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between p-3 bg-muted/30 rounded-lg">
-                      <span className="text-sm">ন্যূনতম আয়</span>
+                      <span className="text-sm">{t('card_min_income')}</span>
                       <span className="font-bold text-sm">{card.min_income || "উল্লেখ নেই"}</span>
                     </div>
                     <div className="flex justify-between p-3 bg-muted/30 rounded-lg">
-                      <span className="text-sm">বয়স</span>
+                      <span className="text-sm">{t('card_age')}</span>
                       <span className="font-bold text-sm">
                         {card.min_age && card.max_age
                           ? `${card.min_age} - ${card.max_age} বছর`
@@ -383,7 +398,7 @@ const CardDetails = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm mb-3 text-muted-foreground">চাকরির ধরন</h3>
+                  <h3 className="font-bold text-sm mb-3 text-muted-foreground">{t('card_employment')}</h3>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {card.employment_types && card.employment_types.length > 0 ? (
                       card.employment_types.map((type, index) => (
@@ -398,7 +413,7 @@ const CardDetails = () => {
                       <span className="text-muted-foreground text-sm">উল্লেখ নেই</span>
                     )}
                   </div>
-                  <h3 className="font-bold text-sm mb-3 text-muted-foreground">প্রয়োজনীয় কাগজপত্র</h3>
+                  <h3 className="font-bold text-sm mb-3 text-muted-foreground">{t('card_documents')}</h3>
                   <div className="space-y-1.5">
                     {card.required_documents && card.required_documents.length > 0 ? (
                       card.required_documents.map((doc, index) => (
@@ -430,11 +445,11 @@ const CardDetails = () => {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">
-                    <strong>সর্বশেষ আপডেট:</strong> {lastUpdated}
+                    <strong>{t('card_last_updated')}:</strong> {lastUpdated}
                   </p>
                   {bankUrl && (
                     <p className="text-sm text-muted-foreground">
-                      <strong>তথ্যসূত্র:</strong>{" "}
+                      <strong>{t('card_source')}:</strong>{" "}
                       <a
                         href={bankUrl}
                         target="_blank"
@@ -449,8 +464,7 @@ const CardDetails = () => {
                 <div className="flex items-start gap-2 p-3 bg-background rounded-lg md:max-w-sm">
                   <MaterialIcon name="info" className="text-primary text-lg shrink-0" />
                   <p className="text-xs text-muted-foreground">
-                    BankBujhi কোনো ব্যাংক নয়। আমরা শুধুমাত্র তথ্য প্রদান করি।
-                    আবেদনের আগে ব্যাংকের সাথে সরাসরি যোগাযোগ করুন।
+                    {t('card_disclaimer')}
                   </p>
                 </div>
               </div>
@@ -467,14 +481,14 @@ const CardDetails = () => {
                   <SafeApplyGate product={card}>
                     <Button size="lg" className="font-bold bg-green-600 hover:bg-green-700">
                       <MaterialIcon name="open_in_new" className="text-lg mr-1" />
-                      এখনই আবেদন করুন
+                      {t('btn_apply')}
                     </Button>
                   </SafeApplyGate>
                 ) : (
                   <Link to="/eligibility">
                     <Button className="font-bold">
                       <MaterialIcon name="fact_check" className="text-lg mr-1" />
-                      যোগ্যতা যাচাই করুন
+                      {t('btn_eligibility')}
                     </Button>
                   </Link>
                 )}

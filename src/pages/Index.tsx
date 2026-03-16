@@ -9,6 +9,7 @@ import FeaturedCardsSection from "@/components/home/FeaturedCardsSection";
 import QuizCTASection from "@/components/home/QuizCTASection";
 import WhatsNewSection from "@/components/home/WhatsNewSection";
 import SEOHead from "@/components/seo/SEOHead";
+import CheckOffer from "@/components/home/CheckOffer";
 
 const Index = () => {
   return (
@@ -23,6 +24,9 @@ const Index = () => {
         <Header />
         <main className="flex-1 pb-16 md:pb-0">
           <HeroSection />
+          <div className="container mx-auto px-4 py-8">
+            <CheckOffer />
+          </div>
           <WhatsNewSection />
           <StatsSection />
           <HowItWorksSection />

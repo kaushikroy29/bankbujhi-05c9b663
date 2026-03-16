@@ -5,10 +5,12 @@ import { fetchCreditCards, type CreditCard } from "@/lib/api/banks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import MaterialIcon from "@/components/ui/MaterialIcon";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const FeaturedCardsSection = () => {
   const [cards, setCards] = useState<CreditCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   const loadFeaturedCards = useCallback(async () => {
     try {
@@ -72,13 +74,13 @@ const FeaturedCardsSection = () => {
         {/* Header */}
         <div className="text-center mb-10 md:mb-12">
           <span className="bg-accent/20 text-accent font-bold text-xs uppercase tracking-widest px-3 py-1 rounded-full">
-            সেরা পছন্দ
+            {t('featured_badge')}
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mt-4">
-            ২০২৫ সালের জনপ্রিয় কার্ড
+            {t('featured_title')}
           </h2>
           <p className="text-muted-foreground mt-2 text-sm sm:text-base">
-            ব্যবহারকারীদের রিভিউ ও সুবিধা-খরচ অনুপাতের ভিত্তিতে নির্বাচিত
+            {t('featured_subtitle')}
           </p>
         </div>
 
@@ -104,7 +106,7 @@ const FeaturedCardsSection = () => {
           <Button variant="outline" size="lg" className="font-bold gap-2" asChild>
             <Link to="/compare">
               <MaterialIcon name="grid_view" className="text-lg" />
-              সব কার্ড দেখুন
+              {t('btn_view_all')}
             </Link>
           </Button>
         </div>

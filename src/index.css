@@ -154,3 +154,16 @@
     @apply px-6 md:px-20 lg:px-40;
   }
 }
+
+/* Analysis Result Warning Styles */
+.analysis.warning h3 {
+  margin-top: 0;
+  color: #92400e;
+}
+
+.analysis.warning pre {
+  background: #fff7ed;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}

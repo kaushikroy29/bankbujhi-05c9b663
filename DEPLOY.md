@@ -1,88 +1,125 @@
-# Deployment Guide for BankBujhi
+# BankBujhi Deployment Guide (v1)
 
-This guide details how to deploy the **BankBujhi** application to production using **Vercel** (Frontend) and **Supabase** (Backend).
+This document explains how to run BankBujhi’s backend services and automation jobs.
 
 ## Prerequisites
 
-- [GitHub Account](https://github.com)
-- [Vercel Account](https://vercel.com)
-- [Supabase Account](https://supabase.com)
-- Git installed locally
+- Node.js ≥ 18
+- OpenClaw installed and configured
+- Supabase project + service role key
+- macOS / Linux (cron-based automation)
 
 ---
 
-## Part 1: Backend Deployment (Supabase)
+## 1. Environment Variables
 
-1.  **Create a Project**:
-    - Log in to [Supabase](https://supabase.com/dashboard) and create a new project.
-    - Note down the `Project URL` and `anon public key` from Settings > API.
+Create a `.env` file inside `backend/`:
 
-2.  **Set up Database Schema**:
-    - Go to the **SQL Editor** in your Supabase dashboard.
-    - Copy the content required for the schema (you can find the migrations in `supabase/migrations/`).
-    - Run the SQL to create `banks`, `credit_cards`, `savings_rates`, and `loan_products` tables.
-
-3.  **Seed Data**:
-    - Open `supabase/migrations/20260130052000_seed_initial_data.sql`.
-    - Copy the content and run it in the SQL Editor.
-    - This will populate your production database with the initial bank data.
-
-4.  **Security (RLS)**:
-    - Ensure Row Level Security (RLS) policies are active (included in the schema).
-    - Checks: Public read access should be enabled for all tables.
+```env
+SUPABASE_URL=...
+SUPABASE_SERVICE_ROLE_KEY=...
+OPENCLAW_PATH=openclaw
+# (Optional)
+PORT=3001
+```
 
 ---
 
-## Part 2: Frontend Deployment (Vercel)
+## 2. Running OpenClaw
 
-1.  **Push to GitHub**:
-    - Ensure your project is pushed to a GitHub repository.
-    ```bash
-    git add .
-    git commit -m "Ready for deployment"
-    git push origin main
-    ```
+OpenClaw must be running before the backend starts.
 
-2.  **Import to Vercel**:
-    - Go to [Vercel Dashboard](https://vercel.com/dashboard).
-    - Click **"Add New..."** -> **"Project"**.
-    - Import your `bankbujhi` repository.
+### Start Gateway
+```bash
+openclaw gateway
+```
 
-3.  **Configure Project**:
-    - **Framework Preset**: Vite
-    - **Root Directory**: `./` (default)
-    - **Build Command**: `npm run build`
-    - **Output Directory**: `dist`
+Verify it is running:
+```bash
+openclaw doctor
+```
 
-4.  **Environment Variables**:
-    - Expand the "Environment Variables" section.
-    - Add the keys using the values from your Supabase project:
-      - `VITE_SUPABASE_URL`: (Your Project URL)
-      - `VITE_SUPABASE_ANON_KEY`: (Your Anon Key)
-
-5.  **Deploy**:
-    - Click **"Deploy"**.
-    - Vercel will build and deploy your site.
-    - Once done, you will get a production URL (e.g., `bankbujhi.vercel.app`).
+⚠️ **Do not expose the gateway publicly.**
 
 ---
 
-## Part 3: Post-Deployment
+## 3. Running the Backend API
 
-1.  **Custom Domain**:
-    - On Vercel, go to Settings > Domains.
-    - Add your domain (e.g., `bankbujhi.com.bd`).
-    - Follow the DNS configuration instructions.
+From the repository root:
 
-2.  **SEO Check**:
-    - Verify `robots.txt` and `sitemap.xml` are accessible at your production domain.
-    - Use [Google Search Console](https://search.google.com/search-console) to submit your sitemap.
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-3.  **Performance Check**:
-    - Run a rigorous test on [PageSpeed Insights](https://pagespeed.web.dev/).
-    - Optimization targets: Image sizing, script loading.
+The backend will be available at:
+`http://localhost:3001`
 
-## Troubleshooting
+### Health check:
+`GET /health` (or `/` for v1 root)
 
-- **Build Fails?** Check the "Build Logs" in Vercel. Common issues include missing devDependencies or type errors.
-- **Data Not Loading?** Check the Browser Console. If you see CORS or 401 errors, check your Supabase RLS policies and Environment Variables.
+---
+
+## 4. Admin Automation Endpoints
+
+### Admin Analyze
+`POST /api/admin/analyze`
+
+### PDF Upload
+`POST /api/upload`
+
+### Internal Automation Trigger
+`POST /api/internal/trigger-automation`
+
+⚠️ **These endpoints are for internal/admin use only.**
+
+---
+
+## 5. RateWatch Cron Automation
+
+The RateWatch cron script is located at:
+`backend/cron/ratewatch.ts`
+
+### Manual run (test)
+```bash
+# If using tsx/ts-node
+tsx backend/cron/ratewatch.ts
+
+# Or compiled JS
+node backend/dist/cron/ratewatch.js
+```
+
+### Cron setup (weekly example)
+
+Edit crontab:
+```bash
+crontab -e
+```
+
+Add:
+```bash
+0 7 * * 1 /usr/local/bin/node /absolute/path/to/bankbujhi/backend/dist/cron/ratewatch.js >> /var/log/bankbujhi-ratewatch.log 2>&1
+```
+
+This runs RateWatch every **Monday at 7 AM**.
+
+---
+
+## 6. Safety Notes
+
+- **OpenClaw never auto-publishes results.**
+- All automation results require **review**.
+- Failed jobs are logged and can be re-run.
+- **No scraping is enabled in v1.**
+
+---
+
+## 7. Re-running Analyses
+
+To re-run analysis:
+1.  Update the logic version.
+2.  Trigger automation again via the backend.
+3.  Old results remain stored for audit.
+
+---

@@ -6,20 +6,22 @@ import { useState } from "react";
 import MobileNav from "./MobileNav";
 import NotificationBell from "./NotificationBell";
 import LanguageToggle from "./LanguageToggle";
-
-const navLinks = [
-  { href: "/compare", label: "কার্ড", icon: "credit_card" },
-  { href: "/banks", label: "ব্যাংক", icon: "account_balance" },
-  { href: "/loans", label: "লোন", icon: "account_balance" },
-  { href: "/savings", label: "সেভিংস", icon: "savings" },
-  { href: "/mfs", label: "MFS", icon: "smartphone" },
-  { href: "/glossary", label: "শব্দকোষ", icon: "menu_book" },
-  { href: "/guides", label: "গাইড", icon: "article" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Header = () => {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const location = useLocation();
+  const { t } = useLanguage();
+
+  const navLinks = [
+    { href: "/compare", label: t('nav_cards'), icon: "credit_card" },
+    { href: "/banks", label: t('filter_bank'), icon: "account_balance" },
+    { href: "/loans", label: t('nav_loans'), icon: "account_balance" },
+    { href: "/savings", label: t('nav_savings'), icon: "savings" },
+    // { href: "/mfs", label: "MFS", icon: "smartphone" },
+    // { href: "/glossary", label: "শব্দকোষ", icon: "menu_book" },
+    // { href: "/guides", label: "গাইড", icon: "article" },
+  ];
 
   return (
     <>
@@ -54,7 +56,7 @@ const Header = () => {
             {/* Compare CTA - Desktop only */}
             <Link to="/compare" className="hidden sm:block">
               <Button className="min-w-[84px] h-10 px-4 text-sm font-bold shadow-sm">
-                তুলনা করুন
+                {t('btn_compare')}
               </Button>
             </Link>
 
@@ -64,9 +66,9 @@ const Header = () => {
             </Link>
 
             {/* Admin Link - Temporary for MVP */}
-            <Link to="/admin" className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-primary transition-colors" title="Admin Dashboard">
+            {/* <Link to="/admin" className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-primary transition-colors" title="Admin Dashboard">
               <MaterialIcon name="admin_panel_settings" className="text-2xl" />
-            </Link>
+            </Link> */}
 
             {/* Notification Bell */}
             <NotificationBell />

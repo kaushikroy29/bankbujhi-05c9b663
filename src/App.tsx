@@ -39,27 +39,31 @@ import MFS from "./pages/MFS";
 import Glossary from "./pages/Glossary";
 import Recommendations from "./pages/Recommendations";
 import Watchlist from "./pages/Watchlist";
-import PendingUpdates from "./pages/admin/PendingUpdates";
+
 import CreditCardCostCalculator from "./components/calculators/CreditCardCostCalculator";
 import EMICalculator from "./components/calculators/EMICalculator";
 import FDRCalculator from "./components/calculators/FDRCalculator";
 import InvestmentCalculator from "./components/calculators/InvestmentCalculator";
 import Calculators from "./pages/Calculators";
-import QuickUpdate from "./pages/admin/QuickUpdate";
-import Admin from "./pages/Admin";
-import UserFavorites from "./pages/UserFavorites";
+
+import IntelligencePage from "./pages/Intelligence";
+
+import { LanguageProvider } from "./contexts/LanguageContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
+    <LanguageProvider>
+      <HelmetProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
           <Routes>
+            <Route path="/intelligence" element={<IntelligencePage />} />
+
             <Route path="/" element={<Index />} />
             <Route path="/compare" element={<Compare />} />
             <Route path="/loans" element={<PersonalLoans />} />
@@ -96,16 +100,15 @@ const App = () => (
             <Route path="/tools" element={<Calculators />} />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/watchlist" element={<Watchlist />} />
-            <Route path="/admin/updates" element={<PendingUpdates />} />
-            <Route path="/admin/quick-update" element={<QuickUpdate />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/favorites" element={<UserFavorites />} />
+
+            {/* <Route path="/favorites" element={<UserFavorites />} /> */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </HelmetProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 

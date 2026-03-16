@@ -40,3 +40,70 @@
 .read-the-docs {
   color: #888;
 }
+
+/* BankBujhi Signature Look */
+.bb-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  max-width: 680px;
+  margin: 1rem auto;
+  text-align: left; /* Override center alignment from root */
+}
+
+.bb-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.bb-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #92400e;
+  background: #fef3c7;
+  padding: 0.25rem 0.5rem;
+  width: fit-content;
+  border-radius: 999px;
+}
+
+.bb-card-body h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.bb-card-body p, .bb-card-body li {
+  color: #334155;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.bb-card-footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Feedback UI */
+.feedback-label {
+  margin-right: 0.5rem;
+}
+.feedback-buttons button {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+.feedback-thanks {
+  color: #64748b;
+}
